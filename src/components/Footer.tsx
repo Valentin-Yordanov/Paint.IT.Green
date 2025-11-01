@@ -9,13 +9,13 @@ const Footer = () => {
       { label: "Community", href: "/community" },
     ],
     resources: [
-      { label: "About Us", href: "#" },
-      { label: "Contact", href: "#" },
-      { label: "FAQ", href: "#" },
+      { label: "About Us", href: "/about" },
+      { label: "Contact", href: "/contact" },
+      { label: "FAQ", href: "/faq" },
     ],
     legal: [
-      { label: "Privacy Policy", href: "#" },
-      { label: "Terms of Service", href: "#" },
+      { label: "Privacy Policy", href: "/privacy" },
+      { label: "Terms of Service", href: "/terms" },
     ],
   };
 
