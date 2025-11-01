@@ -121,25 +121,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-primary text-primary-foreground">
-        <div className="container text-center">
-          <div className="mx-auto max-w-2xl space-y-6">
-            <h2 className="text-3xl md:text-4xl font-bold">
-              Ready to Start Your Journey?
-            </h2>
-            <p className="text-lg opacity-90">
-              Join thousands of students already making a difference in their communities
-            </p>
-            <Link to="/learn">
-              <Button size="lg" variant="secondary" className="gap-2">
-                <Leaf className="h-5 w-5" />
-                Get Started Today
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
     </div>
   );
 };
