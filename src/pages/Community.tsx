@@ -4,7 +4,9 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Heart, MessageCircle, Share2, School, Users, Send } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Heart, MessageCircle, Share2, School, Users, Send, Plus, Edit, Trash2 } from "lucide-react";
 import studentsImage from "@/assets/students-planting.jpg";
 import { useToast } from "@/hooks/use-toast";
 
@@ -13,6 +15,13 @@ const Community = () => {
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
   const [showComments, setShowComments] = useState<Set<number>>(new Set());
   const [newComment, setNewComment] = useState<{ [key: number]: string }>({});
+  const [editingComment, setEditingComment] = useState<{ postId: number; commentIdx: number } | null>(null);
+  const [editCommentText, setEditCommentText] = useState("");
+  const [editingPost, setEditingPost] = useState<number | null>(null);
+  const [editPostText, setEditPostText] = useState("");
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [newPostContent, setNewPostContent] = useState("");
+  const [newPostSchool, setNewPostSchool] = useState("Lincoln Elementary");
   const [posts, setPosts] = useState([
     {
       id: 0,
@@ -117,13 +126,132 @@ const Community = () => {
     });
   };
 
+  const handleCreatePost = () => {
+    if (!newPostContent.trim()) return;
+
+    const newPost = {
+      id: posts.length,
+      school: newPostSchool,
+      author: "You",
+      role: "User",
+      time: "Just now",
+      content: newPostContent,
+      image: undefined,
+      likes: 0,
+      comments: [],
+      isPublic: true,
+    };
+
+    setPosts([newPost, ...posts]);
+    setNewPostContent("");
+    setIsCreateDialogOpen(false);
+    toast({
+      title: "Post created!",
+      description: "Your post has been shared with the community.",
+    });
+  };
+
+  const handleDeletePost = (postId: number) => {
+    setPosts(posts.filter(post => post.id !== postId));
+    toast({
+      title: "Post deleted",
+      description: "Your post has been removed.",
+    });
+  };
+
+  const handleEditPost = (postId: number) => {
+    if (!editPostText.trim()) return;
+    
+    setPosts(posts.map(post => 
+      post.id === postId ? { ...post, content: editPostText } : post
+    ));
+    setEditingPost(null);
+    toast({
+      title: "Post updated",
+      description: "Your post has been updated successfully.",
+    });
+  };
+
+  const handleDeleteComment = (postId: number, commentIdx: number) => {
+    setPosts(posts.map(post => 
+      post.id === postId 
+        ? { ...post, comments: post.comments.filter((_, idx) => idx !== commentIdx) }
+        : post
+    ));
+    toast({
+      title: "Comment deleted",
+      description: "Your comment has been removed.",
+    });
+  };
+
+  const handleEditComment = (postId: number, commentIdx: number) => {
+    if (!editCommentText.trim()) return;
+
+    setPosts(posts.map(post => 
+      post.id === postId 
+        ? { 
+            ...post, 
+            comments: post.comments.map((comment, idx) => 
+              idx === commentIdx ? { ...comment, content: editCommentText } : comment
+            )
+          }
+        : post
+    ));
+    setEditingComment(null);
+    toast({
+      title: "Comment updated",
+      description: "Your comment has been updated successfully.",
+    });
+  };
+
   return (
     <div className="min-h-screen py-12 bg-gradient-to-b from-background to-secondary/20">
       <div className="container max-w-4xl">
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Community Feed
-          </h1>
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold">
+              Community Feed
+            </h1>
+            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+              <DialogTrigger asChild>
+                <Button size="lg" className="gap-2">
+                  <Plus className="h-5 w-5" />
+                  Create Post
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[500px]">
+                <DialogHeader>
+                  <DialogTitle>Create a New Post</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 pt-4">
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">School</label>
+                    <Input
+                      value={newPostSchool}
+                      onChange={(e) => setNewPostSchool(e.target.value)}
+                      placeholder="Your school name"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">What's happening?</label>
+                    <Textarea
+                      value={newPostContent}
+                      onChange={(e) => setNewPostContent(e.target.value)}
+                      placeholder="Share your environmental achievements..."
+                      className="min-h-[120px]"
+                    />
+                  </div>
+                  <Button 
+                    onClick={handleCreatePost} 
+                    disabled={!newPostContent.trim()}
+                    className="w-full"
+                  >
+                    Post to Community
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Celebrate achievements and share environmental initiatives from schools around the world
           </p>
@@ -175,7 +303,52 @@ const Community = () => {
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p className="text-foreground leading-relaxed">{post.content}</p>
+                {editingPost === post.id ? (
+                  <div className="space-y-2">
+                    <Textarea
+                      value={editPostText}
+                      onChange={(e) => setEditPostText(e.target.value)}
+                      className="min-h-[100px]"
+                    />
+                    <div className="flex gap-2">
+                      <Button size="sm" onClick={() => handleEditPost(post.id)}>
+                        Save
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => setEditingPost(null)}>
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <p className="text-foreground leading-relaxed">{post.content}</p>
+                    {post.author === "You" && (
+                      <div className="flex gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="gap-2"
+                          onClick={() => {
+                            setEditingPost(post.id);
+                            setEditPostText(post.content);
+                          }}
+                        >
+                          <Edit className="h-3 w-3" />
+                          Edit
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="gap-2 text-destructive hover:text-destructive"
+                          onClick={() => handleDeletePost(post.id)}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                          Delete
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
                 
                 {post.image && (
                   <div className="rounded-lg overflow-hidden">
@@ -235,14 +408,59 @@ const Community = () => {
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1">
-                              <div className="flex items-center gap-2">
-                                <span className="text-sm font-semibold">{comment.author}</span>
-                                <Badge variant="outline" className="text-xs">
-                                  {comment.role}
-                                </Badge>
-                                <span className="text-xs text-muted-foreground">{comment.time}</span>
-                              </div>
-                              <p className="text-sm text-foreground mt-1">{comment.content}</p>
+                              {editingComment?.postId === post.id && editingComment?.commentIdx === idx ? (
+                                <div className="space-y-2">
+                                  <Textarea
+                                    value={editCommentText}
+                                    onChange={(e) => setEditCommentText(e.target.value)}
+                                    className="min-h-[60px]"
+                                  />
+                                  <div className="flex gap-2">
+                                    <Button size="sm" onClick={() => handleEditComment(post.id, idx)}>
+                                      Save
+                                    </Button>
+                                    <Button size="sm" variant="outline" onClick={() => setEditingComment(null)}>
+                                      Cancel
+                                    </Button>
+                                  </div>
+                                </div>
+                              ) : (
+                                <>
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-sm font-semibold">{comment.author}</span>
+                                    <Badge variant="outline" className="text-xs">
+                                      {comment.role}
+                                    </Badge>
+                                    <span className="text-xs text-muted-foreground">{comment.time}</span>
+                                  </div>
+                                  <p className="text-sm text-foreground mt-1">{comment.content}</p>
+                                  {comment.author === "You" && (
+                                    <div className="flex gap-2 mt-2">
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-7 text-xs gap-1"
+                                        onClick={() => {
+                                          setEditingComment({ postId: post.id, commentIdx: idx });
+                                          setEditCommentText(comment.content);
+                                        }}
+                                      >
+                                        <Edit className="h-3 w-3" />
+                                        Edit
+                                      </Button>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-7 text-xs gap-1 text-destructive hover:text-destructive"
+                                        onClick={() => handleDeleteComment(post.id, idx)}
+                                      >
+                                        <Trash2 className="h-3 w-3" />
+                                        Delete
+                                      </Button>
+                                    </div>
+                                  )}
+                                </>
+                              )}
                             </div>
                           </div>
                         ))}
