@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Leaf, Trophy, Users, BookOpen, Menu } from "lucide-react";
+import { Leaf, Trophy, Users, BookOpen, Menu, User } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const Navbar = () => {
@@ -13,6 +13,7 @@ const Navbar = () => {
     { path: "/learn", label: "Learn", icon: BookOpen },
     { path: "/compete", label: "Compete", icon: Trophy },
     { path: "/community", label: "Community", icon: Users },
+    { path: "/profile", label: "Profile", icon: User },
   ];
 
   const NavLinks = () => (
