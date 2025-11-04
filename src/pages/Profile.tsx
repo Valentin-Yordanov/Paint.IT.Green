@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Trophy, Leaf, Award, BookOpen, Settings, User, Plus, Target } from "lucide-react";
+import { Trophy, Leaf, Award, BookOpen, Settings, User, Plus, Target, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Profile = () => {
@@ -87,6 +87,14 @@ const Profile = () => {
     toast({
       title: "Goal created!",
       description: "Your new goal has been added successfully.",
+    });
+  };
+
+  const handleDeleteGoal = (goalId: number) => {
+    setActiveGoals(activeGoals.filter(goal => goal.id !== goalId));
+    toast({
+      title: "Goal deleted",
+      description: "Your goal has been removed.",
     });
   };
 
@@ -219,12 +227,22 @@ const Profile = () => {
             <div className="space-y-4">
               {activeGoals.map((goal) => (
                 <div key={goal.id} className="space-y-2">
-                  <div className="flex justify-between items-start">
-                    <div>
+                  <div className="flex justify-between items-start gap-2">
+                    <div className="flex-1">
                       <span className="font-medium">{goal.title}</span>
                       <p className="text-sm text-muted-foreground">{goal.description}</p>
                     </div>
-                    <span className="text-sm text-muted-foreground">{goal.progress}%</span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm text-muted-foreground">{goal.progress}%</span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-destructive hover:text-destructive"
+                        onClick={() => handleDeleteGoal(goal.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                   <div className="h-2 bg-secondary rounded-full overflow-hidden">
                     <div 

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Heart, MessageCircle, Share2, School, Users, Send, Plus, Edit, Trash2 } from "lucide-react";
+import { Heart, MessageCircle, Share2, School, Users, Send, Plus, Edit, Trash2, Image } from "lucide-react";
 import studentsImage from "@/assets/students-planting.jpg";
 import { useToast } from "@/hooks/use-toast";
 
@@ -22,6 +22,8 @@ const Community = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [newPostContent, setNewPostContent] = useState("");
   const [newPostSchool, setNewPostSchool] = useState("Lincoln Elementary");
+  const [newPostVisibility, setNewPostVisibility] = useState<"public" | "school">("public");
+  const [newPostImage, setNewPostImage] = useState<string | undefined>(undefined);
   const [activeFilter, setActiveFilter] = useState<"public" | "myPosts" | "mySchool">("public");
   const [posts, setPosts] = useState([
     {
@@ -137,19 +139,32 @@ const Community = () => {
       role: "User",
       time: "Just now",
       content: newPostContent,
-      image: undefined,
+      image: newPostImage,
       likes: 0,
       comments: [],
-      isPublic: true,
+      isPublic: newPostVisibility === "public",
     };
 
     setPosts([newPost, ...posts]);
     setNewPostContent("");
+    setNewPostImage(undefined);
+    setNewPostVisibility("public");
     setIsCreateDialogOpen(false);
     toast({
       title: "Post created!",
       description: "Your post has been shared with the community.",
     });
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setNewPostImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleDeletePost = (postId: number) => {
@@ -235,20 +250,20 @@ const Community = () => {
             Public
           </Badge>
           <Badge 
-            variant={activeFilter === "myPosts" ? "default" : "outline"} 
-            className="cursor-pointer gap-1"
-            onClick={() => setActiveFilter("myPosts")}
-          >
-            <Users className="h-3 w-3" />
-            My Posts
-          </Badge>
-          <Badge 
             variant={activeFilter === "mySchool" ? "default" : "outline"} 
             className="cursor-pointer gap-1"
             onClick={() => setActiveFilter("mySchool")}
           >
             <School className="h-3 w-3" />
             My School
+          </Badge>
+          <Badge 
+            variant={activeFilter === "myPosts" ? "default" : "outline"} 
+            className="cursor-pointer gap-1"
+            onClick={() => setActiveFilter("myPosts")}
+          >
+            <Users className="h-3 w-3" />
+            My Posts
           </Badge>
         </div>
 
@@ -275,6 +290,29 @@ const Community = () => {
                   />
                 </div>
                 <div>
+                  <label className="text-sm font-medium mb-2 block">Visibility</label>
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant={newPostVisibility === "public" ? "default" : "outline"}
+                      onClick={() => setNewPostVisibility("public")}
+                      className="flex-1"
+                    >
+                      <Users className="h-4 w-4 mr-2" />
+                      Public
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={newPostVisibility === "school" ? "default" : "outline"}
+                      onClick={() => setNewPostVisibility("school")}
+                      className="flex-1"
+                    >
+                      <School className="h-4 w-4 mr-2" />
+                      My School Only
+                    </Button>
+                  </div>
+                </div>
+                <div>
                   <label className="text-sm font-medium mb-2 block">What's happening?</label>
                   <Textarea
                     value={newPostContent}
@@ -282,6 +320,31 @@ const Community = () => {
                     placeholder="Share your environmental achievements..."
                     className="min-h-[120px]"
                   />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Add Image (Optional)</label>
+                  <div className="space-y-2">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="cursor-pointer"
+                    />
+                    {newPostImage && (
+                      <div className="relative rounded-lg overflow-hidden">
+                        <img src={newPostImage} alt="Preview" className="w-full h-auto" />
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="icon"
+                          className="absolute top-2 right-2"
+                          onClick={() => setNewPostImage(undefined)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <Button 
                   onClick={handleCreatePost} 
