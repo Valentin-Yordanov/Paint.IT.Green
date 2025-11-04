@@ -22,6 +22,7 @@ const Community = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [newPostContent, setNewPostContent] = useState("");
   const [newPostSchool, setNewPostSchool] = useState("Lincoln Elementary");
+  const [activeFilter, setActiveFilter] = useState<"public" | "myPosts" | "mySchool">("public");
   const [posts, setPosts] = useState([
     {
       id: 0,
@@ -204,75 +205,99 @@ const Community = () => {
     });
   };
 
+  const filteredPosts = posts.filter(post => {
+    if (activeFilter === "public") return post.isPublic;
+    if (activeFilter === "myPosts") return post.author === "You";
+    if (activeFilter === "mySchool") return post.school === "Lincoln Elementary"; // Replace with actual user school
+    return true;
+  });
+
   return (
     <div className="min-h-screen py-12 bg-gradient-to-b from-background to-secondary/20">
       <div className="container max-w-4xl">
         <div className="text-center mb-12">
-          <div className="flex items-center justify-center gap-4 mb-4">
-            <h1 className="text-4xl md:text-5xl font-bold">
-              Community Feed
-            </h1>
-            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-              <DialogTrigger asChild>
-                <Button size="lg" className="gap-2">
-                  <Plus className="h-5 w-5" />
-                  Create Post
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[500px]">
-                <DialogHeader>
-                  <DialogTitle>Create a New Post</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4 pt-4">
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">School</label>
-                    <Input
-                      value={newPostSchool}
-                      onChange={(e) => setNewPostSchool(e.target.value)}
-                      placeholder="Your school name"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">What's happening?</label>
-                    <Textarea
-                      value={newPostContent}
-                      onChange={(e) => setNewPostContent(e.target.value)}
-                      placeholder="Share your environmental achievements..."
-                      className="min-h-[120px]"
-                    />
-                  </div>
-                  <Button 
-                    onClick={handleCreatePost} 
-                    disabled={!newPostContent.trim()}
-                    className="w-full"
-                  >
-                    Post to Community
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            Community Feed
+          </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Celebrate achievements and share environmental initiatives from schools around the world
           </p>
         </div>
 
         {/* Filter badges */}
-        <div className="flex flex-wrap gap-2 mb-8 justify-center">
-          <Badge variant="default" className="cursor-pointer">All Posts</Badge>
-          <Badge variant="outline" className="cursor-pointer gap-1">
+        <div className="flex flex-wrap gap-2 mb-4 justify-center">
+          <Badge 
+            variant={activeFilter === "public" ? "default" : "outline"} 
+            className="cursor-pointer gap-1"
+            onClick={() => setActiveFilter("public")}
+          >
             <Users className="h-3 w-3" />
-            Public Only
+            Public
           </Badge>
-          <Badge variant="outline" className="cursor-pointer gap-1">
+          <Badge 
+            variant={activeFilter === "myPosts" ? "default" : "outline"} 
+            className="cursor-pointer gap-1"
+            onClick={() => setActiveFilter("myPosts")}
+          >
+            <Users className="h-3 w-3" />
+            My Posts
+          </Badge>
+          <Badge 
+            variant={activeFilter === "mySchool" ? "default" : "outline"} 
+            className="cursor-pointer gap-1"
+            onClick={() => setActiveFilter("mySchool")}
+          >
             <School className="h-3 w-3" />
             My School
           </Badge>
         </div>
 
+        {/* Create Post Button */}
+        <div className="flex justify-center mb-8">
+          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+            <DialogTrigger asChild>
+              <Button size="lg" className="gap-2 px-8 py-6 text-lg">
+                <Plus className="h-6 w-6" />
+                Create Post
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[500px]">
+              <DialogHeader>
+                <DialogTitle>Create a New Post</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 pt-4">
+                <div>
+                  <label className="text-sm font-medium mb-2 block">School</label>
+                  <Input
+                    value={newPostSchool}
+                    onChange={(e) => setNewPostSchool(e.target.value)}
+                    placeholder="Your school name"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-2 block">What's happening?</label>
+                  <Textarea
+                    value={newPostContent}
+                    onChange={(e) => setNewPostContent(e.target.value)}
+                    placeholder="Share your environmental achievements..."
+                    className="min-h-[120px]"
+                  />
+                </div>
+                <Button 
+                  onClick={handleCreatePost} 
+                  disabled={!newPostContent.trim()}
+                  className="w-full"
+                >
+                  Post to Community
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
+
         {/* Posts Feed */}
         <div className="space-y-6">
-          {posts.map((post) => (
+          {filteredPosts.map((post) => (
             <Card key={post.id} className="border-border bg-card">
               <CardHeader>
                 <div className="flex items-start justify-between">
@@ -490,17 +515,6 @@ const Community = () => {
             </Card>
           ))}
         </div>
-
-        {/* Info Card */}
-        <Card className="mt-8 bg-primary text-primary-foreground border-0">
-          <CardContent className="p-6">
-            <h3 className="text-lg font-semibold mb-2">Want to share your school's achievements?</h3>
-            <p className="opacity-90 mb-4">
-              Teachers and principals can post updates to celebrate student efforts and inspire other schools.
-            </p>
-            <Button variant="secondary">Learn More About Posting</Button>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

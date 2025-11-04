@@ -5,8 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trophy, Leaf, Award, BookOpen, Settings, User } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Trophy, Leaf, Award, BookOpen, Settings, User, Plus, Target } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Profile = () => {
@@ -28,6 +30,9 @@ const Profile = () => {
   const [editedSchool, setEditedSchool] = useState(userStats.school);
   const [editedEmail, setEditedEmail] = useState(userStats.email);
   const [editedRole, setEditedRole] = useState(userStats.role);
+  const [isGoalDialogOpen, setIsGoalDialogOpen] = useState(false);
+  const [newGoalTitle, setNewGoalTitle] = useState("");
+  const [newGoalDescription, setNewGoalDescription] = useState("");
 
   const recentAchievements = [
     { title: "Tree Planter", description: "Planted 10 trees", icon: Leaf, date: "2 days ago" },
@@ -35,11 +40,11 @@ const Profile = () => {
     { title: "Community Champion", description: "Reached 1000 points", icon: Trophy, date: "2 weeks ago" },
   ];
 
-  const activeGoals = [
-    { title: "Plant 20 trees", progress: 75 },
-    { title: "Complete 10 challenges", progress: 80 },
-    { title: "Finish all lessons", progress: 45 },
-  ];
+  const [activeGoals, setActiveGoals] = useState([
+    { id: 1, title: "Plant 20 trees", description: "Help reforest local areas", progress: 75, target: 20 },
+    { id: 2, title: "Complete 10 challenges", description: "Finish environmental challenges", progress: 80, target: 10 },
+    { id: 3, title: "Finish all lessons", description: "Complete the full curriculum", progress: 45, target: 100 },
+  ]);
 
   const handleSaveProfile = () => {
     setUserStats({
@@ -62,6 +67,27 @@ const Profile = () => {
     setEditedEmail(userStats.email);
     setEditedRole(userStats.role);
     setEditMode(false);
+  };
+
+  const handleAddGoal = () => {
+    if (!newGoalTitle.trim() || !newGoalDescription.trim()) return;
+
+    const newGoal = {
+      id: activeGoals.length + 1,
+      title: newGoalTitle,
+      description: newGoalDescription,
+      progress: 0,
+      target: 100,
+    };
+
+    setActiveGoals([...activeGoals, newGoal]);
+    setNewGoalTitle("");
+    setNewGoalDescription("");
+    setIsGoalDialogOpen(false);
+    toast({
+      title: "Goal created!",
+      description: "Your new goal has been added successfully.",
+    });
   };
 
   return (
@@ -184,14 +210,20 @@ const Profile = () => {
             {/* Active Goals */}
             <Card>
           <CardHeader>
-            <CardTitle>Active Goals</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Target className="h-5 w-5" />
+              Active Goals
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {activeGoals.map((goal, idx) => (
-                <div key={idx}>
-                  <div className="flex justify-between mb-2">
-                    <span className="font-medium">{goal.title}</span>
+              {activeGoals.map((goal) => (
+                <div key={goal.id} className="space-y-2">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <span className="font-medium">{goal.title}</span>
+                      <p className="text-sm text-muted-foreground">{goal.description}</p>
+                    </div>
                     <span className="text-sm text-muted-foreground">{goal.progress}%</span>
                   </div>
                   <div className="h-2 bg-secondary rounded-full overflow-hidden">
@@ -203,7 +235,45 @@ const Profile = () => {
                 </div>
               ))}
             </div>
-              <Button className="w-full mt-6">Set New Goal</Button>
+              <Dialog open={isGoalDialogOpen} onOpenChange={setIsGoalDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button className="w-full mt-6 gap-2">
+                    <Plus className="h-4 w-4" />
+                    Set New Goal
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[500px]">
+                  <DialogHeader>
+                    <DialogTitle>Create a New Goal</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 pt-4">
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">Goal Title</label>
+                      <Input
+                        value={newGoalTitle}
+                        onChange={(e) => setNewGoalTitle(e.target.value)}
+                        placeholder="e.g., Plant 100 Trees"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">Description</label>
+                      <Textarea
+                        value={newGoalDescription}
+                        onChange={(e) => setNewGoalDescription(e.target.value)}
+                        placeholder="Describe your goal..."
+                        className="min-h-[100px]"
+                      />
+                    </div>
+                    <Button 
+                      onClick={handleAddGoal} 
+                      disabled={!newGoalTitle.trim() || !newGoalDescription.trim()}
+                      className="w-full"
+                    >
+                      Create Goal
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </CardContent>
           </Card>
           </TabsContent>
