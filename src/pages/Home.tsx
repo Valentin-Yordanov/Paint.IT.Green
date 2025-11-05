@@ -3,33 +3,36 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { BookOpen, Trophy, Users, Leaf, Recycle, TreePine } from "lucide-react";
 import heroImage from "@/assets/hero-nature.jpg";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Home = () => {
+  const { t } = useLanguage();
+  
   const features = [
     {
       icon: BookOpen,
-      title: "Learn & Discover",
-      description: "Explore why nature conservation matters and how every action counts",
+      title: t('home.feature1.title'),
+      description: t('home.feature1.desc'),
       link: "/learn",
     },
     {
       icon: Trophy,
-      title: "Compete & Win",
-      description: "Join weekly, monthly, and yearly competitions between cities and schools",
+      title: t('home.feature2.title'),
+      description: t('home.feature2.desc'),
       link: "/compete",
     },
     {
       icon: Users,
-      title: "Share & Connect",
-      description: "Celebrate achievements and inspire others in your school community",
+      title: t('home.feature3.title'),
+      description: t('home.feature3.desc'),
       link: "/community",
     },
   ];
 
   const stats = [
-    { icon: TreePine, value: "10,000+", label: "Trees Planted" },
-    { icon: Recycle, value: "50+", label: "Schools Participating" },
-    { icon: Users, value: "5,000+", label: "Students Engaged" },
+    { icon: TreePine, value: "10,000+", label: t('home.stats.trees') },
+    { icon: Recycle, value: "50+", label: t('home.stats.schools') },
+    { icon: Users, value: "5,000+", label: t('home.stats.students') },
   ];
 
   return (
@@ -46,24 +49,23 @@ const Home = () => {
         <div className="container relative z-10 text-center">
           <div className="mx-auto max-w-3xl space-y-6">
             <h1 className="text-5xl md:text-6xl font-bold text-foreground">
-              Protect Our Planet,
-              <span className="text-primary"> Together</span>
+              {t('home.hero.title')}
+              <span className="text-primary"> {t('home.hero.title.highlight')}</span>
             </h1>
             <p className="text-xl text-muted-foreground">
-              Join students from around the world in learning about nature conservation
-              and making a real difference in your community
+              {t('home.hero.subtitle')}
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link to="/learn">
                 <Button size="lg" className="gap-2">
                   <BookOpen className="h-5 w-5" />
-                  Start Learning
+                  {t('home.hero.start')}
                 </Button>
               </Link>
               <Link to="/compete">
                 <Button size="lg" variant="outline" className="gap-2">
                   <Trophy className="h-5 w-5" />
-                  View Competitions
+                  {t('home.hero.view')}
                 </Button>
               </Link>
             </div>
@@ -76,11 +78,10 @@ const Home = () => {
         <div className="container">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Everything You Need to Make a Difference
+              {t('home.features.title')}
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Our platform combines education, competition, and community to inspire
-              environmental action
+              {t('home.features.subtitle')}
             </p>
           </div>
 

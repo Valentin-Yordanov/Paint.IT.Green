@@ -8,11 +8,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Trophy, Leaf, Award, BookOpen, Settings, User, Plus, Target, Trash2 } from "lucide-react";
+import { Trophy, Leaf, Award, BookOpen, Settings, User, Plus, Target, Trash2, Languages } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { Switch } from "@/components/ui/switch";
 
 const Profile = () => {
   const { toast } = useToast();
+  const { t, language, setLanguage } = useLanguage();
   const [userStats, setUserStats] = useState({
     name: "Alex Chen",
     role: "Student",
@@ -35,9 +38,9 @@ const Profile = () => {
   const [newGoalDescription, setNewGoalDescription] = useState("");
 
   const recentAchievements = [
-    { title: "Tree Planter", description: "Planted 10 trees", icon: Leaf, date: "2 days ago" },
-    { title: "Quiz Master", description: "Completed 5 quizzes with 100%", icon: BookOpen, date: "1 week ago" },
-    { title: "Community Champion", description: "Reached 1000 points", icon: Trophy, date: "2 weeks ago" },
+    { title: t('achievement.treePlanter'), description: t('achievement.treePlanterDesc'), icon: Leaf, date: `2 ${t('time.daysAgo')}` },
+    { title: t('achievement.quizMaster'), description: t('achievement.quizMasterDesc'), icon: BookOpen, date: `1 ${t('time.weekAgo')}` },
+    { title: t('achievement.champion'), description: t('achievement.championDesc'), icon: Trophy, date: `2 ${t('time.weeksAgo')}` },
   ];
 
   const [activeGoals, setActiveGoals] = useState([
@@ -56,8 +59,8 @@ const Profile = () => {
     });
     setEditMode(false);
     toast({
-      title: "Profile updated!",
-      description: "Your profile has been saved successfully.",
+      title: t('profile.updated'),
+      description: t('profile.updatedDesc'),
     });
   };
 
@@ -85,16 +88,16 @@ const Profile = () => {
     setNewGoalDescription("");
     setIsGoalDialogOpen(false);
     toast({
-      title: "Goal created!",
-      description: "Your new goal has been added successfully.",
+      title: t('profile.goalCreated'),
+      description: t('profile.goalCreatedDesc'),
     });
   };
 
   const handleDeleteGoal = (goalId: number) => {
     setActiveGoals(activeGoals.filter(goal => goal.id !== goalId));
     toast({
-      title: "Goal deleted",
-      description: "Your goal has been removed.",
+      title: t('profile.goalDeleted'),
+      description: t('profile.goalDeletedDesc'),
     });
   };
 
@@ -102,9 +105,9 @@ const Profile = () => {
     <div className="min-h-screen py-12 bg-gradient-to-b from-background to-secondary/20">
       <div className="container max-w-4xl">
         <div className="mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">My Profile</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t('profile.title')}</h1>
           <p className="text-lg text-muted-foreground">
-            Track your environmental impact and achievements
+            {t('profile.subtitle')}
           </p>
         </div>
 
@@ -112,11 +115,11 @@ const Profile = () => {
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="overview" className="gap-2">
               <User className="h-4 w-4" />
-              Overview
+              {t('profile.overview')}
             </TabsTrigger>
             <TabsTrigger value="settings" className="gap-2">
               <Settings className="h-4 w-4" />
-              Settings
+              {t('profile.settings')}
             </TabsTrigger>
           </TabsList>
 
@@ -140,7 +143,7 @@ const Profile = () => {
                   </div>
                   <div className="text-center">
                     <div className="text-3xl font-bold text-primary">{userStats.points}</div>
-                    <div className="text-sm text-muted-foreground">Total Points</div>
+                    <div className="text-sm text-muted-foreground">{t('profile.points')}</div>
                   </div>
                 </div>
               </CardContent>
@@ -156,7 +159,7 @@ const Profile = () => {
                 </div>
                 <div>
                   <div className="text-2xl font-bold">{userStats.treesPlanted}</div>
-                  <div className="text-sm text-muted-foreground">Trees Planted</div>
+                  <div className="text-sm text-muted-foreground">{t('profile.trees')}</div>
                 </div>
               </div>
             </CardContent>
@@ -169,7 +172,7 @@ const Profile = () => {
                 </div>
                 <div>
                   <div className="text-2xl font-bold">{userStats.challengesCompleted}</div>
-                  <div className="text-sm text-muted-foreground">Challenges Done</div>
+                  <div className="text-sm text-muted-foreground">{t('profile.challenges')}</div>
                 </div>
               </div>
             </CardContent>
@@ -182,7 +185,7 @@ const Profile = () => {
                 </div>
                 <div>
                   <div className="text-2xl font-bold">{userStats.lessonsFinished}</div>
-                  <div className="text-sm text-muted-foreground">Lessons Finished</div>
+                  <div className="text-sm text-muted-foreground">{t('profile.lessons')}</div>
                 </div>
               </div>
             </CardContent>
@@ -194,7 +197,7 @@ const Profile = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Award className="h-5 w-5" />
-              Recent Achievements
+              {t('profile.achievements')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -220,7 +223,7 @@ const Profile = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Target className="h-5 w-5" />
-              Active Goals
+              {t('profile.goals')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -257,28 +260,28 @@ const Profile = () => {
                 <DialogTrigger asChild>
                   <Button className="w-full mt-6 gap-2">
                     <Plus className="h-4 w-4" />
-                    Set New Goal
+                    {t('profile.newGoal')}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[500px]">
                   <DialogHeader>
-                    <DialogTitle>Create a New Goal</DialogTitle>
+                    <DialogTitle>{t('profile.createGoal')}</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4 pt-4">
                     <div>
-                      <label className="text-sm font-medium mb-2 block">Goal Title</label>
+                      <label className="text-sm font-medium mb-2 block">{t('profile.goalTitle')}</label>
                       <Input
                         value={newGoalTitle}
                         onChange={(e) => setNewGoalTitle(e.target.value)}
-                        placeholder="e.g., Plant 100 Trees"
+                        placeholder={t('profile.goalPlaceholder')}
                       />
                     </div>
                     <div>
-                      <label className="text-sm font-medium mb-2 block">Description</label>
+                      <label className="text-sm font-medium mb-2 block">{t('profile.goalDesc')}</label>
                       <Textarea
                         value={newGoalDescription}
                         onChange={(e) => setNewGoalDescription(e.target.value)}
-                        placeholder="Describe your goal..."
+                        placeholder={t('profile.goalDescPlaceholder')}
                         className="min-h-[100px]"
                       />
                     </div>
@@ -287,7 +290,7 @@ const Profile = () => {
                       disabled={!newGoalTitle.trim() || !newGoalDescription.trim()}
                       className="w-full"
                     >
-                      Create Goal
+                      {t('profile.createButton')}
                     </Button>
                   </div>
                 </DialogContent>
@@ -299,13 +302,13 @@ const Profile = () => {
           <TabsContent value="settings">
             <Card>
               <CardHeader>
-                <CardTitle>Profile Settings</CardTitle>
+                <CardTitle>{t('profile.settingsTitle')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 {editMode ? (
                   <>
                     <div className="space-y-2">
-                      <Label htmlFor="name">Full Name</Label>
+                      <Label htmlFor="name">{t('profile.name')}</Label>
                       <Input
                         id="name"
                         value={editedName}
@@ -313,7 +316,7 @@ const Profile = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
+                      <Label htmlFor="email">{t('profile.email')}</Label>
                       <Input
                         id="email"
                         type="email"
@@ -322,7 +325,7 @@ const Profile = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="school">School</Label>
+                      <Label htmlFor="school">{t('profile.school')}</Label>
                       <Input
                         id="school"
                         value={editedSchool}
@@ -330,7 +333,7 @@ const Profile = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="role">Role</Label>
+                      <Label htmlFor="role">{t('profile.role')}</Label>
                       <Input
                         id="role"
                         value={editedRole}
@@ -338,33 +341,55 @@ const Profile = () => {
                       />
                     </div>
                     <div className="flex gap-2">
-                      <Button onClick={handleSaveProfile}>Save Changes</Button>
-                      <Button variant="outline" onClick={handleCancelEdit}>Cancel</Button>
+                      <Button onClick={handleSaveProfile}>{t('profile.save')}</Button>
+                      <Button variant="outline" onClick={handleCancelEdit}>{t('profile.cancel')}</Button>
                     </div>
                   </>
                 ) : (
                   <>
                     <div className="space-y-4">
                       <div>
-                        <Label className="text-muted-foreground">Full Name</Label>
+                        <Label className="text-muted-foreground">{t('profile.name')}</Label>
                         <p className="text-lg font-medium">{userStats.name}</p>
                       </div>
                       <div>
-                        <Label className="text-muted-foreground">Email</Label>
+                        <Label className="text-muted-foreground">{t('profile.email')}</Label>
                         <p className="text-lg font-medium">{userStats.email}</p>
                       </div>
                       <div>
-                        <Label className="text-muted-foreground">School</Label>
+                        <Label className="text-muted-foreground">{t('profile.school')}</Label>
                         <p className="text-lg font-medium">{userStats.school}</p>
                       </div>
                       <div>
-                        <Label className="text-muted-foreground">Role</Label>
+                        <Label className="text-muted-foreground">{t('profile.role')}</Label>
                         <p className="text-lg font-medium">{userStats.role}</p>
                       </div>
                     </div>
-                    <Button onClick={() => setEditMode(true)}>Edit Profile</Button>
+                    <Button onClick={() => setEditMode(true)}>{t('profile.edit')}</Button>
                   </>
                 )}
+                
+                {/* Language Toggle */}
+                <div className="pt-6 border-t">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-primary/10 rounded-lg">
+                        <Languages className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <Label className="text-base font-medium">{t('profile.language')}</Label>
+                        <p className="text-sm text-muted-foreground">{t('profile.languageDesc')}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm font-medium">{language === 'en' ? 'EN' : 'БГ'}</span>
+                      <Switch
+                        checked={language === 'bg'}
+                        onCheckedChange={(checked) => setLanguage(checked ? 'bg' : 'en')}
+                      />
+                    </div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
