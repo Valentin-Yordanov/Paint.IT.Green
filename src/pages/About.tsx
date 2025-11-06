@@ -1,15 +1,18 @@
 import { Leaf, Target, Users, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const About = () => {
+  const { t } = useLanguage();
+  
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-primary/10 to-background py-20">
         <div className="container">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">About EcoLearn</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">{t('about.title')}</h1>
           <p className="text-xl text-muted-foreground max-w-3xl">
-            Empowering the next generation to protect our planet through education, competition, and community action.
+            {t('about.subtitle')}
           </p>
         </div>
       </section>
@@ -18,12 +21,12 @@ const About = () => {
       <section className="container py-16">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
-            <h2 className="text-3xl font-bold mb-4">Our Mission</h2>
+            <h2 className="text-3xl font-bold mb-4">{t('about.mission')}</h2>
             <p className="text-muted-foreground mb-4">
-              EcoLearn is dedicated to creating a global community of environmentally conscious students who understand the importance of protecting our planet.
+              {t('about.missionText1')}
             </p>
             <p className="text-muted-foreground">
-              Through interactive learning, friendly competition, and community engagement, we inspire students of all ages to take meaningful action in preserving nature.
+              {t('about.missionText2')}
             </p>
           </div>
           <div className="grid grid-cols-2 gap-6">

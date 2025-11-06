@@ -1,17 +1,20 @@
 import { Users, MessageSquare, Award, HandHeart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const OurCommunity = () => {
+  const { t } = useLanguage();
+  
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-primary/10 to-background py-20">
         <div className="container">
           <Users className="h-16 w-16 text-primary mb-6" />
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">Our Community</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">{t('ourCommunity.title')}</h1>
           <p className="text-xl text-muted-foreground max-w-3xl">
-            Connecting schools and students across the globe in a shared mission to protect our planet
+            {t('ourCommunity.subtitle')}
           </p>
         </div>
       </section>

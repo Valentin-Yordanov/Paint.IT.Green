@@ -2,8 +2,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, Medal, Award, TrendingUp } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Compete = () => {
+  const { t } = useLanguage();
   const cityLeaderboard = [
     { rank: 1, name: "Green Valley", points: 15420, change: "+240" },
     { rank: 2, name: "Riverside City", points: 14890, change: "+180" },
@@ -70,16 +72,16 @@ const Compete = () => {
       <div className="container">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Competitions & Leaderboards
+            {t('compete.title')}
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            See how cities, schools, and students are competing to make the biggest environmental impact
+            {t('compete.subtitle')}
           </p>
         </div>
 
         {/* Active Competitions */}
         <div className="mb-12">
-          <h2 className="text-2xl font-bold mb-6">Current Challenges</h2>
+          <h2 className="text-2xl font-bold mb-6">{t('compete.challenges')}</h2>
           <div className="grid md:grid-cols-3 gap-6">
             {competitions.map((comp, index) => (
               <Card key={index} className="border-border bg-card">
@@ -110,22 +112,22 @@ const Compete = () => {
           <TabsList className="grid grid-cols-3 h-auto gap-2 bg-secondary">
             <TabsTrigger value="cities" className="flex gap-2 p-3">
               <Trophy className="h-4 w-4" />
-              Cities
+              {t('compete.cities')}
             </TabsTrigger>
             <TabsTrigger value="schools" className="flex gap-2 p-3">
               <Medal className="h-4 w-4" />
-              Schools
+              {t('compete.schools')}
             </TabsTrigger>
             <TabsTrigger value="students" className="flex gap-2 p-3">
               <Award className="h-4 w-4" />
-              Students
+              {t('compete.students')}
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="cities">
             <Card className="border-border bg-card">
               <CardHeader>
-                <CardTitle>City Rankings - Monthly</CardTitle>
+                <CardTitle>{t('compete.cityRankings')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -161,7 +163,7 @@ const Compete = () => {
           <TabsContent value="schools">
             <Card className="border-border bg-card">
               <CardHeader>
-                <CardTitle>School Rankings - Monthly</CardTitle>
+                <CardTitle>{t('compete.schoolRankings')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -192,7 +194,7 @@ const Compete = () => {
           <TabsContent value="students">
             <Card className="border-border bg-card">
               <CardHeader>
-                <CardTitle>Student Rankings - Monthly</CardTitle>
+                <CardTitle>{t('compete.studentRankings')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">

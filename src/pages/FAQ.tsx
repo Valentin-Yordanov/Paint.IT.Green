@@ -4,8 +4,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const FAQ = () => {
+  const { t } = useLanguage();
   const faqs = [
     {
       question: "What is EcoLearn?",
@@ -46,9 +48,9 @@ const FAQ = () => {
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-primary/10 to-background py-20">
         <div className="container">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">Frequently Asked Questions</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">{t('faq.title')}</h1>
           <p className="text-xl text-muted-foreground max-w-3xl">
-            Find answers to common questions about EcoLearn and how to get the most out of our platform.
+            {t('faq.subtitle')}
           </p>
         </div>
       </section>

@@ -1,8 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TreePine, Droplets, Wind, Heart, Recycle, Users } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Learn = () => {
+  const { t } = useLanguage();
   const topics = [
     {
       id: "wildlife",
@@ -101,10 +103,10 @@ const Learn = () => {
       <div className="container">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Learn About Nature Conservation
+            {t('learn.title')}
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Discover why protecting our environment is crucial and how you can make a difference
+            {t('learn.subtitle')}
           </p>
         </div>
 
@@ -152,11 +154,9 @@ const Learn = () => {
 
         <Card className="mt-12 bg-primary text-primary-foreground border-0">
           <CardContent className="p-8 text-center">
-            <h2 className="text-2xl font-bold mb-4">Remember</h2>
+            <h2 className="text-2xl font-bold mb-4">{t('learn.remember')}</h2>
             <p className="text-lg opacity-90 max-w-3xl mx-auto">
-              Every small action counts. Whether it's picking up litter, planting a tree,
-              or teaching someone else about conservation - you're making a difference.
-              Together, we can protect our beautiful planet for generations to come!
+              {t('learn.rememberText')}
             </p>
           </CardContent>
         </Card>

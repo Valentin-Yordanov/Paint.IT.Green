@@ -9,9 +9,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Heart, MessageCircle, Share2, School, Users, Send, Plus, Edit, Trash2, Image } from "lucide-react";
 import studentsImage from "@/assets/students-planting.jpg";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Community = () => {
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
   const [showComments, setShowComments] = useState<Set<number>>(new Set());
   const [newComment, setNewComment] = useState<{ [key: number]: string }>({});
@@ -232,10 +234,10 @@ const Community = () => {
       <div className="container max-w-4xl">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Community Feed
+            {t('community.title')}
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Celebrate achievements and share environmental initiatives from schools around the world
+            {t('community.subtitle')}
           </p>
         </div>
 
@@ -247,7 +249,7 @@ const Community = () => {
             onClick={() => setActiveFilter("public")}
           >
             <Users className="h-3 w-3" />
-            Public
+            {t('community.public')}
           </Badge>
           <Badge 
             variant={activeFilter === "mySchool" ? "default" : "outline"} 
@@ -255,7 +257,7 @@ const Community = () => {
             onClick={() => setActiveFilter("mySchool")}
           >
             <School className="h-3 w-3" />
-            My School
+            {t('community.mySchool')}
           </Badge>
           <Badge 
             variant={activeFilter === "myPosts" ? "default" : "outline"} 
@@ -263,7 +265,7 @@ const Community = () => {
             onClick={() => setActiveFilter("myPosts")}
           >
             <Users className="h-3 w-3" />
-            My Posts
+            {t('community.myPosts')}
           </Badge>
         </div>
 
@@ -273,7 +275,7 @@ const Community = () => {
             <DialogTrigger asChild>
               <Button size="lg" className="gap-2 px-8 py-6 text-lg">
                 <Plus className="h-6 w-6" />
-                Create Post
+                {t('community.createPost')}
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px]">

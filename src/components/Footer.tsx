@@ -1,21 +1,24 @@
 import { Link } from "react-router-dom";
 import { Leaf, Facebook, Twitter, Instagram, Mail } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Footer = () => {
+  const { t } = useLanguage();
+  
   const footerLinks = {
     platform: [
-      { label: "Learn", href: "/learn" },
-      { label: "Compete", href: "/compete" },
-      { label: "Community", href: "/community" },
+      { label: t('nav.learn'), href: "/learn" },
+      { label: t('nav.compete'), href: "/compete" },
+      { label: t('nav.community'), href: "/community" },
     ],
     resources: [
-      { label: "About Us", href: "/about" },
-      { label: "Contact", href: "/contact" },
-      { label: "FAQ", href: "/faq" },
+      { label: t('footer.aboutUs'), href: "/about" },
+      { label: t('footer.contact'), href: "/contact" },
+      { label: t('footer.faq'), href: "/faq" },
     ],
     legal: [
-      { label: "Privacy Policy", href: "/privacy" },
-      { label: "Terms of Service", href: "/terms" },
+      { label: t('footer.privacy'), href: "/privacy" },
+      { label: t('footer.terms'), href: "/terms" },
     ],
   };
 
@@ -35,10 +38,10 @@ const Footer = () => {
           <div className="space-y-4">
             <Link to="/" className="flex items-center gap-2">
               <Leaf className="h-6 w-6 text-primary" />
-              <span className="font-bold text-lg">EcoLearn</span>
+              <span className="font-bold text-lg">{t('nav.ecolearn')}</span>
             </Link>
             <p className="text-sm text-muted-foreground">
-              Empowering students worldwide to protect our planet through education and action.
+              {t('footer.tagline')}
             </p>
             <div className="flex gap-3">
               {socialLinks.map((social) => (
@@ -56,7 +59,7 @@ const Footer = () => {
 
           {/* Platform Links */}
           <div>
-            <h3 className="font-semibold mb-4">Platform</h3>
+            <h3 className="font-semibold mb-4">{t('footer.platform')}</h3>
             <ul className="space-y-2">
               {footerLinks.platform.map((link) => (
                 <li key={link.label}>
@@ -73,7 +76,7 @@ const Footer = () => {
 
           {/* Resources Links */}
           <div>
-            <h3 className="font-semibold mb-4">Resources</h3>
+            <h3 className="font-semibold mb-4">{t('footer.resources')}</h3>
             <ul className="space-y-2">
               {footerLinks.resources.map((link) => (
                 <li key={link.label}>
@@ -90,7 +93,7 @@ const Footer = () => {
 
           {/* Legal Links */}
           <div>
-            <h3 className="font-semibold mb-4">Legal</h3>
+            <h3 className="font-semibold mb-4">{t('footer.legal')}</h3>
             <ul className="space-y-2">
               {footerLinks.legal.map((link) => (
                 <li key={link.label}>
@@ -111,8 +114,8 @@ const Footer = () => {
       <div className="border-t border-border">
         <div className="container py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-            <p>© {new Date().getFullYear()} EcoLearn. All rights reserved.</p>
-            <p>Made with 💚 for a greener planet</p>
+            <p>© {new Date().getFullYear()} {t('nav.ecolearn')}. {t('footer.rights')}</p>
+            <p>{t('footer.madeWith')}</p>
           </div>
         </div>
       </div>

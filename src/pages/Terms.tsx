@@ -1,12 +1,16 @@
+import { useLanguage } from "@/contexts/LanguageContext";
+
 const Terms = () => {
+  const { t } = useLanguage();
+  
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-primary/10 to-background py-20">
         <div className="container">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">Terms of Service</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">{t('terms.title')}</h1>
           <p className="text-xl text-muted-foreground max-w-3xl">
-            Last updated: {new Date().toLocaleDateString()}
+            {t('terms.lastUpdated')} {new Date().toLocaleDateString()}
           </p>
         </div>
       </section>

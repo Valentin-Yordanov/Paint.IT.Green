@@ -1,17 +1,20 @@
 import { Heart, Lightbulb, HandHeart, Sprout } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const OurValues = () => {
+  const { t } = useLanguage();
+  
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-primary/10 to-background py-20">
         <div className="container">
           <Heart className="h-16 w-16 text-primary mb-6" />
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">Our Values</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">{t('ourValues.title')}</h1>
           <p className="text-xl text-muted-foreground max-w-3xl">
-            Education, action, and compassion for all living things
+            {t('ourValues.subtitle')}
           </p>
         </div>
       </section>

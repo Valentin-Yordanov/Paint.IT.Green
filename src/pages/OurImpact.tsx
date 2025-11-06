@@ -1,17 +1,20 @@
 import { Leaf, TrendingUp, TreeDeciduous, Droplets } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const OurImpact = () => {
+  const { t } = useLanguage();
+  
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-primary/10 to-background py-20">
         <div className="container">
           <Leaf className="h-16 w-16 text-primary mb-6" />
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">Our Impact</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">{t('ourImpact.title')}</h1>
           <p className="text-xl text-muted-foreground max-w-3xl">
-            Real environmental change through collective action
+            {t('ourImpact.subtitle')}
           </p>
         </div>
       </section>
