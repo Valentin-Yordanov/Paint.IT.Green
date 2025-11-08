@@ -8,14 +8,16 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Trophy, Leaf, Award, BookOpen, Settings, User, Plus, Target, Trash2, Languages } from "lucide-react";
+import { Trophy, Leaf, Award, BookOpen, Settings, User, Plus, Target, Trash2, Languages, Moon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { Switch } from "@/components/ui/switch";
 
 const Profile = () => {
   const { toast } = useToast();
   const { t, language, setLanguage } = useLanguage();
+  const { theme, setTheme } = useTheme();
   const [userStats, setUserStats] = useState({
     name: "Alex Chen",
     role: "Student",
@@ -369,6 +371,28 @@ const Profile = () => {
                   </>
                 )}
                 
+                {/* Dark Theme Toggle */}
+                <div className="pt-6 border-t">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-primary/10 rounded-lg">
+                        <Moon className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <Label className="text-base font-medium">{t('profile.darkMode')}</Label>
+                        <p className="text-sm text-muted-foreground">{t('profile.darkModeDesc')}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm font-medium">{theme === 'light' ? t('profile.light') : t('profile.dark')}</span>
+                      <Switch
+                        checked={theme === 'dark'}
+                        onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 {/* Language Toggle */}
                 <div className="pt-6 border-t">
                   <div className="flex items-center justify-between">

@@ -129,6 +129,10 @@ const enTranslations: Record<string, string> = {
   'profile.goalDeletedDesc': 'Your goal has been removed.',
   'profile.language': 'Language',
   'profile.languageDesc': 'Switch website language',
+  'profile.darkMode': 'Dark Theme',
+  'profile.darkModeDesc': 'Toggle between light and dark theme',
+  'profile.light': 'Light',
+  'profile.dark': 'Dark',
 
   // Achievements
   'achievement.treePlanter': 'Tree Planter',
@@ -400,6 +404,10 @@ const bgTranslations: Record<string, string> = {
   'profile.goalDeletedDesc': 'Вашата цел е премахната.',
   'profile.language': 'Език',
   'profile.languageDesc': 'Сменете езика на уебсайта',
+  'profile.darkMode': 'Тъмна тема',
+  'profile.darkModeDesc': 'Превключване между светла и тъмна тема',
+  'profile.light': 'Светла',
+  'profile.dark': 'Тъмна',
 
   // Achievements
   'achievement.treePlanter': 'Садител на дървета',
