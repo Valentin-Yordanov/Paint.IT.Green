@@ -21,6 +21,8 @@ import OurGoal from "./pages/OurGoal";
 import OurCommunity from "./pages/OurCommunity";
 import OurImpact from "./pages/OurImpact";
 import OurValues from "./pages/OurValues";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +49,8 @@ const App = () => (
             <Route path="/our-community" element={<OurCommunity />} />
             <Route path="/our-impact" element={<OurImpact />} />
             <Route path="/our-values" element={<OurValues />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

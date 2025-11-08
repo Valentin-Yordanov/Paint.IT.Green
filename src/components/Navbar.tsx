@@ -47,6 +47,16 @@ const Navbar = () => {
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-2">
           <NavLinks />
+          <Link to="/login">
+            <Button variant="outline">
+              {t('nav.login')}
+            </Button>
+          </Link>
+          <Link to="/signup">
+            <Button>
+              {t('nav.signup')}
+            </Button>
+          </Link>
         </div>
 
         {/* Mobile Navigation */}
@@ -59,6 +69,16 @@ const Navbar = () => {
           <SheetContent>
             <div className="flex flex-col gap-4 mt-8">
               <NavLinks />
+              <Link to="/login" className="w-full">
+                <Button variant="outline" className="w-full">
+                  {t('nav.login')}
+                </Button>
+              </Link>
+              <Link to="/signup" className="w-full">
+                <Button className="w-full">
+                  {t('nav.signup')}
+                </Button>
+              </Link>
             </div>
           </SheetContent>
         </Sheet>

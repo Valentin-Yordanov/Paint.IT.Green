@@ -48,6 +48,34 @@ const enTranslations: Record<string, string> = {
   'nav.community': 'Community',
   'nav.profile': 'Profile',
   'nav.ecolearn': 'EcoLearn',
+  'nav.login': 'Login',
+  'nav.signup': 'Sign Up',
+
+  // Login Page
+  'login.title': 'Welcome Back',
+  'login.subtitle': 'Login to your EcoLearn account',
+  'login.email': 'Email',
+  'login.emailPlaceholder': 'you@example.com',
+  'login.password': 'Password',
+  'login.passwordPlaceholder': 'Enter your password',
+  'login.loginButton': 'Login',
+  'login.noAccount': "Don't have an account?",
+  'login.signupLink': 'Sign up',
+
+  // Signup Page
+  'signup.title': 'Create Account',
+  'signup.subtitle': 'Join EcoLearn today',
+  'signup.name': 'Name',
+  'signup.namePlaceholder': 'Your name',
+  'signup.email': 'Email',
+  'signup.emailPlaceholder': 'you@example.com',
+  'signup.password': 'Password',
+  'signup.passwordPlaceholder': 'Create a password',
+  'signup.confirmPassword': 'Confirm Password',
+  'signup.confirmPasswordPlaceholder': 'Confirm your password',
+  'signup.signupButton': 'Sign Up',
+  'signup.haveAccount': 'Already have an account?',
+  'signup.loginLink': 'Login',
 
   // Home Page
   'home.hero.title': 'Protect Our Planet,',
@@ -291,6 +319,34 @@ const bgTranslations: Record<string, string> = {
   'nav.community': 'Общност',
   'nav.profile': 'Профил',
   'nav.ecolearn': 'ЕкоУчене',
+  'nav.login': 'Вход',
+  'nav.signup': 'Регистрация',
+
+  // Login Page
+  'login.title': 'Добре дошли отново',
+  'login.subtitle': 'Влезте в своя EcoLearn акаунт',
+  'login.email': 'Имейл',
+  'login.emailPlaceholder': 'you@example.com',
+  'login.password': 'Парола',
+  'login.passwordPlaceholder': 'Въведете паролата си',
+  'login.loginButton': 'Влез',
+  'login.noAccount': 'Нямате акаунт?',
+  'login.signupLink': 'Регистрирай се',
+
+  // Signup Page
+  'signup.title': 'Създай акаунт',
+  'signup.subtitle': 'Присъедини се към EcoLearn днес',
+  'signup.name': 'Име',
+  'signup.namePlaceholder': 'Вашето име',
+  'signup.email': 'Имейл',
+  'signup.emailPlaceholder': 'you@example.com',
+  'signup.password': 'Парола',
+  'signup.passwordPlaceholder': 'Създайте парола',
+  'signup.confirmPassword': 'Потвърди парола',
+  'signup.confirmPasswordPlaceholder': 'Потвърдете паролата си',
+  'signup.signupButton': 'Регистрирай се',
+  'signup.haveAccount': 'Вече имате акаунт?',
+  'signup.loginLink': 'Влез',
 
   // Home Page
   'home.hero.title': 'Защитете нашата планета,',
