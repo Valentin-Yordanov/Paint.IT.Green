@@ -12,7 +12,7 @@ This project is built with:
 
 ## How can I deploy this project?
 
-Simply write "npm run dev" in the terminal. 
+Simply write "npm run dev" in the terminal.
 
 <!-- 1. Title and Description
 Project Title: The name of your app (# Eco-Champions-Club).
