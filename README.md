@@ -1,54 +1,4 @@
-# Welcome to your Lovable project
-
-## Project info
-
-**URL**: https://lovable.dev/projects/fa29e149-599f-4f12-a097-82739c7b734d
-
-## How can I edit this code?
-
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/fa29e149-599f-4f12-a097-82739c7b734d) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+# Welcome
 
 ## What technologies are used for this project?
 
@@ -62,12 +12,48 @@ This project is built with:
 
 ## How can I deploy this project?
 
-Simply open [Lovable](https://lovable.dev/projects/fa29e149-599f-4f12-a097-82739c7b734d) and click on Share -> Publish.
+Simply write "npm run dev" in the terminal. 
 
-## Can I connect a custom domain to my Lovable project?
+<!-- 1. Title and Description
+Project Title: The name of your app (# Eco-Champions-Club).
 
-Yes, you can!
+Tagline/Short Description: A one or two-sentence summary of what your app does and its purpose for the competition.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+2. Live Demo / Deployment (If applicable)
+Link: If you deployed the site (e.g., to Vercel or Netlify), include the URL.
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Screenshot/Image: Add a high-quality image of your finished app.
+
+3. Features
+A bulleted list of the main things your app can do. This directly answers the judge's question: "What does this project accomplish?"
+
+Example: * User authentication (Sign up/Login)
+
+Example: * Interactive map showing recycling centers
+
+Example: * Dashboard tracking user's sustainability score
+
+4. Technical Stack
+List all the technologies you used. This shows technical sophistication, which is great for a competition.
+
+Frontend: React, TypeScript, Tailwind CSS
+
+Tooling/Bundler: Vite
+
+State Management (if you used Redux, Zustand, etc.)
+
+5. Installation / Setup Guide
+This is crucial for anyone (especially a judge) who wants to run your project locally.
+
+Prerequisites: List software needed (Node.js, npm/bun).
+
+Clone the Repository: Instructions on how to download the code.
+
+Install Dependencies: The command you use: npm install
+
+Run Locally: The command to start the app: npm run dev
+
+6. Credits / Licensing
+Attribution: Note any open-source libraries, APIs, or assets you used.
+
+License: State your licensing (e.g., MIT License, if open source). -->
