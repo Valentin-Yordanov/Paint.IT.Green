@@ -19,8 +19,13 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
+      "react-refresh/only-export-components": [
+        "warn",
+        { allowConstantExport: true },
+      ],
       "@typescript-eslint/no-unused-vars": "off",
     },
-  },
+  }
 );
+
+//Sends warnings in your editor if you write code that violates the best practices for React, TypeScript, or general code quality.
