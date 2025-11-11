@@ -14,6 +14,8 @@ This project is built with:
 
 Simply write "npm run dev" in the terminal.
 
+IF there is no node_modules folder run "npm install" and wait fo a few seconds. Then run "npm run dev" again.
+
 <!-- 1. Title and Description
 Project Title: The name of your app (# Eco-Champions-Club).
 
