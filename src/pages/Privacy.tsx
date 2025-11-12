@@ -19,7 +19,7 @@ const Privacy = () => {
       <section className="container py-16 max-w-4xl prose prose-slate dark:prose-invert">
         <h2>Introduction</h2>
         <p>
-          At EcoLearn, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform.
+          At PIG, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform.
         </p>
 
         <h2>Information We Collect</h2>
@@ -52,7 +52,7 @@ const Privacy = () => {
 
         <h2>Contact Us</h2>
         <p>
-          If you have questions about this Privacy Policy, please contact us at privacy@ecolearn.org.
+          If you have questions about this Privacy Policy, please contact us at ENTER EMAIL.
         </p>
       </section>
     </div>

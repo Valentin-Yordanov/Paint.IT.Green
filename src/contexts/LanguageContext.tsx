@@ -41,19 +41,20 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 };
 
 const enTranslations: Record<string, string> = {
+
   // Navigation
   'nav.home': 'Home',
   'nav.learn': 'Learn',
   'nav.compete': 'Compete',
   'nav.community': 'Community',
   'nav.profile': 'Profile',
-  'nav.ecolearn': 'EcoLearn',
+  'nav.PIG': 'PIG',
   'nav.login': 'Login',
   'nav.signup': 'Sign Up',
 
   // Login Page
   'login.title': 'Welcome Back',
-  'login.subtitle': 'Login to your EcoLearn account',
+  'login.subtitle': 'Login to your PIG account',
   'login.email': 'Email',
   'login.emailPlaceholder': 'you@example.com',
   'login.password': 'Password',
@@ -64,7 +65,7 @@ const enTranslations: Record<string, string> = {
 
   // Signup Page
   'signup.title': 'Create Account',
-  'signup.subtitle': 'Join EcoLearn today',
+  'signup.subtitle': 'Join PIG today',
   'signup.name': 'Name',
   'signup.namePlaceholder': 'Your name',
   'signup.email': 'Email',
@@ -165,10 +166,10 @@ const enTranslations: Record<string, string> = {
   'footer.madeWith': 'Made with 💚 for a greener planet',
 
   // About
-  'about.title': 'About EcoLearn',
+  'about.title': 'About PIG',
   'about.subtitle': 'Empowering the next generation to protect our planet through education, competition, and community action.',
   'about.mission': 'Our Mission',
-  'about.missionText1': 'EcoLearn is dedicated to creating a global community of environmentally conscious students who understand the importance of protecting our planet.',
+  'about.missionText1': 'PIG is dedicated to creating a global community of environmentally conscious students who understand the importance of protecting our planet.',
   'about.missionText2': 'Through interactive learning, friendly competition, and community engagement, we inspire students of all ages to take meaningful action in preserving nature.',
 
   // Learn
@@ -219,7 +220,7 @@ const enTranslations: Record<string, string> = {
 
   // FAQ
   'faq.title': 'Frequently Asked Questions',
-  'faq.subtitle': 'Find answers to common questions about EcoLearn and how to get the most out of our platform.',
+  'faq.subtitle': 'Find answers to common questions about PIG and how to get the most out of our platform.',
 
   // Privacy
   'privacy.title': 'Privacy Policy',
@@ -255,7 +256,7 @@ const enTranslations: Record<string, string> = {
   'ourCommunity.title': 'Our Community',
   'ourCommunity.subtitle': 'Connecting schools and students across the globe in a shared mission to protect our planet',
   'ourCommunity.globalNetwork': 'A Global Network of Change-Makers',
-  'ourCommunity.globalNetworkText': 'EcoLearn connects students from diverse backgrounds and cultures, creating a vibrant community united by their passion for environmental protection. Our platform fosters collaboration, friendship, and collective action across borders.',
+  'ourCommunity.globalNetworkText': 'PIG connects students from diverse backgrounds and cultures, creating a vibrant community united by their passion for environmental protection. Our platform fosters collaboration, friendship, and collective action across borders.',
   'ourCommunity.shareConnect': 'Share & Connect',
   'ourCommunity.shareConnectDesc': 'Exchange ideas, share success stories, and collaborate on projects with students from around the world.',
   'ourCommunity.celebrateTogether': 'Celebrate Together',
@@ -309,26 +310,28 @@ const enTranslations: Record<string, string> = {
   'ourValues.collaborationText': 'No one can solve the climate crisis alone. We believe in the power of collective action, bringing together students, schools, and communities worldwide.',
   'ourValues.livingValues': 'Living Our Values',
   'ourValues.livingValuesText': 'These aren\'t just words on a page—they\'re principles we practice every day. From how we design our curriculum to how we support our community, our values guide us forward.',
-  'ourValues.livingValuesText2': 'When you join EcoLearn, you become part of a movement that prioritizes education, celebrates action, practices compassion, and thrives on collaboration.',
+  'ourValues.livingValuesText2': 'When you join PIG, you become part of a movement that prioritizes education, celebrates action, practices compassion, and thrives on collaboration.',
   'ourValues.joinMission': 'Join Our Mission',
-  'ourValues.joinMissionText': 'Ready to be part of a community that lives these values every day? Start your journey with EcoLearn.',
+  'ourValues.joinMissionText': 'Ready to be part of a community that lives these values every day? Start your journey with PIG.',
   'ourValues.learnMore': 'Learn More About Us',
+
 };
 
 const bgTranslations: Record<string, string> = {
+
   // Navigation
   'nav.home': 'Начало',
   'nav.learn': 'Учене',
   'nav.compete': 'Състезания',
   'nav.community': 'Общност',
   'nav.profile': 'Профил',
-  'nav.ecolearn': 'ЕкоУчене',
+  'nav.PIG': 'ЕкоУчене',
   'nav.login': 'Вход',
   'nav.signup': 'Регистрация',
 
   // Login Page
   'login.title': 'Добре дошли отново',
-  'login.subtitle': 'Влезте в своя EcoLearn акаунт',
+  'login.subtitle': 'Влезте в своя PIG акаунт',
   'login.email': 'Имейл',
   'login.emailPlaceholder': 'you@example.com',
   'login.password': 'Парола',
@@ -339,7 +342,7 @@ const bgTranslations: Record<string, string> = {
 
   // Signup Page
   'signup.title': 'Създай акаунт',
-  'signup.subtitle': 'Присъедини се към EcoLearn днес',
+  'signup.subtitle': 'Присъедини се към PIG днес',
   'signup.name': 'Име',
   'signup.namePlaceholder': 'Вашето име',
   'signup.email': 'Имейл',
@@ -440,10 +443,10 @@ const bgTranslations: Record<string, string> = {
   'footer.madeWith': 'Направено с 💚 за по-зелена планета',
 
   // About
-  'about.title': 'За EcoLearn',
+  'about.title': 'За PIG',
   'about.subtitle': 'Овластяваме следващото поколение да защитава нашата планета чрез образование, състезания и действия на общността.',
   'about.mission': 'Нашата мисия',
-  'about.missionText1': 'EcoLearn е посветен на създаването на глобална общност от екологично съзнателни ученици, които разбират важността на защитата на нашата планета.',
+  'about.missionText1': 'PIG е посветен на създаването на глобална общност от екологично съзнателни ученици, които разбират важността на защитата на нашата планета.',
   'about.missionText2': 'Чрез интерактивно учене, приятелски състезания и ангажиране на общността, ние вдъхновяваме ученици от всички възрасти да предприемат значими действия за опазване на природата.',
 
   // Learn
@@ -494,7 +497,7 @@ const bgTranslations: Record<string, string> = {
 
   // FAQ
   'faq.title': 'Често задавани въпроси',
-  'faq.subtitle': 'Намерете отговори на общи въпроси за EcoLearn и как да получите най-доброто от нашата платформа.',
+  'faq.subtitle': 'Намерете отговори на общи въпроси за PIG и как да получите най-доброто от нашата платформа.',
 
   // Privacy
   'privacy.title': 'Политика за поверителност',
@@ -530,7 +533,7 @@ const bgTranslations: Record<string, string> = {
   'ourCommunity.title': 'Нашата общност',
   'ourCommunity.subtitle': 'Свързваме училища и ученици по целия свят в обща мисия да защитим планетата',
   'ourCommunity.globalNetwork': 'Глобална мрежа от промяна',
-  'ourCommunity.globalNetworkText': 'EcoLearn свързва ученици от различни произходи и култури, създавайки жизнена общност, обединена от страстта си към опазването на околната среда. Нашата платформа насърчава сътрудничеството, приятелството и колективните действия отвъд границите.',
+  'ourCommunity.globalNetworkText': 'PIG свързва ученици от различни произходи и култури, създавайки жизнена общност, обединена от страстта си към опазването на околната среда. Нашата платформа насърчава сътрудничеството, приятелството и колективните действия отвъд границите.',
   'ourCommunity.shareConnect': 'Споделяй и се свързвай',
   'ourCommunity.shareConnectDesc': 'Обменяйте идеи, споделяйте истории за успех и си сътрудничете по проекти с ученици от цял свят.',
   'ourCommunity.celebrateTogether': 'Празнувайте заедно',
@@ -584,8 +587,9 @@ const bgTranslations: Record<string, string> = {
   'ourValues.collaborationText': 'Никой не може да реши климатичната криза сам. Вярваме в силата на колективните действия, обединявайки ученици, училища и общности по целия свят.',
   'ourValues.livingValues': 'Живеем с нашите ценности',
   'ourValues.livingValuesText': 'Това не са просто думи на страница - те са принципи, които практикуваме всеки ден. От начина, по който проектираме учебната си програма, до начина, по който подкрепяме общността си, нашите ценности ни водят напред.',
-  'ourValues.livingValuesText2': 'Когато се присъедините към EcoLearn, ставате част от движение, което приоритизира образованието, празнува действията, практикува състрадание и процъфтява чрез сътрудничество.',
+  'ourValues.livingValuesText2': 'Когато се присъедините към PIG, ставате част от движение, което приоритизира образованието, празнува действията, практикува състрадание и процъфтява чрез сътрудничество.',
   'ourValues.joinMission': 'Присъединете се към нашата мисия',
-  'ourValues.joinMissionText': 'Готови ли сте да бъдете част от общност, която живее тези ценности всеки ден? Започнете пътуването си с EcoLearn.',
+  'ourValues.joinMissionText': 'Готови ли сте да бъдете част от общност, която живее тези ценности всеки ден? Започнете пътуването си с PIG.',
   'ourValues.learnMore': 'Научете повече за нас',
+
 };

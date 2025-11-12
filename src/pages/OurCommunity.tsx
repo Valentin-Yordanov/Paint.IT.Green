@@ -25,7 +25,7 @@ const OurCommunity = () => {
           <div>
             <h2 className="text-3xl font-bold mb-4">A Global Network of Change-Makers</h2>
             <p className="text-muted-foreground text-lg mb-4">
-              EcoLearn connects students from diverse backgrounds and cultures, creating a vibrant community 
+              PIG connects students from diverse backgrounds and cultures, creating a vibrant community 
               united by their passion for environmental protection. Our platform fosters collaboration, 
               friendship, and collective action across borders.
             </p>

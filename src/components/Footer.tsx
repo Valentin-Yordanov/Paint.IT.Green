@@ -38,7 +38,7 @@ const Footer = () => {
           <div className="space-y-4">
             <Link to="/" className="flex items-center gap-2">
               <Leaf className="h-6 w-6 text-primary" />
-              <span className="font-bold text-lg">{t('nav.ecolearn')}</span>
+              <span className="font-bold text-lg">{t('nav.PIG')}</span>
             </Link>
             <p className="text-sm text-muted-foreground">
               {t('footer.tagline')}
@@ -114,7 +114,7 @@ const Footer = () => {
       <div className="border-t border-border">
         <div className="container py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-            <p>© {new Date().getFullYear()} {t('nav.ecolearn')}. {t('footer.rights')}</p>
+            <p>© {new Date().getFullYear()} {t('nav.PIG')}. {t('footer.rights')}</p>
             <p>{t('footer.madeWith')}</p>
           </div>
         </div>

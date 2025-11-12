@@ -78,12 +78,12 @@ const OurImpact = () => {
             <h3 className="text-2xl font-bold mb-4">Student Stories</h3>
             <div className="space-y-4">
               <blockquote className="border-l-4 border-primary pl-4 italic text-muted-foreground">
-                "Through EcoLearn, our school planted 500 trees and inspired our entire city to start a recycling program. 
+                "Through PIG, our school planted 500 trees and inspired our entire city to start a recycling program. 
                 We're not just learning—we're leading change."
                 <footer className="mt-2 not-italic font-semibold">— Maria, 16, Brazil</footer>
               </blockquote>
               <blockquote className="border-l-4 border-primary pl-4 italic text-muted-foreground">
-                "I organized my first beach cleanup thanks to EcoLearn. Now we do it monthly with 50+ volunteers!"
+                "I organized my first beach cleanup thanks to PIG. Now we do it monthly with 50+ volunteers!"
                 <footer className="mt-2 not-italic font-semibold">— David, 14, Philippines</footer>
               </blockquote>
             </div>
