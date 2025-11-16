@@ -5,8 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import {
-  Trophy, Medal, Award, TrendingUp, CalendarDays, ChevronLeft, ChevronRight, Pin, Clock, Star
+  Trophy, Medal, Award, TrendingUp, CalendarDays, Pin, Clock, Star
 } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
 // import { useLanguage } from "@/contexts/LanguageContext"; // Assuming this path is correct
 
 // --- Mock Data ---
@@ -126,80 +127,55 @@ const getDaySuffix = (day: number) => {
 
 // --- Calendar Component ---
 const EventCalendar = () => {
-  const [currentMonth, setCurrentMonth] = useState(new Date('2024-12-01')); // Locked to Dec 2024 for demo
-  
-  // Mocking hook for preview environment
-  const useLanguage = () => ({ t: (key: string, def: string) => def || key });
-  const { t } = useLanguage();
-
-  const daysInMonth = 31; // Dec
-  const startDay = 0; // Dec 1, 2024 is a Sunday
-
-  const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const calendarDays = Array.from({ length: startDay }, () => null)
-    .concat(Array.from({ length: daysInMonth }, (_, i) => i + 1));
-
-  const monthName = currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' });
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date(2024, 11, 7));
+  const currentMonth = selectedDate ? selectedDate.getMonth() : new Date().getMonth();
+  const currentYear = selectedDate ? selectedDate.getFullYear() : new Date().getFullYear();
 
   return (
-    <div className="p-4">
-      <div className="flex items-center justify-between mb-4">
-        <Button variant="outline" size="icon" disabled>
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
-        <h2 className="text-xl font-bold">{monthName}</h2>
-        <Button variant="outline" size="icon" disabled>
-          <ChevronRight className="h-4 w-4" />
-        </Button>
-      </div>
-      <div className="grid grid-cols-7 gap-2 mb-2">
-        {daysOfWeek.map((day) => (
-          <div key={day} className="text-center font-semibold text-muted-foreground text-sm">
-            {day}
-          </div>
-        ))}
-      </div>
-      <div className="grid grid-cols-7 gap-2">
-        {calendarDays.map((day, index) => {
-          const event = calendarEvents.find(e => e.day === day);
-          return (
-            <div
-              key={index}
-              className={`h-28 border rounded-lg p-2 flex flex-col ${
-                day ? 'bg-card' : 'bg-secondary/30'
-              } ${event ? 'border-primary' : 'border-border'}`}
-            >
-              {day && <span className="font-semibold text-sm">{day}</span>}
-              {event && (
-                <div className="mt-1 p-1.5 bg-primary/10 rounded-md text-primary flex-1 overflow-hidden">
-                  <p className="text-xs font-bold truncate">{event.title}</p>
-                  <p className="text-xs truncate">{event.location}</p>
-                </div>
-              )}
-            </div>
-          );
-        })}
+    <div className="space-y-6">
+      {/* Calendar */}
+      <div className="flex justify-center">
+        <Calendar
+          mode="single"
+          selected={selectedDate}
+          onSelect={setSelectedDate}
+          className="rounded-md border"
+          modifiers={{
+            event: calendarEvents.map(e => new Date(currentYear, currentMonth, e.day))
+          }}
+          modifiersStyles={{
+            event: { 
+              fontWeight: 'bold',
+              backgroundColor: 'hsl(var(--primary) / 0.1)',
+              color: 'hsl(var(--primary))',
+              border: '2px solid hsl(var(--primary))'
+            }
+          }}
+        />
       </div>
 
-      <div className="mt-6">
-        <h3 className="text-lg font-semibold mb-3">{t('compete.upcomingEvents', 'Upcoming Events')}</h3>
-        <div className="space-y-3">
-          {calendarEvents.map(event => (
-            <Card key={event.title} className="border-border bg-card">
-              <CardContent className="p-4 flex items-center gap-4">
-                <div className="flex flex-col items-center justify-center p-3 bg-primary/10 text-primary rounded-lg">
-                  <span className="text-2xl font-bold">{event.day}</span>
-                  <span className="text-xs font-medium">{getDaySuffix(event.day)}</span>
-                </div>
-                <div>
-                  <h4 className="font-semibold">{event.title}</h4>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Clock className="h-3 w-3" />
-                    <span>{event.time}</span>
+      {/* Event List */}
+      <div className="space-y-3 pt-6 border-t">
+        <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">Upcoming Events</h3>
+        <div className="space-y-2">
+          {calendarEvents.map((event, idx) => (
+            <Card key={idx} className="border-l-4 border-l-primary">
+              <CardContent className="p-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex flex-col items-center min-w-[50px]">
+                    <span className="text-2xl font-bold text-primary">{event.day}</span>
+                    <span className="text-xs text-muted-foreground uppercase">Dec</span>
                   </div>
-                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Pin className="h-3 w-3" />
-                    <span>{event.location}</span>
+                  <div className="flex-1 space-y-1">
+                    <h4 className="font-semibold text-base">{event.title}</h4>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Clock className="h-3 w-3" />
+                      <span>{event.time}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Pin className="h-3 w-3" />
+                      <span>{event.location}</span>
+                    </div>
                   </div>
                 </div>
               </CardContent>

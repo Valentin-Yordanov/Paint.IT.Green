@@ -415,19 +415,27 @@ const Community = () => {
     feedName: string;
     label: string;
     icon: React.ReactNode;
-  }) => (
-    <Button
-      variant={activeFeed === feedName ? "secondary" : "ghost"}
-      className="w-full justify-start gap-3"
-      onClick={() => {
-        setActiveFeed(feedName);
-        setIsSidebarOpen(false); // Close mobile drawer on navigation
-      }}
-    >
-      {icon}
-      <span>{label}</span>
-    </Button>
-  );
+  }) => {
+    const isActive = activeFeed === feedName;
+    return (
+      <Button
+        variant={isActive ? "secondary" : "ghost"}
+        className={`w-full justify-start gap-3 relative overflow-hidden transition-all
+          ${isActive ? 'bg-primary/10 text-primary hover:bg-primary/15 font-medium shadow-sm' : 'hover:bg-accent/50'}
+        `}
+        onClick={() => {
+          setActiveFeed(feedName);
+          setIsSidebarOpen(false);
+        }}
+      >
+        {isActive && (
+          <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-r" />
+        )}
+        <div className={`${isActive ? 'text-primary' : ''}`}>{icon}</div>
+        <span className="truncate">{label}</span>
+      </Button>
+    );
+  };
 
   return (
     <div className="flex min-h-screen bg-gradient-to-b from-background to-secondary/20">
@@ -439,77 +447,115 @@ const Community = () => {
         />
       )}
 
-      {/* RESPONSIVE SIDEBAR */}
+      {/* RESPONSIVE SIDEBAR - Modern Teams-like Design */}
       <aside
-        className={`w-64 border-r border-border p-4 pt-12 space-y-4 bg-card
+        className={`w-72 border-r border-border bg-card/95 backdrop-blur-sm
           fixed inset-y-0 left-0 z-30 transition-transform duration-300 ease-in-out
           ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-          md:sticky md:translate-x-0 md:bg-card/50`}
+          md:sticky md:translate-x-0 flex flex-col`}
       >
-        <h2 className="px-4 text-lg font-semibold tracking-tight mb-2">
-          {t("community.groups")}
-        </h2>
-
-        <div className="space-y-1">
-          <SidebarNavButton
-            feedName="public"
-            label={t("community.public")}
-            icon={<Globe className="h-4 w-4" />}
-          />
+        {/* Sidebar Header */}
+        <div className="p-6 border-b border-border bg-gradient-to-br from-primary/5 to-accent/5">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Globe className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold tracking-tight">
+                {t("community.groups")}
+              </h2>
+              <p className="text-xs text-muted-foreground">Connect & Share</p>
+            </div>
+          </div>
         </div>
 
-        {MOCK_USER.role === "student" && (
-          <>
-            <h3 className="px-4 text-sm font-medium text-muted-foreground tracking-tight mt-4">
-              {t("community.myGroups")}
-            </h3>
-            <div className="space-y-1">
-              <SidebarNavButton
-                feedName="mySchool"
-                label={MOCK_USER.school}
-                icon={<School className="h-4 w-4" />}
-              />
-              <SidebarNavButton
-                feedName="myClass"
-                label={MOCK_USER.class}
-                icon={<Users className="h-4 w-4" />}
-              />
-            </div>
-          </>
-        )}
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-6">
+          {/* Public Feed */}
+          <div className="space-y-2">
+            <SidebarNavButton
+              feedName="public"
+              label={t("community.public")}
+              icon={<Globe className="h-4 w-4" />}
+            />
+          </div>
 
-        {MOCK_USER.role === "moderator" && (
-          <>
-            <h3 className="px-4 text-sm font-medium text-muted-foreground tracking-tight mt-4">
-              <Shield className="h-4 w-4 inline-block mr-2" />
-              {t("community.moderator")}
-            </h3>
-            <div className="space-y-1">
-              <h4 className="px-4 text-xs font-semibold text-muted-foreground/80 tracking-tight mt-2">
-                {t("community.allSchools")}
-              </h4>
-              {ALL_SCHOOLS.map((school) => (
+          {/* Student Groups */}
+          {MOCK_USER.role === "student" && (
+            <div className="space-y-2">
+              <div className="px-3 py-2 flex items-center gap-2">
+                <div className="h-1 w-1 rounded-full bg-primary" />
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  {t("community.myGroups")}
+                </h3>
+              </div>
+              <div className="space-y-1">
                 <SidebarNavButton
-                  key={school}
-                  feedName={school}
-                  label={school}
+                  feedName="mySchool"
+                  label={MOCK_USER.school}
                   icon={<School className="h-4 w-4" />}
                 />
-              ))}
-              <h4 className="px-4 text-xs font-semibold text-muted-foreground/80 tracking-tight mt-2">
-                {t("community.allClasses")}
-              </h4>
-              {ALL_CLASSES.map((className) => (
                 <SidebarNavButton
-                  key={className}
-                  feedName={className}
-                  label={className}
+                  feedName="myClass"
+                  label={MOCK_USER.class}
                   icon={<Users className="h-4 w-4" />}
                 />
-              ))}
+              </div>
             </div>
-          </>
-        )}
+          )}
+
+          {/* Moderator View */}
+          {MOCK_USER.role === "moderator" && (
+            <div className="space-y-4">
+              <div className="px-3 py-2 flex items-center gap-2 bg-accent/10 rounded-lg">
+                <Shield className="h-4 w-4 text-accent" />
+                <h3 className="text-sm font-semibold tracking-tight">
+                  {t("community.moderator")}
+                </h3>
+              </div>
+              
+              <div className="space-y-3">
+                <div>
+                  <div className="px-3 py-1.5 flex items-center gap-2">
+                    <div className="h-1 w-1 rounded-full bg-muted-foreground" />
+                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                      {t("community.allSchools")}
+                    </h4>
+                  </div>
+                  <div className="space-y-1 mt-1">
+                    {ALL_SCHOOLS.map((school) => (
+                      <SidebarNavButton
+                        key={school}
+                        feedName={school}
+                        label={school}
+                        icon={<School className="h-4 w-4" />}
+                      />
+                    ))}
+                  </div>
+                </div>
+                
+                <div>
+                  <div className="px-3 py-1.5 flex items-center gap-2">
+                    <div className="h-1 w-1 rounded-full bg-muted-foreground" />
+                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                      {t("community.allClasses")}
+                    </h4>
+                  </div>
+                  <div className="space-y-1 mt-1">
+                    {ALL_CLASSES.map((className) => (
+                      <SidebarNavButton
+                        key={className}
+                        feedName={className}
+                        label={className}
+                        icon={<Users className="h-4 w-4" />}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </aside>
 
       <main className="flex-1 p-8 md:p-12 md:ml-0">
@@ -540,8 +586,8 @@ const Community = () => {
               onOpenChange={handleOpenCreateDialog}
             >
               <DialogTrigger asChild>
-                <Button size="lg" className="gap-2 px-8 py-6 text-lg">
-                  <Plus className="h-6 w-6" />
+                <Button size="lg" className="gap-2 px-6 py-6 text-base shadow-md hover:shadow-lg transition-shadow">
+                  <Plus className="h-5 w-5" />
                   {t("community.createPost")}
                 </Button>
               </DialogTrigger>
