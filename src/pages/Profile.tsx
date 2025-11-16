@@ -103,6 +103,20 @@ const Profile = () => {
     });
   };
 
+  const handleUpdateGoalProgress = (goalId: number, change: number) => {
+    setActiveGoals(activeGoals.map(goal => {
+      if (goal.id === goalId) {
+        const newProgress = Math.max(0, Math.min(100, goal.progress + change));
+        return { ...goal, progress: newProgress };
+      }
+      return goal;
+    }));
+    toast({
+      title: t('profile.progressUpdated'),
+      description: t('profile.progressUpdatedDesc'),
+    });
+  };
+
   return (
     <div className="min-h-screen py-12 bg-gradient-to-b from-background to-secondary/20">
       <div className="container max-w-4xl">
@@ -231,29 +245,50 @@ const Profile = () => {
           <CardContent>
             <div className="space-y-4">
               {activeGoals.map((goal) => (
-                <div key={goal.id} className="space-y-2">
+                <div key={goal.id} className="space-y-3 p-4 rounded-lg border border-border bg-card/50">
                   <div className="flex justify-between items-start gap-2">
                     <div className="flex-1">
                       <span className="font-medium">{goal.title}</span>
                       <p className="text-sm text-muted-foreground">{goal.description}</p>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-sm text-muted-foreground">{goal.progress}%</span>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-destructive hover:text-destructive"
-                        onClick={() => handleDeleteGoal(goal.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-destructive hover:text-destructive shrink-0"
+                      onClick={() => handleDeleteGoal(goal.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
-                  <div className="h-2 bg-secondary rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-primary transition-all duration-300"
-                      style={{ width: `${goal.progress}%` }}
-                    />
+                  
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">{goal.progress}% Complete</span>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8 w-8 p-0"
+                          onClick={() => handleUpdateGoalProgress(goal.id, -5)}
+                        >
+                          <span className="text-lg">−</span>
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8 w-8 p-0"
+                          onClick={() => handleUpdateGoalProgress(goal.id, 5)}
+                        >
+                          <span className="text-lg">+</span>
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="h-2 bg-secondary rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-primary transition-all duration-300"
+                        style={{ width: `${goal.progress}%` }}
+                      />
+                    </div>
                   </div>
                 </div>
               ))}
