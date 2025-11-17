@@ -421,7 +421,11 @@ const Community = () => {
       <Button
         variant={isActive ? "secondary" : "ghost"}
         className={`w-full justify-start gap-3 relative overflow-hidden transition-all
-          ${isActive ? 'bg-primary/10 text-primary hover:bg-primary/15 font-medium shadow-sm' : 'hover:bg-accent/50'}
+          ${
+            isActive
+              ? "bg-primary/10 text-primary hover:bg-primary/15 font-medium shadow-sm"
+              : "hover:bg-accent/50"
+          }
         `}
         onClick={() => {
           setActiveFeed(feedName);
@@ -431,7 +435,7 @@ const Community = () => {
         {isActive && (
           <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-r" />
         )}
-        <div className={`${isActive ? 'text-primary' : ''}`}>{icon}</div>
+        <div className={`${isActive ? "text-primary" : ""}`}>{icon}</div>
         <span className="truncate">{label}</span>
       </Button>
     );
@@ -513,7 +517,7 @@ const Community = () => {
                   {t("community.moderator")}
                 </h3>
               </div>
-              
+
               <div className="space-y-3">
                 <div>
                   <div className="px-3 py-1.5 flex items-center gap-2">
@@ -533,7 +537,7 @@ const Community = () => {
                     ))}
                   </div>
                 </div>
-                
+
                 <div>
                   <div className="px-3 py-1.5 flex items-center gap-2">
                     <div className="h-1 w-1 rounded-full bg-muted-foreground" />
@@ -586,7 +590,10 @@ const Community = () => {
               onOpenChange={handleOpenCreateDialog}
             >
               <DialogTrigger asChild>
-                <Button size="lg" className="gap-2 px-6 py-6 text-base shadow-md hover:shadow-lg transition-shadow">
+                <Button
+                  size="lg"
+                  className="gap-2 px-6 py-6 text-base shadow-md hover:shadow-lg transition-shadow"
+                >
                   <Plus className="h-5 w-5" />
                   {t("community.createPost")}
                 </Button>
