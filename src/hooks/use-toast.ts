@@ -184,3 +184,6 @@ function useToast() {
 }
 
 export { useToast, toast };
+
+//This file establishes a self-contained state management system, implementing a Reducer pattern to efficiently handle, track, and dispatch updates 
+//for all global notification (toast) messages within the application.

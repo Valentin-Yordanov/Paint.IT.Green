@@ -17,3 +17,5 @@ export function useIsMobile() {
 
   return !!isMobile;
 }
+
+//How big is the users screen(is smaller than a tablet)

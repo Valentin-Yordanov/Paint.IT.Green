@@ -4,11 +4,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import {
-  Trophy, Medal, Award, TrendingUp, CalendarDays, Pin, Clock, Star
-} from "lucide-react";
+import { Trophy, Medal, Award, TrendingUp, CalendarDays, Pin, Clock, Star} from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
-// import { useLanguage } from "@/contexts/LanguageContext"; // Assuming this path is correct
+import { useLanguage } from "@/contexts/LanguageContext";
+
 
 // --- Mock Data ---
 

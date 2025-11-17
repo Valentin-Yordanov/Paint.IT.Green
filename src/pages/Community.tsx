@@ -5,29 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Heart,
-  MessageCircle,
-  Share2,
-  School,
-  Users,
-  Send,
-  Plus,
-  Edit,
-  Trash2,
-  Image,
-  Globe,
-  Shield,
-  Book,
-  Menu,
-} from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
+import { Heart, MessageCircle, Share2, School, Users, Send, Plus, Edit, Trash2, Image, Globe, Shield, Book, Menu} from "lucide-react";
 import studentsImage from "@/assets/students-planting.jpg";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -466,9 +445,9 @@ const Community = () => {
             </div>
             <div>
               <h2 className="text-lg font-bold tracking-tight">
-                {t("community.groups")}
+                {t("CURRENT GROUP")}
               </h2>
-              <p className="text-xs text-muted-foreground">Connect & Share</p>
+              <p className="text-xs text-muted-foreground">SOMETHING ABOUT THE GROUP MBY</p>
             </div>
           </div>
         </div>
@@ -490,7 +469,7 @@ const Community = () => {
               <div className="px-3 py-2 flex items-center gap-2">
                 <div className="h-1 w-1 rounded-full bg-primary" />
                 <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  {t("community.myGroups")}
+                  {t("My Groups")}
                 </h3>
               </div>
               <div className="space-y-1">
@@ -576,7 +555,7 @@ const Community = () => {
         <div className="container max-w-4xl mx-auto">
           <div className="text-left mb-12">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              {getFeedTitle()} {t("community.feed")}
+              {getFeedTitle()}
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl">
               {t("community.subtitle")}
@@ -611,12 +590,15 @@ const Community = () => {
                       value={newPostSchool}
                       onChange={(e) => setNewPostSchool(e.target.value)}
                       placeholder="Your school name"
+
                       // Input is disabled if user is a student, or if they are a moderator
                       // currently viewing a specific school's feed (which implies posting to that school)
-                      disabled={
-                        MOCK_USER.role === "student" ||
-                        ALL_SCHOOLS.includes(activeFeed)
-                      }
+                      
+                      // disabled={
+                      //   MOCK_USER.role === "student" ||
+                      //   ALL_SCHOOLS.includes(activeFeed)
+                      // }
+                      
                       title={
                         MOCK_USER.role === "student"
                           ? "As a student, you can only post to your school."
@@ -626,7 +608,11 @@ const Community = () => {
                       }
                     />
                   </div>
-                  <div>
+
+
+
+                  {/*Buttons that I no longer need}
+                   <div>
                     <label className="text-sm font-medium mb-2 block">
                       Visibility
                     </label>
@@ -665,7 +651,10 @@ const Community = () => {
                         My Class Only
                       </Button>
                     </div>
-                  </div>
+                  </div> */}
+
+
+
                   <div>
                     <label className="text-sm font-medium mb-2 block">
                       What's happening?
