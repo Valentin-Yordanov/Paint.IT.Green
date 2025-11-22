@@ -19,11 +19,11 @@ const Terms = () => {
       <section className="container py-16 max-w-4xl prose prose-slate dark:prose-invert">
         <h2>Acceptance of Terms</h2>
         <p>
-          By accessing and using PIG, you accept and agree to be bound by the terms and provisions of this agreement.
+          By accessing and using P.I.G, you accept and agree to be bound by the terms and provisions of this agreement.
         </p>
 
         <h2>Use of Platform</h2>
-        <p>PIG is intended for educational purposes. Users agree to:</p>
+        <p>P.I.G is intended for educational purposes. Users agree to:</p>
         <ul>
           <li>Provide accurate information during registration</li>
           <li>Maintain the security of their account</li>
@@ -38,12 +38,12 @@ const Terms = () => {
 
         <h2>Competition Rules</h2>
         <p>
-          Participants in competitions must follow all rules and guidelines. PIG reserves the right to disqualify participants who violate competition rules or engage in fraudulent activities.
+          Participants in competitions must follow all rules and guidelines. P.I.G reserves the right to disqualify participants who violate competition rules or engage in fraudulent activities.
         </p>
 
         <h2>Content Ownership</h2>
         <p>
-          Users retain ownership of the content they post, but grant PIG a license to use, display, and distribute that content within the platform.
+          Users retain ownership of the content they post, but grant P.I.G a license to use, display, and distribute that content within the platform.
         </p>
 
         <h2>Prohibited Activities</h2>

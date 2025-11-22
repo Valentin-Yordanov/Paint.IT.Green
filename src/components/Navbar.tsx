@@ -44,7 +44,8 @@ const Navbar = () => {
             alt="PIG Logo" 
             className="h-12 w-12 object-contain" 
           />
-        </Link>
+            <span className="text-xl font-bold text-foreground">{t('Paint IT Green')}</span>
+          </Link>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-2">

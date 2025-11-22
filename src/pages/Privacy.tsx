@@ -19,7 +19,7 @@ const Privacy = () => {
       <section className="container py-16 max-w-4xl prose prose-slate dark:prose-invert">
         <h2>Introduction</h2>
         <p>
-          At PIG, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform.
+          At P.I.G, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform.
         </p>
 
         <h2>Information We Collect</h2>

@@ -301,36 +301,53 @@ const Compete = () => {
         <h2 className="text-3xl font-bold mb-8 text-center">{t('compete.leaderboards', 'Leaderboards')}</h2>
         
         <Tabs defaultValue="current" className="space-y-8">
-          <TabsList className="grid grid-cols-3 h-auto gap-2 bg-secondary/50">
-            <TabsTrigger value="current" className="flex gap-2 p-3 text-base">
-              <TrendingUp className="h-5 w-5" />
-              {t('compete.currentMonth', 'Current Month')}
+          {/* --- UPDATED TABS LIST START --- */}
+          <TabsList className="grid grid-cols-3 h-auto gap-2 bg-secondary/50 p-1">
+            
+            {/* Tab 1: Current Month */}
+            <TabsTrigger value="current" className="flex flex-col sm:flex-row gap-1 sm:gap-2 p-2 h-full data-[state=active]:bg-background shadow-none">
+              <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5" />
+              <div className="flex flex-col sm:block text-xs sm:text-base font-medium leading-tight">
+                <span className="sm:hidden">Current</span>
+                <span className="hidden sm:inline">{t('compete.currentMonth', 'Current Month')}</span>
+              </div>
             </TabsTrigger>
-            <TabsTrigger value="lastMonth" className="flex gap-2 p-3 text-base">
-              <Trophy className="h-5 w-5" />
-              {/* Updated Text */}
-              {t('compete.lastWinners', 'Last Month\'s Winners')}
+
+            {/* Tab 2: Last Month Winners */}
+            <TabsTrigger value="lastMonth" className="flex flex-col sm:flex-row gap-1 sm:gap-2 p-2 h-full data-[state=active]:bg-background shadow-none">
+              <Trophy className="h-4 w-4 sm:h-5 sm:w-5" />
+              <div className="flex flex-col sm:block text-xs sm:text-base font-medium leading-tight">
+                <span className="sm:hidden">Winners</span>
+                <span className="hidden sm:inline">{t('compete.lastWinners', 'Last Month\'s Winners')}</span>
+              </div>
             </TabsTrigger>
-            <TabsTrigger value="allTime" className="flex gap-2 p-3 text-base">
-              <Star className="h-5 w-5" />
-              {t('compete.allTime', 'All-Time Wins')}
+
+            {/* Tab 3: All-Time Wins */}
+            <TabsTrigger value="allTime" className="flex flex-col sm:flex-row gap-1 sm:gap-2 p-2 h-full data-[state=active]:bg-background shadow-none">
+              <Star className="h-4 w-4 sm:h-5 sm:w-5" />
+              <div className="flex flex-col sm:block text-xs sm:text-base font-medium leading-tight">
+                <span className="sm:hidden">All-Time</span>
+                <span className="hidden sm:inline">{t('compete.allTime', 'All-Time Wins')}</span>
+              </div>
             </TabsTrigger>
           </TabsList>
+          {/* --- UPDATED TABS LIST END --- */}
 
-          {/* Tab 1: Current Month */}
+          {/* Tab 1 Content: Current Month */}
           <TabsContent value="current">
             <Tabs defaultValue="cities" className="space-y-8">
-              <TabsList className="grid grid-cols-3 h-auto gap-2 bg-secondary">
-                <TabsTrigger value="cities" className="flex gap-2 p-3">
-                  <Trophy className="h-4 w-4" />
+              {/* Nested Sub-Tabs for Cities/Schools/Students */}
+              <TabsList className="grid grid-cols-3 h-auto gap-2 bg-secondary p-1">
+                <TabsTrigger value="cities" className="flex gap-2 p-2 text-xs sm:text-sm h-auto">
+                  <Trophy className="h-3 w-3 sm:h-4 sm:w-4" />
                   {t('compete.cities', 'Cities')}
                 </TabsTrigger>
-                <TabsTrigger value="schools" className="flex gap-2 p-3">
-                  <Medal className="h-4 w-4" />
+                <TabsTrigger value="schools" className="flex gap-2 p-2 text-xs sm:text-sm h-auto">
+                  <Medal className="h-3 w-3 sm:h-4 sm:w-4" />
                   {t('compete.schools', 'Schools')}
                 </TabsTrigger>
-                <TabsTrigger value="students" className="flex gap-2 p-3">
-                  <Award className="h-4 w-4" />
+                <TabsTrigger value="students" className="flex gap-2 p-2 text-xs sm:text-sm h-auto">
+                  <Award className="h-3 w-3 sm:h-4 sm:w-4" />
                   {t('compete.students', 'Students')}
                 </TabsTrigger>
               </TabsList>
@@ -348,19 +365,19 @@ const Compete = () => {
                           className="flex items-center justify-between p-4 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors"
                         >
                           <div className="flex items-center gap-4">
-                            <div className="w-12 flex justify-center">
+                            <div className="w-8 sm:w-12 flex justify-center">
                               {getRankIcon(entry.rank)}
                             </div>
                             <div>
-                              <div className="font-semibold">{entry.name}</div>
+                              <div className="font-semibold text-sm sm:text-base">{entry.name}</div>
                             </div>
                           </div>
-                          <div className="flex items-center gap-4">
-                            <Badge variant="outline" className="gap-1 text-green-600">
+                          <div className="flex items-center gap-2 sm:gap-4">
+                            <Badge variant="outline" className="gap-1 text-green-600 hidden sm:flex">
                               <TrendingUp className="h-3 w-3" />
                               {entry.change}
                             </Badge>
-                            <div className="text-lg font-bold text-primary">
+                            <div className="text-sm sm:text-lg font-bold text-primary">
                               {entry.points.toLocaleString()}
                             </div>
                           </div>
@@ -384,15 +401,15 @@ const Compete = () => {
                           className="flex items-center justify-between p-4 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors"
                         >
                           <div className="flex items-center gap-4">
-                            <div className="w-12 flex justify-center">
+                            <div className="w-8 sm:w-12 flex justify-center">
                               {getRankIcon(entry.rank)}
                             </div>
                             <div>
-                              <div className="font-semibold">{entry.name}</div>
-                              <div className="text-sm text-muted-foreground">{entry.city}</div>
+                              <div className="font-semibold text-sm sm:text-base">{entry.name}</div>
+                              <div className="text-xs sm:text-sm text-muted-foreground">{entry.city}</div>
                             </div>
                           </div>
-                          <div className="text-lg font-bold text-primary">
+                          <div className="text-sm sm:text-lg font-bold text-primary">
                             {entry.points.toLocaleString()}
                           </div>
                         </div>
@@ -415,15 +432,15 @@ const Compete = () => {
                           className="flex items-center justify-between p-4 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors"
                         >
                           <div className="flex items-center gap-4">
-                            <div className="w-12 flex justify-center">
+                            <div className="w-8 sm:w-12 flex justify-center">
                               {getRankIcon(entry.rank)}
                             </div>
                             <div>
-                              <div className="font-semibold">{entry.name}</div>
-                              <div className="text-sm text-muted-foreground">{entry.school}</div>
+                              <div className="font-semibold text-sm sm:text-base">{entry.name}</div>
+                              <div className="text-xs sm:text-sm text-muted-foreground">{entry.school}</div>
                             </div>
                           </div>
-                          <div className="text-lg font-bold text-primary">
+                          <div className="text-sm sm:text-lg font-bold text-primary">
                             {entry.points.toLocaleString()}
                           </div>
                         </div>
@@ -435,11 +452,11 @@ const Compete = () => {
             </Tabs>
           </TabsContent>
 
-          {/* Tab 2: Last Month's Winners - Updated to show Top 5 */}
+          {/* Tab 2 Content: Last Month's Winners */}
           <TabsContent value="lastMonth">
             <Card className="border-border bg-card">
               <CardHeader>
-                <CardTitle className="text-xl">
+                <CardTitle className="text-lg sm:text-xl">
                   {t('compete.lastWinnersRanking', 'Top Schools in Last Challenge:')}
                 </CardTitle>
                 <p className="text-muted-foreground text-sm">{lastChallengeTitle}</p>
@@ -452,16 +469,16 @@ const Compete = () => {
                       className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-lg bg-gradient-to-r from-green-500/10 to-transparent transition-colors"
                     >
                       <div className="flex items-center gap-4 mb-2 sm:mb-0">
-                        <div className="w-12 flex justify-center">
+                        <div className="w-8 sm:w-12 flex justify-center">
                           {getRankIcon(entry.rank)}
                         </div>
                         <div>
-                          <div className="font-semibold text-lg text-foreground">{entry.name}</div>
-                          <div className="text-sm text-muted-foreground">{entry.city}</div>
-                          <Badge variant="secondary" className="mt-1">{entry.achievement}</Badge>
+                          <div className="font-semibold text-base sm:text-lg text-foreground">{entry.name}</div>
+                          <div className="text-xs sm:text-sm text-muted-foreground">{entry.city}</div>
+                          <Badge variant="secondary" className="mt-1 text-xs">{entry.achievement}</Badge>
                         </div>
                       </div>
-                      <div className="text-lg font-bold text-primary sm:self-center">
+                      <div className="text-base sm:text-lg font-bold text-primary sm:self-center pl-12 sm:pl-0">
                         {entry.score.toLocaleString()} points
                       </div>
                     </div>
@@ -471,7 +488,7 @@ const Compete = () => {
             </Card>
           </TabsContent>
 
-          {/* Tab 3: All-Time Wins */}
+          {/* Tab 3 Content: All-Time Wins */}
           <TabsContent value="allTime">
             <Card className="border-border bg-card">
               <CardHeader>
@@ -485,16 +502,16 @@ const Compete = () => {
                       className="flex items-center justify-between p-4 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="w-12 flex justify-center">
+                        <div className="w-8 sm:w-12 flex justify-center">
                           {getRankIcon(entry.rank)}
                         </div>
                         <div>
-                          <div className="font-semibold">{entry.name}</div>
+                          <div className="font-semibold text-sm sm:text-base">{entry.name}</div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 text-lg font-bold text-primary">
+                      <div className="flex items-center gap-2 text-base sm:text-lg font-bold text-primary">
                         {entry.wins}
-                        <span className="text-sm font-medium text-muted-foreground">wins</span>
+                        <span className="text-xs sm:text-sm font-medium text-muted-foreground">wins</span>
                       </div>
                     </div>
                   ))}

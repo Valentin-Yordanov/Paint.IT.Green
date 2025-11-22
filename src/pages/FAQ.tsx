@@ -10,20 +10,20 @@ const FAQ = () => {
   const { t } = useLanguage();
   const faqs = [
     {
-      question: "What is PIG?",
-      answer: "PIG is an educational platform that teaches students about environmental conservation through interactive learning, competitions, and community engagement."
+      question: "What is P.I.G?",
+      answer: "P.I.G is an educational platform that teaches students about environmental conservation through interactive learning, competitions, and community engagement."
     },
     {
-      question: "Who can join PIG?",
-      answer: "PIG is open to students of all ages, teachers, school administrators, and parents. Each user type has different access levels and features."
+      question: "Who can join P.I.G?",
+      answer: "P.I.G is open to students of all ages, teachers, school administrators, and parents. Each user type has different access levels and features."
     },
     {
       question: "How do the competitions work?",
       answer: "Competitions run weekly, monthly, and yearly at city, school, and individual student levels. Participants earn points for completing environmental challenges and actions."
     },
     {
-      question: "Is PIG free to use?",
-      answer: "Yes! PIG is completely free for all students and educators. Our mission is to make environmental education accessible to everyone."
+      question: "Is P.I.G free to use?",
+      answer: "Yes! P.I.G is completely free for all students and educators. Our mission is to make environmental education accessible to everyone."
     },
     {
       question: "How can my school join?",

@@ -112,7 +112,7 @@ const OurValues = () => {
               our curriculum to how we support our community, our values guide us forward.
             </p>
             <p className="text-muted-foreground">
-              When you join PIG, you become part of a movement that prioritizes education, celebrates 
+              When you join P.I.G, you become part of a movement that prioritizes education, celebrates 
               action, practices compassion, and thrives on collaboration.
             </p>
           </div>
@@ -120,7 +120,7 @@ const OurValues = () => {
           <div className="bg-primary/5 border border-primary/20 rounded-lg p-8">
             <h3 className="text-2xl font-bold mb-4">Join Our Mission</h3>
             <p className="text-muted-foreground mb-6">
-              Ready to be part of a community that lives these values every day? Start your journey with PIG.
+              Ready to be part of a community that lives these values every day? Start your journey with P.I.G.
             </p>
             <Link to="/about">
               <Button size="lg">Learn More About Us</Button>

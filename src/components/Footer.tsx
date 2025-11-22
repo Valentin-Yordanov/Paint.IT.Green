@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Leaf, Facebook, Twitter, Instagram, Mail } from "lucide-react";
+import { Facebook, Twitter, Instagram, Mail } from "lucide-react"; // Removed 'Leaf'
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const Footer = () => {
@@ -36,9 +36,13 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand Section */}
           <div className="space-y-4">
-            <Link to="/" className="flex items-center gap-2">
-              <Leaf className="h-6 w-6 text-primary" />
-              <span className="font-bold text-lg">{t('nav.PIG')}</span>
+            <Link to="/" className="flex items-center gap-2 w-fit">
+              <img 
+                src="/pig-logo.png" 
+                alt="PIG Logo" 
+                className="h-8 w-8 object-contain rounded-full" 
+              />
+              <span className="text-xl font-bold text-foreground">{t('Paint IT Green')}</span>
             </Link>
             <p className="text-sm text-muted-foreground">
               {t('footer.tagline')}

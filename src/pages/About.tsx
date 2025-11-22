@@ -10,7 +10,7 @@ const About = () => {
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-primary/10 to-background py-20">
         <div className="container">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">{t('about.title')}</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">{t('Paint IT Green')}</h1>
           <p className="text-xl text-muted-foreground max-w-3xl">
             {t('about.subtitle')}
           </p>
