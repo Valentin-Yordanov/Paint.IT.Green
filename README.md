@@ -1,61 +1,56 @@
-# Welcome
+# 🌿 PIG - Paint IT Green
 
-## What technologies are used for this project?
+![Project Banner](public/og-image.jpg) 
+> **Join students worldwide in learning about nature conservation, competing in environmental challenges, and making a real difference in your community.**
 
-This project is built with:
+## 📖 About The Project
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+**Paint IT Green (PIG)** is an educational platform designed to gamify environmental conservation. This project was built to solve the problem of [insert specific problem, e.g., lack of student engagement in nature] by providing an interactive way to participate in eco-challenges.
 
-## How can I deploy this project?
+### Key Features
+* **🌍 Eco-Challenges:** Interactive tasks for students to complete.
+* **🏆 Global Leaderboards:** Compete with other "Eco-Champions."
+* **⚡ Serverless Backend:** Powered by Azure Functions for fast, scalable API responses.
+* **🎨 Modern UI:** Built with shadcn/ui and Tailwind CSS for a sleek, responsive experience.
 
-Simply write "npm run dev" in the terminal.
+---
 
-IF there is no node_modules folder run "npm install" and wait fo a few seconds. Then run "npm run dev" again.
+## 🛠️ Tech Stack
 
-<!-- 1. Title and Description
-Project Title: The name of your app (# Eco-Champions-Club).
+This project uses a modern **Serverless** architecture hosted on Azure.
 
-Tagline/Short Description: A one or two-sentence summary of what your app does and its purpose for the competition.
+| Area | Technology |
+| :--- | :--- |
+| **Frontend** | React, TypeScript, Vite |
+| **Styling** | Tailwind CSS, shadcn/ui |
+| **Backend** | Azure Functions (Node.js v4 Model) |
+| **Hosting** | Azure Static Web Apps (SWA) |
+| **CI/CD** | GitHub Actions |
 
-2. Live Demo / Deployment (If applicable)
-Link: If you deployed the site (e.g., to Vercel or Netlify), include the URL.
+---
 
-Screenshot/Image: Add a high-quality image of your finished app.
+## 🚀 Getting Started (Local Development)
 
-3. Features
-A bulleted list of the main things your app can do. This directly answers the judge's question: "What does this project accomplish?"
+To run this project locally, you need to run both the Frontend (React) and the Backend (Azure Functions).
 
-Example: * User authentication (Sign up/Login)
+### Prerequisites
+* **Node.js:** Version 20 or higher.
+* **Azure Functions Core Tools:** (Optional, but recommended for backend debugging).
+* **SWA CLI:** (`npm install -g @azure/static-web-apps-cli`)
 
-Example: * Interactive map showing recycling centers
+### 1. Clone & Install Dependencies
 
-Example: * Dashboard tracking user's sustainability score
+You need to install dependencies for **both** the root (frontend) and the API (backend).
 
-4. Technical Stack
-List all the technologies you used. This shows technical sophistication, which is great for a competition.
+```bash
+# 1. Clone the repo
+git clone [https://github.com/Valentin-Yordanov/eco-champions-club.git](https://github.com/Valentin-Yordanov/eco-champions-club.git)
+cd eco-champions-club
 
-Frontend: React, TypeScript, Tailwind CSS
+# 2. Install Frontend Dependencies
+npm install
 
-Tooling/Bundler: Vite
-
-State Management (if you used Redux, Zustand, etc.)
-
-5. Installation / Setup Guide
-This is crucial for anyone (especially a judge) who wants to run your project locally.
-
-Prerequisites: List software needed (Node.js, npm/bun).
-
-Clone the Repository: Instructions on how to download the code.
-
-Install Dependencies: The command you use: npm install
-
-Run Locally: The command to start the app: npm run dev
-
-6. Credits / Licensing
-Attribution: Note any open-source libraries, APIs, or assets you used.
-
-License: State your licensing (e.g., MIT License, if open source). -->
+# 3. Install Backend Dependencies
+cd api
+npm install
+cd ..
