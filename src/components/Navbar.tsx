@@ -44,11 +44,8 @@ const Navbar = () => {
             alt="PIG Logo" 
             className="h-10 w-10 object-contain rounded-full" 
           />
-          
-          {/* Text (Keep this if you want the text next to the image, or delete if the logo has text) */}
-          <span className="text-xl font-bold text-foreground">{t('nav.PIG')}</span>
         </Link>
-        
+
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-2">
           <NavLinks />
