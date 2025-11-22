@@ -42,7 +42,7 @@ const Navbar = () => {
           <img 
             src="/pig-logo.png" 
             alt="PIG Logo" 
-            className="h-10 w-10 object-contain rounded-full" 
+            className="h-12 w-12 object-contain" 
           />
         </Link>
 
