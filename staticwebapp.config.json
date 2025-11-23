@@ -12,6 +12,14 @@
       "rewrite": "/.auth/logout"
     },
     {
+      "route": "/api/login",
+      "allowedRoles": ["anonymous"]
+    },
+    {
+      "route": "/api/register",
+      "allowedRoles": ["anonymous"]
+    },
+    {
       "route": "/api/*",
       "allowedRoles": ["anonymous", "authenticated"]
     }
@@ -21,5 +29,8 @@
       "redirect": "/login",
       "statusCode": 302
     }
+  },
+  "globalHeaders": {
+    "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate"
   }
 }
