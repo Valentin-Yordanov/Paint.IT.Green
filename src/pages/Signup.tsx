@@ -88,11 +88,11 @@ const Signup: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-secondary/20 px-4 py-8">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 flex flex-col items-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary mb-2">
-            <Leaf className="h-7 w-7 text-primary-foreground" />
+          <div className="h-12 w-12 object-contain">
+            <img src="/pig-logo.png" />
           </div>
           <CardTitle className="text-2xl font-bold">{t('signup.title')}</CardTitle>
-          <CardDescription>{t('signup.subtitle')}</CardDescription>
+          <CardDescription>{t('Help Paint IT Green today')}</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
