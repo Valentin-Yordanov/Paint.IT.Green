@@ -1,27 +1,87 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Leaf } from "lucide-react";
+import { Leaf, Loader2, CheckCircle, XCircle } from "lucide-react";
 
-const Signup = () => {
+// Define the interface for the possible response body from the API
+interface ApiResponseData {
+  body?: string; 
+  message?: string;
+  userId?: string;
+  role?: string;
+}
+
+const Signup: React.FC = () => {
   const { t } = useLanguage();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const navigate = useNavigate();
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Signup logic will be implemented later
+    setError(null);
+    setSuccessMessage(null);
+
     if (password !== confirmPassword) {
-      console.log("Passwords don't match");
+      setError(t('signup.error.passwordMismatch'));
       return;
     }
-    console.log("Signup attempted with:", { name, email, password });
+
+    setIsLoading(true);
+
+    try {
+      const userData = {
+        name,
+        email,
+        password,
+        requestedRole: "Student" 
+      };
+
+      // *** FIX: Use RELATIVE path, not hardcoded localhost:7071 ***
+      const response = await fetch('/api/UserHandler', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+      });
+      
+      let data: ApiResponseData = {};
+      const contentType = response.headers.get("content-type");
+      
+      if (contentType && contentType.includes("application/json")) {
+        data = (await response.json()) as ApiResponseData;
+      } else {
+        const text = await response.text();
+        data = { body: text }; 
+      }
+
+      if (response.ok) {
+        setSuccessMessage(t('signup.successMessage'));
+        setTimeout(() => {
+            navigate('/login');
+        }, 2000); 
+
+      } else {
+        const errorMessage = data.body || data.message || t('signup.error.generic');
+        setError(errorMessage);
+      }
+
+    } catch (err) {
+      console.error("API call error:", err);
+      // Fallback network error message
+      setError(t('signup.error.serverOffline') || `Could not connect to the backend server. (Check if API is running).`);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -36,6 +96,8 @@ const Signup = () => {
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
+            
+            {/* Input Fields */}
             <div className="space-y-2">
               <Label htmlFor="name">{t('signup.name')}</Label>
               <Input
@@ -45,6 +107,7 @@ const Signup = () => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
+                disabled={isLoading}
               />
             </div>
             <div className="space-y-2">
@@ -56,6 +119,7 @@ const Signup = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                disabled={isLoading}
               />
             </div>
             <div className="space-y-2">
@@ -67,6 +131,7 @@ const Signup = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                disabled={isLoading}
               />
             </div>
             <div className="space-y-2">
@@ -78,12 +143,39 @@ const Signup = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
+                disabled={isLoading}
               />
             </div>
+            
+            {/* --- Message Display --- */}
+            {successMessage && (
+              <div className="flex items-center justify-center p-3 rounded-lg bg-green-100 text-green-700">
+                <CheckCircle className="h-5 w-5 mr-2" />
+                <span className="text-sm font-medium">{successMessage}</span>
+              </div>
+            )}
+            {error && (
+              <div className="flex items-center justify-center p-3 rounded-lg bg-red-100 text-red-700 border border-red-200">
+                <XCircle className="h-5 w-5 mr-2" />
+                <span className="text-sm font-medium text-center">{error}</span>
+              </div>
+            )}
+            
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full">
-              {t('signup.signupButton')}
+            <Button 
+              type="submit" 
+              className="w-full" 
+              disabled={isLoading || !!successMessage} 
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {t('signup.loading')}
+                </>
+              ) : (
+                t('signup.signupButton')
+              )}
             </Button>
             <p className="text-sm text-muted-foreground text-center">
               {t('signup.haveAccount')}{" "}
