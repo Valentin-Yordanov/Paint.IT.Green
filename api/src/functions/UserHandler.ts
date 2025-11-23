@@ -15,10 +15,11 @@ interface UserSchema extends ItemDefinition {
 }
 
 // 1. Database Configuration
-// IMPORTANT: Ensure this variable name matches the one used in LoginHandler.ts
 const connectionString = process.env.COSMOS_DB_CONNECTION_STRING; 
 
-const databaseName = "SchoolDB"; // Ensure this matches your database
+// *** FIX: Using Environment Variable for databaseName here as well ***
+const databaseName = process.env.COSMOS_DB_DATABASE_ID; 
+
 const containerName = "Users"; // Ensure this matches your container
 
 /**
@@ -29,14 +30,16 @@ export async function userHandler(request: HttpRequest, context: InvocationConte
     context.log(`Processing user signup request.`);
 
     try {
-        if (!connectionString) {
-            context.error("COSMOS_DB_CONNECTION_STRING environment variable not set.");
+        // --- Configuration Check: Ensure all necessary variables are present ---
+        if (!connectionString || !databaseName) {
+            context.error("Database configuration missing: Check COSMOS_DB_CONNECTION_STRING and COSMOS_DB_DATABASE_ID.");
             return { status: 500, body: "Internal Server Error: Database configuration missing." };
         }
         
-        // FIX: The CosmosClient constructor expects an object with 'endpoint' and 'key' OR a 'connectionString'.
-        // We use the object format for clarity and consistency.
+        // 1. Connect to Cosmos DB
         const client = new CosmosClient(connectionString);
+        
+        // Using the environment variable for the database ID
         const database = client.database(databaseName);
         const container = database.container(containerName);
 
@@ -121,9 +124,10 @@ export async function userHandler(request: HttpRequest, context: InvocationConte
     }
 }
 
-// 9. Register the Function with the Azure Host
+// *** CRITICAL FIX: Add 'route: "register"' to match the frontend call /api/register ***
 app.http('UserHandler', {
     methods: ['POST'],
     authLevel: 'anonymous',
+    route: 'register', // <-- New line here
     handler: userHandler
 });

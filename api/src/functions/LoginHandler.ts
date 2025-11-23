@@ -3,14 +3,8 @@ import { CosmosClient } from "@azure/cosmos";
 import * as bcrypt from "bcryptjs"; // Used for secure password comparison
 
 // Configuration (Use Environment Variables!)
-// 1. Get Connection String from Azure App Settings (COSMOS_DB_CONNECTION_STRING)
 const connectionString = process.env.COSMOS_DB_CONNECTION_STRING;
-
-// 2. Get Database ID from Azure App Settings (COSMOS_DB_DATABASE_ID)
-// THIS WAS HARDCODED - NOW WE USE THE ENVIRONMENT VARIABLE
 const databaseName = process.env.COSMOS_DB_DATABASE_ID; 
-
-// 3. Container Name is typically hardcoded if standard
 const containerName = "Users";
 
 interface LoginRequest {
@@ -47,7 +41,7 @@ export async function LoginHandler(request: HttpRequest, context: InvocationCont
         // 1. Connect to Cosmos DB
         const client = new CosmosClient(connectionString);
         
-        // This line is now correctly using the environment variable for the database ID
+        // This line is correctly using the environment variable for the database ID
         const container = client.database(databaseName).container(containerName);
 
         // 2. Query for the user by email
@@ -99,8 +93,10 @@ export async function LoginHandler(request: HttpRequest, context: InvocationCont
     }
 }
 
+// *** CRITICAL FIX: Add 'route: "login"' to match the frontend call /api/login ***
 app.http('LoginHandler', {
     methods: ['POST'],
     authLevel: 'anonymous',
+    route: 'login', // <-- New line here
     handler: LoginHandler
 });
