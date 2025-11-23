@@ -102,7 +102,8 @@ export async function userHandler(request: HttpRequest, context: InvocationConte
     }
 }
 
-app.http('UserHandler', {
+// FIX: Renamed function ID from 'UserHandler' to 'RegisterUser' to resolve the registration conflict.
+app.http('RegisterUser', { 
     methods: ['POST'],
     authLevel: 'anonymous',
     route: 'register',

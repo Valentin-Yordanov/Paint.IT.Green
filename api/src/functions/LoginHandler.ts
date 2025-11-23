@@ -1,6 +1,7 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 import { CosmosClient } from "@azure/cosmos";
-import * as bcrypt from "bcryptjs"; 
+import * as bcrypt from "bcryptjs";
+import * as jwt from "jsonwebtoken"; // Import JWT if you plan to use tokens later, though not used here
 
 // Configuration (Uses Environment Variables from Azure's "Environment variables" blade)
 const connectionString = process.env.COSMOS_DB_CONNECTION_STRING;
@@ -22,7 +23,8 @@ interface DbUser {
     passwordHash: string; 
 }
 
-export async function LoginHandler(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
+// Renamed function to lowercase 'loginHandler'
+export async function loginHandler(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`Login attempt processing...`);
 
     try {
@@ -30,9 +32,14 @@ export async function LoginHandler(request: HttpRequest, context: InvocationCont
         const { email, password } = body;
 
         // Ensure configuration and required fields are present
-        if (!connectionString || !databaseName || !email || !password) {
-            context.error("Missing required fields or DB configuration.");
-            return { status: 400, body: "Missing required fields or server configuration." };
+        if (!connectionString || !databaseName) {
+            // FIX: Return 500 status with specific message if DB config is missing
+            context.error("Database configuration missing (COSMOS_DB_CONNECTION_STRING or ID).");
+            return { status: 500, body: "Internal Server Error: Database configuration missing." };
+        }
+        if (!email || !password) {
+            context.error("Missing email or password in request body.");
+            return { status: 400, body: "Missing email or password." };
         }
 
         // 1. Connect to Cosmos DB
@@ -41,7 +48,6 @@ export async function LoginHandler(request: HttpRequest, context: InvocationCont
 
         // 2. Query for the user by email
         const querySpec = {
-            // Field name in query must be passwordHash
             query: "SELECT c.id, c.email, c.name, c.role, c.passwordHash FROM c WHERE c.email = @email",
             parameters: [
                 { name: "@email", value: email }
@@ -82,14 +88,15 @@ export async function LoginHandler(request: HttpRequest, context: InvocationCont
         context.error("Login Handler Error:", error);
         return { 
             status: 500, 
-            body: "Internal Server Error. Could not connect to the database. Check function logs." 
+            body: "Internal Server Error. Check function logs." 
         };
     }
 }
 
-app.http('LoginHandler', {
+// FIX: Renamed ID to 'UserLogin' and updated handler reference to 'loginHandler'
+app.http('UserLogin', {
     methods: ['POST'],
     authLevel: 'anonymous',
     route: 'login',
-    handler: LoginHandler
+    handler: loginHandler // Uses the renamed function
 });
