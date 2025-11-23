@@ -2,12 +2,12 @@ import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/fu
 import { CosmosClient, ItemDefinition } from "@azure/cosmos";
 import * as bcrypt from "bcryptjs";
 
-// Local interface representing the structure of the user object saved to Cosmos DB.
 interface UserSchema extends ItemDefinition {
-    id: string; // The partition key, usually user's email or a unique ID
+    id: string; 
     email: string;
     name: string;
-    passwordHash: string; // Storing the HASHED password
+    // CONFIRMED NAME: passwordHash
+    passwordHash: string; 
     role: string;
     isVerified: boolean;
     schoolId: string;
@@ -16,11 +16,8 @@ interface UserSchema extends ItemDefinition {
 
 // 1. Database Configuration
 const connectionString = process.env.COSMOS_DB_CONNECTION_STRING; 
-
-// *** FIX: Using Environment Variable for databaseName here as well ***
 const databaseName = process.env.COSMOS_DB_DATABASE_ID; 
-
-const containerName = "Users"; // Ensure this matches your container
+const containerName = "Users";
 
 /**
  * Handles user registration via POST request.
@@ -30,30 +27,23 @@ export async function userHandler(request: HttpRequest, context: InvocationConte
     context.log(`Processing user signup request.`);
 
     try {
-        // --- Configuration Check: Ensure all necessary variables are present ---
-        if (!connectionString || !databaseName) {
-            context.error("Database configuration missing: Check COSMOS_DB_CONNECTION_STRING and COSMOS_DB_DATABASE_ID.");
-            return { status: 500, body: "Internal Server Error: Database configuration missing." };
+        const body = await request.json() as { email: string; password: string; name: string; requestedRole?: string };
+        const { email, password, name, requestedRole } = body;
+
+        // Ensure configuration and required fields are present
+        if (!connectionString || !databaseName || !email || !password || !name) {
+            context.error("Missing required fields or DB configuration.");
+            return { status: 400, body: "Missing required fields or server configuration." };
         }
         
         // 1. Connect to Cosmos DB
         const client = new CosmosClient(connectionString);
-        
-        // Using the environment variable for the database ID
         const database = client.database(databaseName);
         const container = database.container(containerName);
 
-        // 2. Get data from the frontend
-        const body = await request.json() as { email: string; password: string; name: string; requestedRole?: string };
-        const { email, password, name, requestedRole } = body;
-
-        if (!email || !password || !name) {
-            return { status: 400, body: "Please provide email, password, and name." };
-        }
-
         const lowerCaseEmail = email.toLowerCase();
         
-        // 3. Check if user already exists
+        // 2. Check if user already exists
         const { resources: existingUsers } = await container.items
             .query({
                 query: "SELECT * FROM c WHERE c.email = @email",
@@ -65,38 +55,35 @@ export async function userHandler(request: HttpRequest, context: InvocationConte
             return { status: 409, body: "User with this email already exists." };
         }
 
-        // 4. Security: Encrypt the password (Salt = 10 rounds)
+        // 3. Security: Encrypt the password (Salt = 10 rounds)
         const salt = await bcrypt.genSalt(10); 
-        const passwordHash = await bcrypt.hash(password, salt);
+        const hashedPassword = await bcrypt.hash(password, salt);
 
-        // 5. Determine Role
-        const role = requestedRole || "Student"; // Changed default to "Student" for clarity
+        // 4. Determine Role
+        const role = requestedRole || "Student"; 
 
-        // 6. Create the User Object
+        // 5. Create the User Object
         const newUser: UserSchema = {
-            // Using the email as ID and Partition Key (ensure your container uses /id or /email as partition key)
             id: lowerCaseEmail, 
             email: lowerCaseEmail,
             name,
-            passwordHash,
+            // CRITICAL FIX: SAVING AS passwordHash
+            passwordHash: hashedPassword, 
             role,
             isVerified: false, 
             schoolId: "default-school",
             createdAt: new Date().toISOString()
         };
 
-        // 7. Save to Cosmos DB
+        // 6. Save to Cosmos DB
         const { resource: createdUser } = await container.items.create(newUser); 
         
         if (!createdUser) {
             context.error('Cosmos DB create operation returned no resource.');
-            return { 
-                status: 500, 
-                body: `Registration failed. Database operation did not return the created user.`,
-            };
+            return { status: 500, body: `Registration failed. Database operation did not return the created user.`, };
         }
 
-        // 8. Response for success
+        // 7. Response for success
         return {
             status: 201,
             jsonBody: {
@@ -107,16 +94,7 @@ export async function userHandler(request: HttpRequest, context: InvocationConte
         };
 
     } catch (error) {
-        let errorMessage = "An unknown error occurred.";
-        if (error instanceof Error) {
-            errorMessage = error.message;
-        } else if (typeof error === 'object' && error !== null && 'message' in error) {
-            errorMessage = (error as { message: string }).message; 
-        }
-
-        context.error(`Error creating user: ${errorMessage}`);
-
-        // Return a generic error to the client for security
+        context.error(`Error creating user: ${error instanceof Error ? error.message : String(error)}`);
         return {
             status: 500, 
             body: `Internal Server Error. Please check the function logs for details.`,
@@ -124,10 +102,9 @@ export async function userHandler(request: HttpRequest, context: InvocationConte
     }
 }
 
-// *** CRITICAL FIX: Add 'route: "register"' to match the frontend call /api/register ***
 app.http('UserHandler', {
     methods: ['POST'],
     authLevel: 'anonymous',
-    route: 'register', // <-- New line here
+    route: 'register',
     handler: userHandler
 });

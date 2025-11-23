@@ -1,8 +1,8 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 import { CosmosClient } from "@azure/cosmos";
-import * as bcrypt from "bcryptjs"; // Used for secure password comparison
+import * as bcrypt from "bcryptjs"; 
 
-// Configuration (Use Environment Variables!)
+// Configuration (Uses Environment Variables from Azure's "Environment variables" blade)
 const connectionString = process.env.COSMOS_DB_CONNECTION_STRING;
 const databaseName = process.env.COSMOS_DB_DATABASE_ID; 
 const containerName = "Users";
@@ -12,13 +12,14 @@ interface LoginRequest {
     password?: string;
 }
 
-// Interface for user data fetched from Cosmos DB (must include the hash field)
+// Interface for user data fetched from Cosmos DB 
 interface DbUser {
     id: string;
     email: string;
     name?: string;
     role: string;
-    passwordHash: string; // The hashed password field
+    // CONFIRMED NAME: passwordHash
+    passwordHash: string; 
 }
 
 export async function LoginHandler(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
@@ -28,24 +29,19 @@ export async function LoginHandler(request: HttpRequest, context: InvocationCont
         const body = await request.json() as LoginRequest;
         const { email, password } = body;
 
-        if (!email || !password) {
-            return { status: 400, body: "Please provide email and password" };
-        }
-
-        // --- Configuration Check: Ensure all necessary variables are present ---
-        if (!connectionString || !databaseName) {
-            context.error("Database configuration missing: Check COSMOS_DB_CONNECTION_STRING and COSMOS_DB_DATABASE_ID.");
-            return { status: 500, body: "Internal Server Error: Configuration missing." };
+        // Ensure configuration and required fields are present
+        if (!connectionString || !databaseName || !email || !password) {
+            context.error("Missing required fields or DB configuration.");
+            return { status: 400, body: "Missing required fields or server configuration." };
         }
 
         // 1. Connect to Cosmos DB
         const client = new CosmosClient(connectionString);
-        
-        // This line is correctly using the environment variable for the database ID
         const container = client.database(databaseName).container(containerName);
 
         // 2. Query for the user by email
         const querySpec = {
+            // Field name in query must be passwordHash
             query: "SELECT c.id, c.email, c.name, c.role, c.passwordHash FROM c WHERE c.email = @email",
             parameters: [
                 { name: "@email", value: email }
@@ -61,8 +57,7 @@ export async function LoginHandler(request: HttpRequest, context: InvocationCont
 
         const user = users[0] as DbUser;
 
-        // 3. Check Password (Secure Professional Standard)
-        // Compare the plain text password with the stored HASH
+        // 3. Check Password (Comparing against user.passwordHash)
         const passwordMatch = await bcrypt.compare(password, user.passwordHash);
 
         if (!passwordMatch) {
@@ -70,22 +65,21 @@ export async function LoginHandler(request: HttpRequest, context: InvocationCont
             return { status: 401, body: "Invalid email or password" };
         }
 
-        // 4. Success! Return a clean user profile (EXCLUDING the password hash)
+        // 4. Success! Return a clean user profile
         const userProfile = {
             id: user.id,
             email: user.email,
             name: user.name,
-            role: user.role || "student" // Default role
+            role: user.role || "student" 
         };
 
         return {
             status: 200,
-            jsonBody: userProfile // Ensures the response is JSON with correct Content-Type
+            jsonBody: userProfile
         };
 
     } catch (error) {
         context.error("Login Handler Error:", error);
-        // The most likely error here is a failure to connect to Cosmos DB
         return { 
             status: 500, 
             body: "Internal Server Error. Could not connect to the database. Check function logs." 
@@ -93,10 +87,9 @@ export async function LoginHandler(request: HttpRequest, context: InvocationCont
     }
 }
 
-// *** CRITICAL FIX: Add 'route: "login"' to match the frontend call /api/login ***
 app.http('LoginHandler', {
     methods: ['POST'],
     authLevel: 'anonymous',
-    route: 'login', // <-- New line here
+    route: 'login',
     handler: LoginHandler
 });
