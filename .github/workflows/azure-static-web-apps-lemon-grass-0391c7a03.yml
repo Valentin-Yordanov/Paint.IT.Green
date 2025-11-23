@@ -35,11 +35,14 @@ jobs:
             return await coredemo.getIDToken()
           result-encoding: string
           
-      # STEP 1: Install API dependencies and compile TypeScript
-      - name: Build API (TypeScript Compilation)
+      # STEP 1: Install dependencies, compile TypeScript, and prepare config files
+      - name: Build API (TypeScript Compilation & Prepare Config)
         run: |
           npm install
           npm run build 
+          # *** CRITICAL FIX: The Azure Functions runtime requires host.json
+          # to be in the root of the api_location folder. We must copy it in. ***
+          cp host.json dist/ 
         working-directory: api 
       # ------------------------------------------------------------------
         
@@ -51,7 +54,7 @@ jobs:
           action: "upload"
           ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
           app_location: "/"         # App source code path (your frontend)
-          # *** CRITICAL FIX: Point to the compiled JS output directory ***
+          # *** FIX: Point to the compiled JS output directory ***
           api_location: "api/dist"  
           output_location: "dist"   # Built app content directory (your frontend output)
           ########################################################################################################
