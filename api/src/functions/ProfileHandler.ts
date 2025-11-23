@@ -1,117 +1,132 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
-import { CosmosClient } from "@azure/cosmos";
+import { CosmosClient, ItemDefinition } from "@azure/cosmos";
+import * as bcrypt from "bcryptjs";
 
-// 1. Configuration
-const connectionString = process.env.COSMOS_DB_CONNECTION_STRING;
-const databaseName = "SchoolDB";
-const containerName = "Users";
-
-// Define the shape of the update request body
-interface ProfileUpdateRequest {
+// Local interface representing the structure of the user object saved to Cosmos DB.
+interface UserSchema extends ItemDefinition {
+    id: string; // The partition key, usually user's email or a unique ID
     email: string;
-    name?: string;
-    school?: string;
-    role?: string;
+    name: string;
+    passwordHash: string; // Storing the HASHED password
+    role: string;
+    isVerified: boolean;
+    schoolId: string;
+    createdAt: string;
 }
 
-export async function profileHandler(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
-    context.log(`Processing Profile request.`);
+// 1. Database Configuration
+const connectionString = process.env.COSMOS_DB_CONNECTION_STRING; 
 
-    if (!connectionString) {
-        return { status: 500, body: "Database configuration missing." };
-    }
+// THIS IS THE CRITICAL CHANGE: Reading the database name from Azure App Settings
+const databaseName = process.env.COSMOS_DB_DATABASE_ID; 
 
-    const client = new CosmosClient(connectionString);
-    const container = client.database(databaseName).container(containerName);
+const containerName = "Users"; // Ensure this matches your container
 
-    // GET: Fetch User Profile
-    if (request.method === "GET") {
-        const email = request.query.get('email');
+/**
+ * Handles user registration via POST request.
+ * Creates a new user in Cosmos DB with a hashed password.
+ */
+export async function userHandler(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
+    context.log(`Processing user signup request.`);
 
-        if (!email) {
-            return { status: 400, body: "Email is required to fetch profile." };
+    try {
+        // --- Configuration Check: Ensure all necessary variables are present ---
+        if (!connectionString || !databaseName) {
+            context.error("Database configuration missing: Check COSMOS_DB_CONNECTION_STRING and COSMOS_DB_DATABASE_ID.");
+            return { status: 500, body: "Internal Server Error: Database configuration missing." };
+        }
+        
+        // 1. Connect to Cosmos DB
+        const client = new CosmosClient(connectionString);
+        
+        // Using the environment variable for the database ID
+        const database = client.database(databaseName);
+        const container = database.container(containerName);
+
+        // 2. Get data from the frontend
+        const body = await request.json() as { email: string; password: string; name: string; requestedRole?: string };
+        const { email, password, name, requestedRole } = body;
+
+        if (!email || !password || !name) {
+            return { status: 400, body: "Please provide email, password, and name." };
         }
 
-        try {
-            const lowerEmail = email.toLowerCase();
-            const { resource: user } = await container.item(lowerEmail, lowerEmail).read();
+        const lowerCaseEmail = email.toLowerCase();
+        
+        // 3. Check if user already exists
+        const { resources: existingUsers } = await container.items
+            .query({
+                query: "SELECT * FROM c WHERE c.email = @email",
+                parameters: [{ name: "@email", value: lowerCaseEmail }]
+            })
+            .fetchAll();
 
-            if (!user) {
-                return { status: 404, body: "User not found." };
-            }
-
-            // Remove sensitive data
-            const { passwordHash, ...safeUser } = user;
-
-            // Merge with default stats if they don't exist in DB yet
-            const fullProfile = {
-                points: 0,
-                rank: "Newcomer",
-                treesPlanted: 0,
-                challengesCompleted: 0,
-                lessonsFinished: 0,
-                school: "Not Set",
-                ...safeUser 
-            };
-
-            return { status: 200, jsonBody: fullProfile };
-
-        } catch (error) {
-            context.error("Error fetching profile:", error);
-            return { status: 500, body: "Failed to fetch profile." };
+        if (existingUsers.length > 0) {
+            return { status: 409, body: "User with this email already exists." };
         }
-    }
 
-    // PUT: Update User Profile
-    if (request.method === "PUT") {
-        try {
-            // FIX: Use the specific interface instead of 'any'
-            const body = await request.json() as ProfileUpdateRequest;
-            const { email, name, school, role } = body;
+        // 4. Security: Encrypt the password (Salt = 10 rounds)
+        const salt = await bcrypt.genSalt(10); 
+        const passwordHash = await bcrypt.hash(password, salt);
 
-            if (!email) {
-                return { status: 400, body: "Email is required for update." };
-            }
+        // 5. Determine Role
+        const role = requestedRole || "Student"; // Changed default to "Student" for clarity
 
-            const lowerEmail = email.toLowerCase();
-            
-            // 1. Read existing item first
-            const { resource: existingUser } = await container.item(lowerEmail, lowerEmail).read();
+        // 6. Create the User Object
+        const newUser: UserSchema = {
+            // Using the email as ID and Partition Key (ensure your container uses /id or /email as partition key)
+            id: lowerCaseEmail, 
+            email: lowerCaseEmail,
+            name,
+            passwordHash,
+            role,
+            isVerified: false, 
+            schoolId: "default-school",
+            createdAt: new Date().toISOString()
+        };
 
-            if (!existingUser) {
-                return { status: 404, body: "User to update not found." };
-            }
-
-            // 2. Update allowed fields
-            const updatedUser = {
-                ...existingUser,
-                name: name || existingUser.name,
-                schoolId: school || existingUser.schoolId, 
-                role: role || existingUser.role,
-            };
-
-            // 3. Save back to DB
-            const { resource: savedUser } = await container.items.upsert(updatedUser);
-
+        // 7. Save to Cosmos DB
+        const { resource: createdUser } = await container.items.create(newUser); 
+        
+        if (!createdUser) {
+            context.error('Cosmos DB create operation returned no resource.');
             return { 
-                status: 200, 
-                jsonBody: { 
-                    message: "Profile updated successfully", 
-                    user: savedUser 
-                } 
+                status: 500, 
+                body: `Registration failed. Database operation did not return the created user.`,
             };
-
-        } catch (error) {
-            context.error("Error updating profile:", error);
-            return { status: 500, body: "Failed to update profile." };
         }
-    }
 
-    return { status: 405, body: "Method Not Allowed" };
+        // 8. Response for success
+        return {
+            status: 201,
+            jsonBody: {
+                message: "User created successfully! Please wait for a moderator to verify your account.",
+                userId: createdUser.id,
+                role: createdUser.role
+            }
+        };
+
+    } catch (error) {
+        let errorMessage = "An unknown error occurred.";
+        if (error instanceof Error) {
+            errorMessage = error.message;
+        } else if (typeof error === 'object' && error !== null && 'message' in error) {
+            errorMessage = (error as { message: string }).message; 
+        }
+
+        context.error(`Error creating user: ${errorMessage}`);
+
+        // Return a generic error to the client for security
+        return {
+            status: 500, 
+            body: `Internal Server Error. Please check the function logs for details.`,
+        };
+    }
 }
 
-app.http('ProfileHandler', {
-    methods: ['GET', 'PUT'],
+// 9. Register the Function with the Azure Host
+app.http('UserHandler', {
+    methods: ['POST'],
     authLevel: 'anonymous',
-    handler: profileHandler
+    handler: userHandler
 });

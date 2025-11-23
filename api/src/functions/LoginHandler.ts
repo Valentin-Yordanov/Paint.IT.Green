@@ -2,9 +2,15 @@ import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/fu
 import { CosmosClient } from "@azure/cosmos";
 import * as bcrypt from "bcryptjs"; // Used for secure password comparison
 
-// Configuration (Use Environment Variables in production! Check your local.settings.json)
+// Configuration (Use Environment Variables!)
+// 1. Get Connection String from Azure App Settings (COSMOS_DB_CONNECTION_STRING)
 const connectionString = process.env.COSMOS_DB_CONNECTION_STRING;
-const databaseName = "SchoolDB"; 
+
+// 2. Get Database ID from Azure App Settings (COSMOS_DB_DATABASE_ID)
+// THIS WAS HARDCODED - NOW WE USE THE ENVIRONMENT VARIABLE
+const databaseName = process.env.COSMOS_DB_DATABASE_ID; 
+
+// 3. Container Name is typically hardcoded if standard
 const containerName = "Users";
 
 interface LoginRequest {
@@ -32,13 +38,16 @@ export async function LoginHandler(request: HttpRequest, context: InvocationCont
             return { status: 400, body: "Please provide email and password" };
         }
 
-        if (!connectionString) {
-            context.error("Database connection string missing in environment variables.");
+        // --- Configuration Check: Ensure all necessary variables are present ---
+        if (!connectionString || !databaseName) {
+            context.error("Database configuration missing: Check COSMOS_DB_CONNECTION_STRING and COSMOS_DB_DATABASE_ID.");
             return { status: 500, body: "Internal Server Error: Configuration missing." };
         }
 
         // 1. Connect to Cosmos DB
         const client = new CosmosClient(connectionString);
+        
+        // This line is now correctly using the environment variable for the database ID
         const container = client.database(databaseName).container(containerName);
 
         // 2. Query for the user by email
@@ -82,7 +91,11 @@ export async function LoginHandler(request: HttpRequest, context: InvocationCont
 
     } catch (error) {
         context.error("Login Handler Error:", error);
-        return { status: 500, body: "Internal Server Error" };
+        // The most likely error here is a failure to connect to Cosmos DB
+        return { 
+            status: 500, 
+            body: "Internal Server Error. Could not connect to the database. Check function logs." 
+        };
     }
 }
 
