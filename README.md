@@ -54,3 +54,16 @@ npm install
 cd api
 npm install
 cd ..
+```
+
+### 2. Run app
+
+```bash
+##You will need 2 terminals
+# Terminal 1. The BackEnd
+cd api
+npm start
+
+# Terminal 2. FrontEnd (if not in eco-champions-club: cd eco-champions-club)
+npm run dev
+```
