@@ -3,7 +3,7 @@ import { CosmosClient } from "@azure/cosmos";
 import * as bcrypt from "bcryptjs";
 import * as jwt from "jsonwebtoken"; // Import JWT if you plan to use tokens later, though not used here
 
-// Configuration (Uses Environment Variables from Azure's "Environment variables" blade)
+// Configuration (Uses Environment Variables from Azure's "Environment variables" blade) 
 const connectionString = process.env.COSMOS_DB_CONNECTION_STRING;
 const databaseName = process.env.COSMOS_DB_DATABASE_ID; 
 const containerName = "Users";
@@ -13,7 +13,7 @@ interface LoginRequest {
     password?: string;
 }
 
-// Interface for user data fetched from Cosmos DB 
+// Interface for user data fetched from Cosmos DB  
 interface DbUser {
     id: string;
     email: string;
@@ -61,7 +61,7 @@ export async function loginHandler(request: HttpRequest, context: InvocationCont
             return { status: 401, body: "Invalid email or password" };
         }
 
-        const user = users[0] as DbUser;
+        const user = users[0] as DbUser; 
 
         // 3. Check Password (Comparing against user.passwordHash)
         const passwordMatch = await bcrypt.compare(password, user.passwordHash);

@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TreePine, Droplets, Wind, Heart, Recycle, Users } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Button } from "@/components/ui/button";
 
 const Learn = () => {
   const { t } = useLanguage();
@@ -111,7 +112,7 @@ const Learn = () => {
         </div>
 
         <Tabs defaultValue="wildlife" className="space-y-8">
-          <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 h-auto gap-2 bg-transparent">
+          <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 h-auto gap-2 bg-transparent ">
             {topics.map((topic) => (
               <TabsTrigger
                 key={topic.id}

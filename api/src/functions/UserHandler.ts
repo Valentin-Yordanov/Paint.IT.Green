@@ -2,16 +2,16 @@ import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/fu
 import { CosmosClient, ItemDefinition } from "@azure/cosmos";
 import * as bcrypt from "bcryptjs";
 
-interface UserSchema extends ItemDefinition {
-    id: string; 
-    email: string;
-    name: string;
+interface UserSchema extends ItemDefinition { 
+    id: string;   
+    email: string; 
+    name: string;  
     // CONFIRMED NAME: passwordHash
-    passwordHash: string; 
-    role: string;
-    isVerified: boolean;
-    schoolId: string;
-    createdAt: string;
+    passwordHash: string;  
+    role: string; 
+    isVerified: boolean; 
+    schoolId: string; 
+    createdAt: string; 
 }
 
 // 1. Database Configuration
@@ -37,7 +37,7 @@ export async function userHandler(request: HttpRequest, context: InvocationConte
         }
         
         // 1. Connect to Cosmos DB
-        const client = new CosmosClient(connectionString);
+        const client = new CosmosClient(connectionString); 
         const database = client.database(databaseName);
         const container = database.container(containerName);
 
@@ -68,7 +68,7 @@ export async function userHandler(request: HttpRequest, context: InvocationConte
             email: lowerCaseEmail,
             name,
             // CRITICAL FIX: SAVING AS passwordHash
-            passwordHash: hashedPassword, 
+            passwordHash: hashedPassword,  
             role,
             isVerified: false, 
             schoolId: "default-school",
@@ -92,7 +92,7 @@ export async function userHandler(request: HttpRequest, context: InvocationConte
                 role: createdUser.role
             }
         };
-
+ 
     } catch (error) {
         context.error(`Error creating user: ${error instanceof Error ? error.message : String(error)}`);
         return {

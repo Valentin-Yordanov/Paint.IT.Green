@@ -83,7 +83,7 @@ export async function userHandler(request: HttpRequest, context: InvocationConte
             isVerified: false, 
             schoolId: "default-school",
             createdAt: new Date().toISOString()
-        };
+        }; 
 
         // 7. Save to Cosmos DB
         const { resource: createdUser } = await container.items.create(newUser); 
@@ -117,7 +117,7 @@ export async function userHandler(request: HttpRequest, context: InvocationConte
         context.error(`Error creating user: ${errorMessage}`);
 
         // Return a generic error to the client for security
-        return {
+        return { 
             status: 500, 
             body: `Internal Server Error. Please check the function logs for details.`,
         };
@@ -126,7 +126,7 @@ export async function userHandler(request: HttpRequest, context: InvocationConte
 
 // 9. Register the Function with the Azure Host
 app.http('UserHandler', {
-    methods: ['POST'],
+    methods: ['POST'], 
     authLevel: 'anonymous',
     handler: userHandler
 });

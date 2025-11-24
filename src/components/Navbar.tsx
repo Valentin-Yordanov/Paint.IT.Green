@@ -2,22 +2,22 @@ import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Leaf, Trophy, Users, BookOpen, Menu, User } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useLanguage } from "../contexts/LanguageContext"; 
-import { useAuth } from "../contexts/AuthContext"; 
+import { useLanguage } from "../contexts/LanguageContext";
+import { useAuth } from "../contexts/AuthContext";
 
 const Navbar = () => {
   const location = useLocation();
   const { t } = useLanguage();
-  const { isAuthenticated } = useAuth(); 
-  
+  const { isAuthenticated } = useAuth();
+
   const isActive = (path: string) => location.pathname === path;
-  
+
   const navLinks = [
-    { path: "/", label: t('nav.home'), icon: Leaf },
-    { path: "/learn", label: t('nav.learn'), icon: BookOpen },
-    { path: "/compete", label: t('nav.compete'), icon: Trophy },
-    { path: "/community", label: t('nav.community'), icon: Users },
-    { path: "/profile", label: t('nav.profile'), icon: User },
+    { path: "/", label: t("nav.home"), icon: Leaf },
+    { path: "/learn", label: t("nav.learn"), icon: BookOpen },
+    { path: "/compete", label: t("nav.compete"), icon: Trophy },
+    { path: "/community", label: t("nav.community"), icon: Users },
+    { path: "/profile", label: t("nav.profile"), icon: User },
   ];
 
   const NavLinks = () => (
@@ -25,7 +25,7 @@ const Navbar = () => {
       {navLinks.map(({ path, label, icon: Icon }) => (
         <Link key={path} to={path}>
           <Button
-            variant={isActive(path) ? "default" : "ghost"}
+            variant={isActive(path) ? "default" : "outline"}
             className="gap-2"
           >
             <Icon className="h-4 w-4" />
@@ -47,12 +47,12 @@ const Navbar = () => {
       <>
         <Link to="/login" className={isMobile ? "w-full" : ""}>
           <Button variant="outline" className={isMobile ? "w-full" : ""}>
-            {t('nav.login')}
+            {t("nav.login")}
           </Button>
         </Link>
         <Link to="/signup" className={isMobile ? "w-full" : ""}>
           <Button className={isMobile ? "w-full" : ""}>
-            {t('nav.signup')}
+            {t("nav.signup")}
           </Button>
         </Link>
       </>
@@ -63,12 +63,14 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <img 
-            src="/pig-logo.png" 
-            alt="PIG Logo" 
-            className="h-12 w-12 object-contain" 
+          <img
+            src="/pig-logo.png"
+            alt="PIG Logo"
+            className="h-12 w-12 object-contain"
           />
-          <span className="text-xl font-bold text-foreground">{t('Paint IT Green')}</span>
+          <span className="text-xl font-bold text-foreground">
+            {t("Paint IT Green")}
+          </span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -76,7 +78,7 @@ const Navbar = () => {
           <NavLinks />
           <AuthButtons />
         </div>
-        
+
         {/* Mobile Navigation */}
         <Sheet>
           <SheetTrigger asChild className="md:hidden">
