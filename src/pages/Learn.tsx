@@ -117,7 +117,7 @@ const Learn = () => {
               <TabsTrigger
                 key={topic.id}
                 value={topic.id}
-                className="flex flex-col gap-2 p-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                className="flex flex-col gap-2 p-4 border border-border data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:border-primary" // Added border classes here
               >
                 <topic.icon className="h-5 w-5" />
                 <span className="text-sm">{topic.title}</span>
