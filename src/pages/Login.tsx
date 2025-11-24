@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { Loader2 } from "lucide-react";
-import { XCircle } from "lucide-react"; // Import XCircle for error display
+import { XCircle } from "lucide-react"; 
 
 const Login = () => {
  const { t } = useLanguage();
@@ -19,14 +19,12 @@ const Login = () => {
 
  const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
-  setError(""); // Clear previous errors
+  setError(""); 
   setIsLoading(true);
 
   try {
-   // FIX: Change URL from '/api/LoginHandler' to the registered route '/api/login'
    const response = await fetch('/api/login', { 
     method: 'POST',
-    // *** IMPORTANT: Must include Content-Type header ***
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password })
    });
@@ -34,7 +32,7 @@ const Login = () => {
    if (response.ok) {
     // Successful login (status 200)
     const userData = await response.json();
-    login(userData); // This triggers the Context update and navigation
+    login(userData); 
    } else {
     // Unsuccessful login (status 401, 400, 500 etc.)
     const errorBody = await response.text();
@@ -46,16 +44,12 @@ const Login = () => {
       // Check for common error fields in the JSON body
       errorMessage = jsonError.body || jsonError.message || errorMessage;
     } catch {
-      // If it's plain text, use it directly (e.g., "Invalid email or password" from the backend)
       errorMessage = errorBody || errorMessage;
     }
-
-    // Set the error state, which displays the message to the user
     setError(errorMessage);
    }
   } catch (err) {
    console.error("Network or unexpected error during login:", err);
-   // Fallback for network issues (CORS, server not running, etc.)
    setError(t('login.error.serverOffline') || "Could not connect to the backend server. Please check your connection.");
   } finally {
    setIsLoading(false);

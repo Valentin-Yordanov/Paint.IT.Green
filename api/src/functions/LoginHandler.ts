@@ -1,7 +1,7 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 import { CosmosClient } from "@azure/cosmos";
 import * as bcrypt from "bcryptjs";
-import * as jwt from "jsonwebtoken"; // Import JWT if you plan to use tokens later, though not used here
+import * as jwt from "jsonwebtoken"; 
 
 // Configuration (Uses Environment Variables from Azure's "Environment variables" blade) 
 const connectionString = process.env.COSMOS_DB_CONNECTION_STRING;
@@ -19,11 +19,10 @@ interface DbUser {
     email: string;
     name?: string;
     role: string;
-    // CONFIRMED NAME: passwordHash
     passwordHash: string; 
 }
 
-// Renamed function to lowercase 'loginHandler'
+
 export async function loginHandler(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`Login attempt processing...`);
 
@@ -33,7 +32,6 @@ export async function loginHandler(request: HttpRequest, context: InvocationCont
 
         // Ensure configuration and required fields are present
         if (!connectionString || !databaseName) {
-            // FIX: Return 500 status with specific message if DB config is missing
             context.error("Database configuration missing (COSMOS_DB_CONNECTION_STRING or ID).");
             return { status: 500, body: "Internal Server Error: Database configuration missing." };
         }
@@ -93,10 +91,10 @@ export async function loginHandler(request: HttpRequest, context: InvocationCont
     }
 }
 
-// FIX: Renamed ID to 'UserLogin' and updated handler reference to 'loginHandler'
+
 app.http('UserLogin', {
     methods: ['POST'],
     authLevel: 'anonymous',
     route: 'login',
-    handler: loginHandler // Uses the renamed function
+    handler: loginHandler 
 });

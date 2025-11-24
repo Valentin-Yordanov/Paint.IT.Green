@@ -6,7 +6,6 @@ interface UserSchema extends ItemDefinition {
     id: string;   
     email: string; 
     name: string;  
-    // CONFIRMED NAME: passwordHash
     passwordHash: string;  
     role: string; 
     isVerified: boolean; 
@@ -19,10 +18,6 @@ const connectionString = process.env.COSMOS_DB_CONNECTION_STRING;
 const databaseName = process.env.COSMOS_DB_DATABASE_ID; 
 const containerName = "Users";
 
-/**
- * Handles user registration via POST request.
- * Creates a new user in Cosmos DB with a hashed password.
- */
 export async function userHandler(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`Processing user signup request.`);
 
@@ -30,7 +25,6 @@ export async function userHandler(request: HttpRequest, context: InvocationConte
         const body = await request.json() as { email: string; password: string; name: string; requestedRole?: string };
         const { email, password, name, requestedRole } = body;
 
-        // Ensure configuration and required fields are present
         if (!connectionString || !databaseName || !email || !password || !name) {
             context.error("Missing required fields or DB configuration.");
             return { status: 400, body: "Missing required fields or server configuration." };
@@ -67,7 +61,6 @@ export async function userHandler(request: HttpRequest, context: InvocationConte
             id: lowerCaseEmail, 
             email: lowerCaseEmail,
             name,
-            // CRITICAL FIX: SAVING AS passwordHash
             passwordHash: hashedPassword,  
             role,
             isVerified: false, 
@@ -102,7 +95,6 @@ export async function userHandler(request: HttpRequest, context: InvocationConte
     }
 }
 
-// FIX: Renamed function ID from 'UserHandler' to 'RegisterUser' to resolve the registration conflict.
 app.http('RegisterUser', { 
     methods: ['POST'],
     authLevel: 'anonymous',

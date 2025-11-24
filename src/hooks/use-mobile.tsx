@@ -32,4 +32,4 @@ export function useIsMobile(customBreakpoint = MOBILE_BREAKPOINT) {
   return isMobile;
 }
 
-//How big is the users screen(is smaller than a tablet)
+//How big is the users screen(is it smaller than a tablet)

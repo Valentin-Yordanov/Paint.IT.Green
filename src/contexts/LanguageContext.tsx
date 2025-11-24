@@ -1,33 +1,33 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-
-type Language = 'en' | 'bg';
-
-interface LanguageContextType {
-  language: Language;
-  setLanguage: (lang: Language) => void;
-  t: (key: string) => string;
-}
-
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
-
-// eslint-disable-next-line react-refresh/only-export-components  
-export const useLanguage = () => {
-  const context = useContext(LanguageContext);
-  if (!context) {
-    throw new Error('useLanguage must be used within LanguageProvider');
-  }
-  return context;
-};
-
-export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState<Language>(() => {
-    const saved = localStorage.getItem('language');
-    return (saved as Language) || 'en';
-  });
-
-  useEffect(() => {
-    localStorage.setItem('language', language);
-  }, [language]);
+import React, { createContext, useContext, useState, useEffect } from 'react'; 
+ 
+type Language = 'en' | 'bg'; 
+ 
+interface LanguageContextType { 
+  language: Language; 
+  setLanguage: (lang: Language) => void; 
+  t: (key: string) => string;  
+} 
+  
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined); 
+ 
+// eslint-disable-next-line react-refresh/only-export-components   
+export const useLanguage = () => { 
+  const context = useContext(LanguageContext); 
+  if (!context) { 
+    throw new Error('useLanguage must be used within LanguageProvider');  
+  } 
+  return context; 
+}; 
+ 
+export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => { 
+  const [language, setLanguage] = useState<Language>(() => { 
+    const saved = localStorage.getItem('language'); 
+    return (saved as Language) || 'en'; 
+  }); 
+ 
+  useEffect(() => { 
+    localStorage.setItem('language', language); 
+  }, [language]); 
 
   const t = (key: string): string => {
     const translations = language === 'bg' ? bgTranslations : enTranslations;
@@ -590,11 +590,11 @@ const bgTranslations: Record<string, string> = {
   'ourValues.compassionText': 'Защитата на околната среда започва с грижата - за нашата планета, за всички видове и един за друг. Насърчаваме общност, изградена върху емпатия, уважение и доброта.',
   'ourValues.collaboration': 'Сътрудничество',
   'ourValues.collaborationText': 'Никой не може да реши климатичната криза сам. Вярваме в силата на колективните действия, обединявайки ученици, училища и общности по целия свят.',
-  'ourValues.livingValues': 'Живеем с нашите ценности',
+  'ourValues.livingValues': 'Живеем с нашите ценности', 
   'ourValues.livingValuesText': 'Това не са просто думи на страница - те са принципи, които практикуваме всеки ден. От начина, по който проектираме учебната си програма, до начина, по който подкрепяме общността си, нашите ценности ни водят напред.',
-  'ourValues.livingValuesText2': 'Когато се присъедините към PIG, ставате част от движение, което приоритизира образованието, празнува действията, практикува състрадание и процъфтява чрез сътрудничество.',
-  'ourValues.joinMission': 'Присъединете се към нашата мисия',
-  'ourValues.joinMissionText': 'Готови ли сте да бъдете част от общност, която живее тези ценности всеки ден? Започнете пътуването си с PIG.',
-  'ourValues.learnMore': 'Научете повече за нас',
-
-};
+  'ourValues.livingValuesText2': 'Когато се присъедините към PIG, ставате част от движение, което приоритизира образованието, празнува действията, практикува състрадание и процъфтява чрез сътрудничество.', 
+  'ourValues.joinMission': 'Присъединете се към нашата мисия', 
+  'ourValues.joinMissionText': 'Готови ли сте да бъдете част от общност, която живее тези ценности всеки ден? Започнете пътуването си с PIG.', 
+  'ourValues.learnMore': 'Научете повече за нас',  
+}; 
+ 

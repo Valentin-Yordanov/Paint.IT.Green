@@ -19,7 +19,7 @@ const Profile = () => {
   const { toast } = useToast();
   const { t, language, setLanguage } = useLanguage();
   const { theme, setTheme } = useTheme();
-  const { logout, user } = useAuth(); // getting 'user' from context to know WHO to fetch
+  const { logout, user } = useAuth(); 
 
   const [isLoading, setIsLoading] = useState(true);
   const [userStats, setUserStats] = useState({
@@ -71,7 +71,7 @@ const Profile = () => {
           setUserStats({
             name: data.name || "User",
             role: data.role || "Student",
-            school: data.schoolId || "Not Set", // Note: DB field is schoolId
+            school: data.schoolId || "Not Set", 
             email: data.email,
             points: data.points || 0,
             rank: data.rank || "Bronze",
@@ -105,7 +105,7 @@ const Profile = () => {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: userStats.email, // Identify user by email
+          email: userStats.email, 
           name: editedName,
           school: editedSchool,
           role: editedRole
@@ -427,7 +427,7 @@ const Profile = () => {
                         id="email"
                         type="email"
                         value={editedEmail}
-                        disabled // Disabled because changing email breaks the ID link usually
+                        disabled 
                         className="bg-muted"
                       />
                     </div>

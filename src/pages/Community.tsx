@@ -78,8 +78,6 @@ type Post = {
 
 const Community = () => {
   const { toast } = useToast();
-  // const { t } = useLanguage(); // Assuming this context exists in your project
-  // Mock translation function if context is missing
   const t = (key: string) => {
      const translations: {[key:string]: string} = {
          "community.public": "Public",

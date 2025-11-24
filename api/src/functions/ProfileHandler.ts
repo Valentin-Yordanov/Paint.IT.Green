@@ -4,10 +4,10 @@ import * as bcrypt from "bcryptjs";
 
 // Local interface representing the structure of the user object saved to Cosmos DB.
 interface UserSchema extends ItemDefinition {
-    id: string; // The partition key, usually user's email or a unique ID
+    id: string; 
     email: string;
     name: string;
-    passwordHash: string; // Storing the HASHED password
+    passwordHash: string; 
     role: string;
     isVerified: boolean;
     schoolId: string;
@@ -17,15 +17,10 @@ interface UserSchema extends ItemDefinition {
 // 1. Database Configuration
 const connectionString = process.env.COSMOS_DB_CONNECTION_STRING; 
 
-// THIS IS THE CRITICAL CHANGE: Reading the database name from Azure App Settings
 const databaseName = process.env.COSMOS_DB_DATABASE_ID; 
 
-const containerName = "Users"; // Ensure this matches your container
+const containerName = "Users"; 
 
-/**
- * Handles user registration via POST request.
- * Creates a new user in Cosmos DB with a hashed password.
- */
 export async function userHandler(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`Processing user signup request.`);
 
@@ -74,7 +69,6 @@ export async function userHandler(request: HttpRequest, context: InvocationConte
 
         // 6. Create the User Object
         const newUser: UserSchema = {
-            // Using the email as ID and Partition Key (ensure your container uses /id or /email as partition key)
             id: lowerCaseEmail, 
             email: lowerCaseEmail,
             name,

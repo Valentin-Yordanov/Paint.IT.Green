@@ -1,7 +1,7 @@
-*.js.map
-*.ts
+js.map
+*ts
 .git*
-.vscode
+vscode
 __azurite_db*__.json
 __blobstorage__
 __queuestorage__

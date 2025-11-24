@@ -7,7 +7,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
 
-// Define the interface for the possible response body from the API
 interface ApiResponseData {
    body?: string; 
    message?: string;
@@ -47,7 +46,7 @@ const Signup: React.FC = () => {
             requestedRole: "Student" 
          };
 
-         // FIX: Change URL from '/api/UserHandler' to the registered route '/api/register'
+
          const response = await fetch('/api/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -65,7 +64,6 @@ const Signup: React.FC = () => {
          }
 
          if (response.ok) {
-            // If the backend response contains a specific success message, use that.
             const message = data.message || t('signup.successMessage');
             setSuccessMessage(message);
             

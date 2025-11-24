@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label"; 
 import { Trophy, Medal, Award, TrendingUp, CalendarDays, Pin, Clock, Star, Plus, Loader2, Trash2, Edit } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
-import { useLanguage } from "@/contexts/LanguageContext"; // Ensure this path is correct
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const IS_LOGGED_IN = true; 
 const CURRENT_USER_ID = "user-123-mock"; 
@@ -250,8 +250,6 @@ const EventCalendar = () => {
 
 // --- Main Compete Component ---
 const Compete = () => {
-  // Use the actual context if available, or fallback to mock
-  // const { t } = useLanguage(); 
   const useLanguageMock = () => ({ t: (key: string, def: string) => def || key });
   const { t } = useLanguageMock();
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
