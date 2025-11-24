@@ -80,7 +80,7 @@ const enTranslations: Record<string, string> = {
   'signup.loginLink': 'Login',
 
   // Home Page
-  'home.hero.title': 'Protect Our Planet,',
+  'home.hero.title': 'Lets Protect Our Planet,',
   'home.hero.title.highlight': 'Together',
   'home.hero.subtitle': 'Join students from around the world in learning about nature conservation and making a real difference in your community',
   'home.hero.start': 'Start Learning',
@@ -359,8 +359,8 @@ const bgTranslations: Record<string, string> = {
   'signup.loginLink': 'Влез',
 
   // Home Page
-  'home.hero.title': 'Защитете нашата планета,',
-  'home.hero.title.highlight': 'Заедно',
+  'home.hero.title': 'Нека заедно защитим планетата ',
+  'home.hero.title.highlight': 'НИ',
   'home.hero.subtitle': 'Присъединете се към ученици от цял свят в изучаването на опазването на природата и правенето на реална промяна във вашата общност',
   'home.hero.start': 'Започни да учиш',
   'home.hero.view': 'Виж състезанията',
