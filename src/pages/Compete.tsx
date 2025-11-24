@@ -64,7 +64,7 @@ const EventCalendar = () => {
         setIsFormOpen(false);
         setNewEvent({ title: "", time: "", location: "" });
     }
-  }, [selectedDate]);
+  }, [editingId, selectedDate]);
 
   const handleSaveEvent = async () => {
     if (!selectedDate || !newEvent.title) return;
