@@ -18,7 +18,7 @@ const Navbar = () => {
     { path: "/compete", label: t("nav.compete"), icon: Trophy },
     { path: "/community", label: t("nav.community"), icon: Users },
     { path: "/profile", label: t("nav.profile"), icon: User },
-  ];
+  ].filter(link => link.path !== "/profile" || isAuthenticated); // Filter out /profile if not authenticated
 
   const NavLinks = () => (
     <>
