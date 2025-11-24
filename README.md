@@ -1,6 +1,6 @@
 # 🌿 PIG - Paint IT Green
 
-![Project Banner](public/og-image.jpg) 
+![Project Banner](public/og-img.png) 
 > **Join students worldwide in learning about nature conservation, competing in environmental challenges, and making a real difference in your community.**
 
 ## 📖 About The Project
@@ -22,7 +22,7 @@ This project uses a modern **Serverless** architecture hosted on Azure.
 | Area | Technology |
 | :--- | :--- |
 | **Frontend** | React, TypeScript, Vite |
-| **Styling** | Tailwind CSS, shadcn/ui |
+| **Styling** | Tailwind CSS|
 | **Backend** | Azure Functions (Node.js v4 Model) |
 | **Hosting** | Azure Static Web Apps (SWA) |
 | **CI/CD** | GitHub Actions |

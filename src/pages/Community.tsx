@@ -5,8 +5,30 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
-import { Heart, MessageCircle, Share2, School, Users, Send, Plus, Edit, Trash2, Image, Globe, Shield, Book, Menu} from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Heart,
+  MessageCircle,
+  Share2,
+  School,
+  Users,
+  Send,
+  Plus,
+  Edit,
+  Trash2,
+  Image as ImageIcon,
+  Globe,
+  Shield,
+  Menu,
+  X,
+  LayoutGrid
+} from "lucide-react";
 import studentsImage from "@/assets/students-planting.jpg";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -31,7 +53,7 @@ const ALL_CLASSES = [
 ];
 // --- END MOCK DATA ---
 
-// --- EXPLICIT TYPES (FIX for TypeScript error) ---
+// --- EXPLICIT TYPES ---
 type Comment = {
   author: string;
   role: string;
@@ -56,7 +78,16 @@ type Post = {
 
 const Community = () => {
   const { toast } = useToast();
-  const { t } = useLanguage();
+  // const { t } = useLanguage(); // Assuming this context exists in your project
+  // Mock translation function if context is missing
+  const t = (key: string) => {
+     const translations: {[key:string]: string} = {
+         "community.public": "Public",
+         "community.title": "Community"
+     };
+     return translations[key] || key;
+  }
+
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
   const [showComments, setShowComments] = useState<Set<number>>(new Set());
   const [newComment, setNewComment] = useState<{ [key: number]: string }>({});
@@ -77,9 +108,11 @@ const Community = () => {
     undefined
   );
   const [activeFeed, setActiveFeed] = useState<string>("public");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State for mobile sidebar
+  
+  // Mobile Sidebar State
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Initial post data with Post[] type
+  // Initial post data
   const [posts, setPosts] = useState<Post[]>([
     {
       id: 0,
@@ -332,7 +365,6 @@ const Community = () => {
 
   const handleOpenCreateDialog = (isOpen: boolean) => {
     if (isOpen) {
-      // Set default visibility based on the active feed
       if (activeFeed === "mySchool" || ALL_SCHOOLS.includes(activeFeed)) {
         setNewPostVisibility("school");
       } else if (activeFeed === "myClass") {
@@ -341,7 +373,6 @@ const Community = () => {
         setNewPostVisibility("public");
       }
 
-      // Set default school based on the active feed
       if (ALL_SCHOOLS.includes(activeFeed)) {
         setNewPostSchool(activeFeed);
       } else {
@@ -378,319 +409,230 @@ const Community = () => {
   });
 
   const getFeedTitle = () => {
-    if (activeFeed === "public") return t("community.public");
+    if (activeFeed === "public") return t("community.public") || "Public Feed";
     if (activeFeed === "mySchool") return MOCK_USER.school;
     if (activeFeed === "myClass") return MOCK_USER.class;
     if (ALL_SCHOOLS.includes(activeFeed)) return activeFeed;
     if (ALL_CLASSES.includes(activeFeed)) return activeFeed;
-    return t("community.title");
+    return t("community.title") || "Community";
   };
 
-  const SidebarNavButton = ({
-    feedName,
-    label,
-    icon,
-  }: {
-    feedName: string;
-    label: string;
-    icon: React.ReactNode;
-  }) => {
-    const isActive = activeFeed === feedName;
-    return (
-      <Button
-        variant={isActive ? "secondary" : "ghost"}
-        className={`w-full justify-start gap-3 relative overflow-hidden transition-all
-          ${
-            isActive
-              ? "bg-primary/10 text-primary hover:bg-primary/15 font-medium shadow-sm"
-              : "hover:bg-accent/50"
-          }
-        `}
-        onClick={() => {
-          setActiveFeed(feedName);
-          setIsSidebarOpen(false);
-        }}
-      >
-        {isActive && (
-          <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-r" />
-        )}
-        <div className={`${isActive ? "text-primary" : ""}`}>{icon}</div>
-        <span className="truncate">{label}</span>
-      </Button>
-    );
+  const getFeedSubtitle = () => {
+    if (activeFeed === "public") return "Environmental initiatives from schools around the world";
+    if (activeFeed === "mySchool") return "Updates and events from your school";
+    if (activeFeed === "myClass") return "Class discussions and projects";
+    return "Group updates";
   };
+
+  // --- REUSABLE SIDEBAR BUTTON COMPONENT ---
+  const SidebarButton = ({ 
+    active, 
+    icon, 
+    label, 
+    onClick 
+  }: { 
+    active: boolean; 
+    icon: React.ReactNode; 
+    label: string; 
+    onClick: () => void; 
+  }) => (
+    <Button
+      variant={active ? "secondary" : "ghost"}
+      className={`w-full justify-start gap-3 h-12 px-4 mb-1 relative transition-all duration-200 ${
+        active 
+          ? "bg-primary/10 text-primary font-semibold" 
+          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+      }`}
+      onClick={() => {
+        onClick();
+        setIsMobileMenuOpen(false); // Close sidebar on mobile when clicked
+      }}
+    >
+      {/* Active Indicator Line */}
+      {active && (
+        <div className="absolute left-0 top-1/4 bottom-1/4 w-1 bg-primary rounded-r-full" />
+      )}
+      <span className={active ? "text-primary" : "text-muted-foreground"}>{icon}</span>
+      <span className="truncate">{label}</span>
+    </Button>
+  );
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-b from-background to-secondary/20">
-      {/* OVERLAY FOR MOBILE */}
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-20 md:hidden"
-          onClick={() => setIsSidebarOpen(false)}
+    <div className="flex w-full min-h-screen bg-background relative">
+      
+      {/* --- MOBILE OVERLAY (Darkens background when sidebar is open) --- */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 z-40 md:hidden backdrop-blur-sm"
+          onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
-      {/* RESPONSIVE SIDEBAR - Modern Teams-like Design */}
-      <aside
-        className={`w-72 border-r border-border bg-card/95 backdrop-blur-sm
-          fixed inset-y-0 left-0 z-30 transition-transform duration-300 ease-in-out
-          ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-          md:sticky md:translate-x-0 flex flex-col`}
+      {/* --- SIDEBAR NAVIGATION (LEFT) --- */}
+      <aside 
+        className={`
+          fixed md:sticky top-0 h-screen w-[280px] z-50 
+          bg-card border-r shadow-lg md:shadow-none
+          transform transition-transform duration-300 ease-in-out
+          ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+          flex flex-col /* Changed: Removed overflow-y-auto from here */
+        `}
       >
-        {/* Sidebar Header */}
-        <div className="p-6 border-b border-border bg-gradient-to-br from-primary/5 to-accent/5">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Globe className="h-5 w-5 text-primary" />
+        {/* FIXED HEADER SECTION */}
+        <div className="p-6 shrink-0 border-b border-border/40">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground">
+              <LayoutGrid size={20} />
             </div>
             <div>
-              <h2 className="text-lg font-bold tracking-tight">
-                {t("CURRENT GROUP")}
-              </h2>
-              <p className="text-xs text-muted-foreground">SOMETHING ABOUT THE GROUP MBY</p>
+              <h2 className="font-bold text-lg leading-tight tracking-tight">Community</h2>
+              <p className="text-xs text-muted-foreground">Paint IT Green</p>
             </div>
           </div>
         </div>
 
-        {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-6">
-          {/* Public Feed */}
-          <div className="space-y-2">
-            <SidebarNavButton
-              feedName="public"
-              label={t("community.public")}
-              icon={<Globe className="h-4 w-4" />}
-            />
-          </div>
+        {/* SCROLLABLE NAVIGATION SECTION */}
+        <nav className="flex-1 overflow-y-auto p-6">
+            {/* Main Feeds */}
+            <div>
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 pl-4">
+                Feeds
+              </h3>
+              <SidebarButton
+                active={activeFeed === "public"}
+                icon={<Globe size={18} />}
+                label={t("community.public") || "Public Feed"}
+                onClick={() => setActiveFeed("public")}
+              />
+            </div>
 
-          {/* Student Groups */}
-          {MOCK_USER.role === "student" && (
-            <div className="space-y-2">
-              <div className="px-3 py-2 flex items-center gap-2">
-                <div className="h-1 w-1 rounded-full bg-primary" />
-                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  {t("My Groups")}
+            {/* Groups */}
+            {MOCK_USER.role === "student" && (
+              <div>
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 pl-4 mt-6">
+                  My Groups
                 </h3>
-              </div>
-              <div className="space-y-1">
-                <SidebarNavButton
-                  feedName="mySchool"
+                <SidebarButton
+                  active={activeFeed === "mySchool"}
+                  icon={<School size={18} />}
                   label={MOCK_USER.school}
-                  icon={<School className="h-4 w-4" />}
+                  onClick={() => setActiveFeed("mySchool")}
                 />
-                <SidebarNavButton
-                  feedName="myClass"
+                <SidebarButton
+                  active={activeFeed === "myClass"}
+                  icon={<Users size={18} />}
                   label={MOCK_USER.class}
-                  icon={<Users className="h-4 w-4" />}
+                  onClick={() => setActiveFeed("myClass")}
                 />
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Moderator View */}
-          {MOCK_USER.role === "moderator" && (
-            <div className="space-y-4">
-              <div className="px-3 py-2 flex items-center gap-2 bg-accent/10 rounded-lg">
-                <Shield className="h-4 w-4 text-accent" />
-                <h3 className="text-sm font-semibold tracking-tight">
-                  {t("community.moderator")}
+            {/* Moderator Tools */}
+            {MOCK_USER.role === "moderator" && (
+              <div>
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 pl-4 mt-6 flex items-center gap-2">
+                  <Shield size={12} /> Moderation
                 </h3>
+                {ALL_SCHOOLS.map((school) => (
+                  <SidebarButton
+                    key={school}
+                    active={activeFeed === school}
+                    icon={<School size={18} />}
+                    label={school}
+                    onClick={() => setActiveFeed(school)}
+                  />
+                ))}
+                <div className="my-2 border-t border-border/50" />
+                {ALL_CLASSES.map((cls) => (
+                  <SidebarButton
+                    key={cls}
+                    active={activeFeed === cls}
+                    icon={<Users size={18} />}
+                    label={cls}
+                    onClick={() => setActiveFeed(cls)}
+                  />
+                ))}
               </div>
-
-              <div className="space-y-3">
-                <div>
-                  <div className="px-3 py-1.5 flex items-center gap-2">
-                    <div className="h-1 w-1 rounded-full bg-muted-foreground" />
-                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                      {t("community.allSchools")}
-                    </h4>
-                  </div>
-                  <div className="space-y-1 mt-1">
-                    {ALL_SCHOOLS.map((school) => (
-                      <SidebarNavButton
-                        key={school}
-                        feedName={school}
-                        label={school}
-                        icon={<School className="h-4 w-4" />}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <div className="px-3 py-1.5 flex items-center gap-2">
-                    <div className="h-1 w-1 rounded-full bg-muted-foreground" />
-                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                      {t("community.allClasses")}
-                    </h4>
-                  </div>
-                  <div className="space-y-1 mt-1">
-                    {ALL_CLASSES.map((className) => (
-                      <SidebarNavButton
-                        key={className}
-                        feedName={className}
-                        label={className}
-                        icon={<Users className="h-4 w-4" />}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
+            )}
+        </nav>
+        
+        {/* FOOTER REMOVED HERE */}
       </aside>
 
-      <main className="flex-1 p-8 md:p-12 md:ml-0">
-        {/* MOBILE HAMBURGER BUTTON */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="md:hidden mb-4"
-          onClick={() => setIsSidebarOpen(true)}
-        >
-          <Menu className="h-6 w-6" />
-        </Button>
+      {/* --- MAIN CONTENT AREA --- */}
+      <main className="flex-1 w-full min-w-0 bg-secondary/5 dark:bg-background">
+        
+        {/* Mobile Header Bar (Visible only on small screens) */}
+        <div className="md:hidden sticky top-0 z-30 bg-background/80 backdrop-blur-md border-b px-4 h-16 flex items-center justify-between">
+            <div className="flex items-center gap-2 font-semibold">
+                {activeFeed === "public" && <Globe className="w-5 h-5 text-primary" />}
+                {activeFeed === "mySchool" && <School className="w-5 h-5 text-primary" />}
+                {activeFeed === "myClass" && <Users className="w-5 h-5 text-primary" />}
+                <span className="truncate max-w-[200px]">{getFeedTitle()}</span>
+            </div>
+            <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(true)}>
+                <Menu />
+            </Button>
+        </div>
 
-        <div className="container max-w-4xl mx-auto">
-          <div className="text-left mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+        <div className="max-w-3xl mx-auto p-4 md:p-8 space-y-6">
+          
+          {/* Page Header (Desktop) */}
+          <div className="hidden md:block mb-8 space-y-2">
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">
               {getFeedTitle()}
             </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl">
-              {t("community.subtitle")}
+            <p className="text-muted-foreground text-lg">
+              {getFeedSubtitle()}
             </p>
           </div>
 
-          {/* Create Post Button */}
-          <div className="flex justify-start mb-8">
-            <Dialog
-              open={isCreateDialogOpen}
-              onOpenChange={handleOpenCreateDialog}
-            >
+          {/* Action Bar */}
+          <div className="flex items-center justify-between mb-6">
+            <Dialog open={isCreateDialogOpen} onOpenChange={handleOpenCreateDialog}>
               <DialogTrigger asChild>
-                <Button
-                  size="lg"
-                  className="gap-2 px-6 py-6 text-base shadow-md hover:shadow-lg transition-shadow"
-                >
-                  <Plus className="h-5 w-5" />
-                  {t("community.createPost")}
+                <Button className="rounded-full shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all">
+                  <Plus className="mr-2 h-4 w-4" /> 
+                  Create Post
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
-                  <DialogTitle>Create a New Post</DialogTitle>
+                  <DialogTitle>Create a new post</DialogTitle>
                 </DialogHeader>
-                <div className="space-y-4 pt-4">
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">
-                      School
-                    </label>
-                    <Input
-                      value={newPostSchool}
-                      onChange={(e) => setNewPostSchool(e.target.value)}
-                      placeholder="Your school name"
-
-                      // Input is disabled if user is a student, or if they are a moderator
-                      // currently viewing a specific school's feed (which implies posting to that school)
-                      
-                      // disabled={
-                      //   MOCK_USER.role === "student" ||
-                      //   ALL_SCHOOLS.includes(activeFeed)
-                      // }
-                      
-                      title={
-                        MOCK_USER.role === "student"
-                          ? "As a student, you can only post to your school."
-                          : ALL_SCHOOLS.includes(activeFeed)
-                          ? `Posting to ${activeFeed}. To change, select a different feed.`
-                          : "School name"
-                      }
-                    />
-                  </div>
-
-
-
-                  {/*Buttons that I no longer need}
-                   <div>
-                    <label className="text-sm font-medium mb-2 block">
-                      Visibility
-                    </label>
-                    <div className="flex flex-col sm:flex-row gap-2">
-                      <Button
-                        type="button"
-                        variant={
-                          newPostVisibility === "public" ? "default" : "outline"
-                        }
-                        onClick={() => setNewPostVisibility("public")}
-                        className="flex-1"
-                      >
-                        <Globe className="h-4 w-4 mr-2" />
-                        Public
-                      </Button>
-                      <Button
-                        type="button"
-                        variant={
-                          newPostVisibility === "school" ? "default" : "outline"
-                        }
-                        onClick={() => setNewPostVisibility("school")}
-                        className="flex-1"
-                      >
-                        <School className="h-4 w-4 mr-2" />
-                        My School Only
-                      </Button>
-                      <Button
-                        type="button"
-                        variant={
-                          newPostVisibility === "class" ? "default" : "outline"
-                        }
-                        onClick={() => setNewPostVisibility("class")}
-                        className="flex-1"
-                      >
-                        <Users className="h-4 w-4 mr-2" />
-                        My Class Only
-                      </Button>
-                    </div>
-                  </div> */}
-
-
-
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">
-                      What's happening?
-                    </label>
-                    <Textarea
-                      value={newPostContent}
-                      onChange={(e) => setNewPostContent(e.target.value)}
-                      placeholder="Share your environmental achievements..."
-                      className="min-h-[120px]"
-                      // Textarea is enabled to allow input
-                      disabled={false}
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">
-                      Add Image (Optional)
-                    </label>
-                    <div className="space-y-2">
-                      <Input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        className="cursor-pointer"
+                <div className="grid gap-4 py-4">
+                  <div className="flex items-start gap-4">
+                    <Avatar>
+                      <AvatarFallback>
+                        {MOCK_USER.name.substring(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="grid gap-2 flex-1">
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-medium">{MOCK_USER.name}</p>
+                        <Badge variant="outline" className="capitalize">
+                          {newPostVisibility}
+                        </Badge>
+                      </div>
+                      <Textarea
+                        placeholder={`Share something with ${
+                          newPostVisibility === "public" ? "everyone" : "your group"
+                        }...`}
+                        value={newPostContent}
+                        onChange={(e) => setNewPostContent(e.target.value)}
+                        className="min-h-[100px] resize-none border-none focus-visible:ring-0 px-0 shadow-none"
                       />
                       {newPostImage && (
-                        <div className="relative rounded-lg overflow-hidden">
+                        <div className="relative mt-2 rounded-lg overflow-hidden border">
                           <img
                             src={newPostImage}
                             alt="Preview"
-                            className="w-full h-auto"
+                            className="w-full h-auto max-h-[300px] object-cover"
                           />
                           <Button
-                            type="button"
-                            variant="destructive"
                             size="icon"
-                            className="absolute top-2 right-2"
+                            variant="destructive"
+                            className="absolute top-2 right-2 h-8 w-8 rounded-full"
                             onClick={() => setNewPostImage(undefined)}
                           >
                             <Trash2 className="h-4 w-4" />
@@ -699,13 +641,32 @@ const Community = () => {
                       )}
                     </div>
                   </div>
-                  <Button
-                    onClick={handleCreatePost}
-                    disabled={!newPostContent.trim()}
-                    className="w-full"
-                  >
-                    Post to {getFeedTitle()}
-                  </Button>
+                  <div className="flex items-center justify-between border-t pt-4">
+                    <div className="flex gap-2">
+                      <label htmlFor="image-upload" className="cursor-pointer">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="text-muted-foreground hover:text-primary"
+                          onClick={() => document.getElementById("image-upload")?.click()}
+                        >
+                          <ImageIcon className="h-4 w-4 mr-2" />
+                          Photo
+                        </Button>
+                      </label>
+                      <Input
+                        id="image-upload"
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleImageUpload}
+                      />
+                    </div>
+                    <Button onClick={handleCreatePost} disabled={!newPostContent.trim()}>
+                      Post
+                    </Button>
+                  </div>
                 </div>
               </DialogContent>
             </Dialog>
@@ -713,301 +674,256 @@ const Community = () => {
 
           {/* Posts Feed */}
           <div className="space-y-6">
-            {filteredPosts.length > 0 ? (
+            {filteredPosts.length === 0 ? (
+              <div className="text-center py-12 bg-card rounded-xl border border-dashed">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-muted mb-4">
+                  <MessageCircle className="h-6 w-6 text-muted-foreground" />
+                </div>
+                <h3 className="text-lg font-medium">No posts yet</h3>
+                <p className="text-muted-foreground max-w-sm mx-auto mt-2">
+                  Be the first to share something with the {getFeedTitle()} community!
+                </p>
+              </div>
+            ) : (
               filteredPosts.map((post) => (
-                <Card key={post.id} className="border-border bg-card">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-3">
-                        <Avatar>
-                          <AvatarFallback className="bg-primary text-primary-foreground">
-                            {post.author
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-semibold">{post.author}</span>
-                            <Badge variant="secondary" className="text-xs">
-                              {post.role}
-                            </Badge>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <School className="h-3 w-3" />
-                            <span>{post.school}</span>
-                            <span>•</span>
-                            <span>{post.time}</span>
-                          </div>
+                <Card key={post.id} className="overflow-hidden border-border/60 hover:border-border transition-colors">
+                  <CardHeader className="flex flex-row items-start gap-4 p-4 md:p-6 pb-2">
+                    <Avatar className="h-10 w-10 border">
+                      <AvatarFallback className="bg-primary/5 text-primary">
+                        {post.author.substring(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                          <p className="font-semibold text-sm truncate">{post.author}</p>
+                          <Badge variant="secondary" className="w-fit text-[10px] h-5 px-1.5 font-normal">
+                            {post.role}
+                          </Badge>
+                          {post.school !== MOCK_USER.school && (
+                            <span className="text-xs text-muted-foreground hidden sm:inline">
+                                • {post.school}
+                            </span>
+                          )}
                         </div>
-                      </div>
-                      <Badge
-                        variant={
-                          post.visibility === "public" ? "default" : "outline"
-                        }
-                      >
-                        {post.visibility === "public" && "Public"}
-                        {post.visibility === "school" && "School Only"}
-                        {post.visibility === "class" && (
-                          <>{post.targetGroup || "Class Only"}</>
+                        {post.author === MOCK_USER.name && (
+                          <div className="flex gap-1">
+                            {editingPost === post.id ? (
+                              <>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 text-green-600"
+                                  onClick={() => handleEditPost(post.id)}
+                                >
+                                  <Send className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8"
+                                  onClick={() => setEditingPost(null)}
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              </>
+                            ) : (
+                              <>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 text-muted-foreground hover:text-primary"
+                                  onClick={() => {
+                                    setEditingPost(post.id);
+                                    setEditPostText(post.content);
+                                  }}
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                                  onClick={() => handleDeletePost(post.id)}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </>
+                            )}
+                          </div>
                         )}
-                      </Badge>
+                      </div>
+                      <div className="flex items-center gap-2 mt-1">
+                        <p className="text-xs text-muted-foreground">{post.time}</p>
+                        <span className="text-xs text-muted-foreground">•</span>
+                        {post.visibility === "public" && (
+                          <Globe className="h-3 w-3 text-muted-foreground" />
+                        )}
+                        {post.visibility === "school" && (
+                          <School className="h-3 w-3 text-muted-foreground" />
+                        )}
+                        {post.visibility === "class" && (
+                          <Users className="h-3 w-3 text-muted-foreground" />
+                        )}
+                      </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-4">
+
+                  <CardContent className="p-4 md:p-6 pt-2 space-y-4">
                     {editingPost === post.id ? (
-                      <div className="space-y-2">
-                        <Textarea
-                          value={editPostText}
-                          onChange={(e) => setEditPostText(e.target.value)}
-                          className="min-h-[100px]"
-                        />
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            onClick={() => handleEditPost(post.id)}
-                          >
-                            Save
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => setEditingPost(null)}
-                          >
-                            Cancel
-                          </Button>
-                        </div>
-                      </div>
+                      <Textarea
+                        value={editPostText}
+                        onChange={(e) => setEditPostText(e.target.value)}
+                        className="min-h-[100px]"
+                      />
                     ) : (
-                      <div className="space-y-2">
-                        <p className="text-foreground leading-relaxed">
-                          {post.content}
-                        </p>
-                        {post.author === MOCK_USER.name && (
-                          <div className="flex gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="gap-2"
-                              onClick={() => {
-                                setEditingPost(post.id);
-                                setEditPostText(post.content);
-                              }}
-                            >
-                              <Edit className="h-3 w-3" />
-                              Edit
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="gap-2 text-destructive hover:text-destructive"
-                              onClick={() => handleDeletePost(post.id)}
-                            >
-                              <Trash2 className="h-3 w-3" />
-                              Delete
-                            </Button>
-                          </div>
-                        )}
-                      </div>
+                      <p className="text-sm md:text-base leading-relaxed whitespace-pre-wrap">
+                        {post.content}
+                      </p>
                     )}
 
                     {post.image && (
-                      <div className="rounded-lg overflow-hidden">
+                      <div className="rounded-xl overflow-hidden border bg-muted/30">
                         <img
                           src={post.image}
-                          alt="Post content"
-                          className="w-full h-auto object-cover"
+                          alt="Post attachment"
+                          className="w-full h-auto max-h-[500px] object-cover"
+                          loading="lazy"
                         />
                       </div>
                     )}
 
-                    <div className="flex items-center gap-4 pt-4 border-t border-border">
+                    <div className="flex items-center gap-4 pt-2 border-t mt-4">
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="gap-2"
+                        className={`gap-2 ${
+                          likedPosts.has(post.id) ? "text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30" : "text-muted-foreground"
+                        }`}
                         onClick={() => toggleLike(post.id)}
                       >
                         <Heart
-                          className={`h-4 w-4 ${
-                            likedPosts.has(post.id)
-                              ? "fill-red-500 text-red-500"
-                              : ""
-                          }`}
+                          className={`h-4 w-4 ${likedPosts.has(post.id) ? "fill-current" : ""}`}
                         />
                         <span>{post.likes}</span>
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="gap-2"
+                        className="gap-2 text-muted-foreground hover:text-primary"
                         onClick={() => toggleComments(post.id)}
                       >
                         <MessageCircle className="h-4 w-4" />
                         <span>{post.comments.length}</span>
                       </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="gap-2"
-                        onClick={() => {
-                          toast({
-                            title: "Shared!",
-                            description: "Post link copied to clipboard.",
-                          });
-                        }}
-                      >
+                      <Button variant="ghost" size="sm" className="ml-auto gap-2 text-muted-foreground">
                         <Share2 className="h-4 w-4" />
-                        Share
                       </Button>
                     </div>
 
-                    {/* Comments Section */}
                     {showComments.has(post.id) && (
-                      <div className="pt-4 border-t border-border space-y-4">
-                        {post.comments.length > 0 ? (
-                          <div className="space-y-3">
-                            {post.comments.map((comment, idx) => (
-                              <div key={idx} className="flex gap-3">
-                                <Avatar className="h-8 w-8">
-                                  <AvatarFallback className="bg-secondary text-xs">
-                                    {comment.author
-                                      .split(" ")
-                                      .map((n) => n[0])
-                                      .join("")}
-                                  </AvatarFallback>
-                                </Avatar>
-                                <div className="flex-1">
-                                  {editingComment?.postId === post.id &&
-                                  editingComment?.commentIdx === idx ? (
-                                    <div className="space-y-2">
-                                      <Textarea
-                                        value={editCommentText}
-                                        onChange={(e) =>
-                                          setEditCommentText(e.target.value)
-                                        }
-                                        className="min-h-[60px]"
-                                      />
-                                      <div className="flex gap-2">
-                                        <Button
-                                          size="sm"
-                                          onClick={() =>
-                                            handleEditComment(post.id, idx)
-                                          }
-                                        >
-                                          Save
-                                        </Button>
-                                        <Button
-                                          size="sm"
-                                          variant="outline"
-                                          onClick={() =>
-                                            setEditingComment(null)
-                                          }
-                                        >
-                                          Cancel
-                                        </Button>
-                                      </div>
+                      <div className="space-y-4 pt-4 animate-in fade-in slide-in-from-top-2 duration-200">
+                        <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                          {post.comments.map((comment, idx) => (
+                            <div key={idx} className="flex gap-3 group">
+                              <Avatar className="h-8 w-8">
+                                <AvatarFallback className="text-xs">
+                                  {comment.author.substring(0, 2).toUpperCase()}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="flex-1 bg-muted/40 p-3 rounded-lg rounded-tl-none">
+                                <div className="flex items-center justify-between mb-1">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-sm font-semibold">
+                                      {comment.author}
+                                    </span>
+                                    <span className="text-xs text-muted-foreground">
+                                      {comment.time}
+                                    </span>
+                                  </div>
+                                  {comment.author === MOCK_USER.name && (
+                                    <div className="opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-6 w-6"
+                                        onClick={() => {
+                                          setEditingComment({ postId: post.id, commentIdx: idx });
+                                          setEditCommentText(comment.content);
+                                        }}
+                                      >
+                                        <Edit className="h-3 w-3" />
+                                      </Button>
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-6 w-6 text-destructive"
+                                        onClick={() => handleDeleteComment(post.id, idx)}
+                                      >
+                                        <Trash2 className="h-3 w-3" />
+                                      </Button>
                                     </div>
-                                  ) : (
-                                    <>
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-sm font-semibold">
-                                          {comment.author}
-                                        </span>
-                                        <Badge
-                                          variant="outline"
-                                          className="text-xs"
-                                        >
-                                          {comment.role}
-                                        </Badge>
-                                        <span className="text-xs text-muted-foreground">
-                                          {comment.time}
-                                        </span>
-                                      </div>
-                                      <p className="text-sm text-foreground mt-1">
-                                        {comment.content}
-                                      </p>
-                                      {comment.author === MOCK_USER.name && (
-                                        <div className="flex gap-2 mt-2">
-                                          <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            className="h-7 text-xs gap-1"
-                                            onClick={() => {
-                                              setEditingComment({
-                                                postId: post.id,
-                                                commentIdx: idx,
-                                              });
-                                              setEditCommentText(
-                                                comment.content
-                                              );
-                                            }}
-                                          >
-                                            <Edit className="h-3 w-3" />
-                                            Edit
-                                          </Button>
-                                          <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            className="h-7 text-xs gap-1 text-destructive hover:text-destructive"
-                                            onClick={() =>
-                                              handleDeleteComment(post.id, idx)
-                                            }
-                                          >
-                                            <Trash2 className="h-3 w-3" />
-                                            Delete
-                                          </Button>
-                                        </div>
-                                      )}
-                                    </>
                                   )}
                                 </div>
+                                {editingComment?.postId === post.id && editingComment.commentIdx === idx ? (
+                                  <div className="flex gap-2">
+                                    <Input
+                                      value={editCommentText}
+                                      onChange={(e) => setEditCommentText(e.target.value)}
+                                      className="h-8 text-sm"
+                                    />
+                                    <Button
+                                      size="sm"
+                                      className="h-8"
+                                      onClick={() => handleEditComment(post.id, idx)}
+                                    >
+                                      Save
+                                    </Button>
+                                  </div>
+                                ) : (
+                                  <p className="text-sm">{comment.content}</p>
+                                )}
                               </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <p className="text-sm text-muted-foreground">
-                            No comments yet. Be the first to comment!
-                          </p>
-                        )}
-
-                        {/* Comment Input Section */}
+                            </div>
+                          ))}
+                        </div>
                         <div className="flex gap-2">
-                          <Textarea
-                            placeholder="Write a comment..."
-                            value={newComment[post.id] || ""}
-                            onChange={(e) =>
-                              setNewComment({
-                                ...newComment,
-                                [post.id]: e.target.value,
-                              })
-                            }
-                            className="min-h-[60px]"
-                          />
-                          <Button
-                            size="icon"
-                            onClick={() => handleAddComment(post.id)}
-                            disabled={!newComment[post.id]?.trim()}
-                          >
-                            <Send className="h-4 w-4" />
-                          </Button>
+                          <Avatar className="h-8 w-8">
+                            <AvatarFallback className="text-xs bg-primary/10">
+                              {MOCK_USER.name.substring(0, 2).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 relative">
+                            <Input
+                              placeholder="Write a comment..."
+                              value={newComment[post.id] || ""}
+                              onChange={(e) =>
+                                setNewComment({ ...newComment, [post.id]: e.target.value })
+                              }
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter" && !e.shiftKey) {
+                                  e.preventDefault();
+                                  handleAddComment(post.id);
+                                }
+                              }}
+                              className="pr-10"
+                            />
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="absolute right-0 top-0 h-full text-muted-foreground hover:text-primary"
+                              onClick={() => handleAddComment(post.id)}
+                              disabled={!newComment[post.id]?.trim()}
+                            >
+                              <Send className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     )}
                   </CardContent>
                 </Card>
               ))
-            ) : (
-              <Card className="border-border bg-card">
-                <CardContent className="p-8 text-center">
-                  <Book className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-xl font-semibold">No posts here</h3>
-                  <p className="text-muted-foreground">
-                    There are no posts in this feed yet. Why not create one?
-                  </p>
-                </CardContent>
-              </Card>
             )}
           </div>
         </div>
@@ -1017,592 +933,3 @@ const Community = () => {
 };
 
 export default Community;
-
-// import { useState } from "react";
-// import { Card, CardContent, CardHeader } from "@/components/ui/card";
-// import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-// import { Badge } from "@/components/ui/badge";
-// import { Button } from "@/components/ui/button";
-// import { Textarea } from "@/components/ui/textarea";
-// import { Input } from "@/components/ui/input";
-// import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-// import { Heart, MessageCircle, Share2, School, Users, Send, Plus, Edit, Trash2, Image } from "lucide-react";
-// import studentsImage from "@/assets/students-planting.jpg";
-// import { useToast } from "@/hooks/use-toast";
-// import { useLanguage } from "@/contexts/LanguageContext";
-
-// const Community = () => {
-//   const { toast } = useToast();
-//   const { t } = useLanguage();
-//   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
-//   const [showComments, setShowComments] = useState<Set<number>>(new Set());
-//   const [newComment, setNewComment] = useState<{ [key: number]: string }>({});
-//   const [editingComment, setEditingComment] = useState<{ postId: number; commentIdx: number } | null>(null);
-//   const [editCommentText, setEditCommentText] = useState("");
-//   const [editingPost, setEditingPost] = useState<number | null>(null);
-//   const [editPostText, setEditPostText] = useState("");
-//   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-//   const [newPostContent, setNewPostContent] = useState("");
-//   const [newPostSchool, setNewPostSchool] = useState("Lincoln Elementary");
-//   const [newPostVisibility, setNewPostVisibility] = useState<"public" | "school">("public");
-//   const [newPostImage, setNewPostImage] = useState<string | undefined>(undefined);
-//   const [activeFilter, setActiveFilter] = useState<"public" | "myPosts" | "mySchool">("public");
-//   const [posts, setPosts] = useState([
-//     {
-//       id: 0,
-//       school: "Lincoln Elementary",
-//       author: "Principal Johnson",
-//       role: "Principal",
-//       time: "2 hours ago",
-//       content: "Incredible turnout for our tree planting event today! Our students planted 50 trees around the school campus. So proud of everyone's dedication to our environment! 🌳",
-//       image: studentsImage,
-//       likes: 124,
-//       comments: [
-//         { author: "Ms. Smith", role: "Teacher", content: "Amazing work! Our school should do something similar.", time: "1 hour ago" },
-//         { author: "Parent Davis", role: "Parent", content: "So proud of these kids! Great initiative.", time: "30 minutes ago" }
-//       ],
-//       isPublic: true,
-//     },
-//     {
-//       id: 1,
-//       school: "Roosevelt High",
-//       author: "Ms. Anderson",
-//       role: "Teacher",
-//       time: "5 hours ago",
-//       content: "Our 10th grade class organized a beach cleanup this weekend. We collected over 200 pounds of trash! The students showed amazing leadership and teamwork.",
-//       likes: 89,
-//       comments: [
-//         { author: "Mr. Johnson", role: "Teacher", content: "Fantastic effort by your students!", time: "3 hours ago" }
-//       ],
-//       isPublic: true,
-//     },
-//     {
-//       id: 2,
-//       school: "Washington Middle",
-//       author: "Mr. Chen",
-//       role: "Teacher",
-//       time: "1 day ago",
-//       content: "Week 3 of our recycling challenge! Students have collected and sorted over 500 plastic bottles. They're learning firsthand how much waste we can prevent from going to landfills.",
-//       likes: 67,
-//       comments: [],
-//       isPublic: false,
-//     },
-//     {
-//       id: 3,
-//       school: "Jefferson Academy",
-//       author: "Principal Martinez",
-//       role: "Principal",
-//       time: "2 days ago",
-//       content: "Excited to announce our new butterfly garden! Students designed and planted it themselves. Can't wait to see all the pollinators it attracts this spring! 🦋",
-//       likes: 95,
-//       comments: [
-//         { author: "Ms. Brown", role: "Teacher", content: "Beautiful! Can't wait to see it bloom.", time: "1 day ago" }
-//       ],
-//       isPublic: true,
-//     },
-//   ]);
-
-//   const toggleLike = (postId: number) => {
-//     const newLikedPosts = new Set(likedPosts);
-//     if (newLikedPosts.has(postId)) {
-//       newLikedPosts.delete(postId);
-//       setPosts(posts.map(post =>
-//         post.id === postId ? { ...post, likes: post.likes - 1 } : post
-//       ));
-//     } else {
-//       newLikedPosts.add(postId);
-//       setPosts(posts.map(post =>
-//         post.id === postId ? { ...post, likes: post.likes + 1 } : post
-//       ));
-//     }
-//     setLikedPosts(newLikedPosts);
-//   };
-
-//   const toggleComments = (postId: number) => {
-//     const newShowComments = new Set(showComments);
-//     if (newShowComments.has(postId)) {
-//       newShowComments.delete(postId);
-//     } else {
-//       newShowComments.add(postId);
-//     }
-//     setShowComments(newShowComments);
-//   };
-
-//   const handleAddComment = (postId: number) => {
-//     const comment = newComment[postId]?.trim();
-//     if (!comment) return;
-
-//     setPosts(posts.map(post =>
-//       post.id === postId
-//         ? {
-//             ...post,
-//             comments: [
-//               ...post.comments,
-//               { author: "You", role: "User", content: comment, time: "Just now" }
-//             ]
-//           }
-//         : post
-//     ));
-
-//     setNewComment({ ...newComment, [postId]: "" });
-//     toast({
-//       title: "Comment added!",
-//       description: "Your comment has been posted successfully.",
-//     });
-//   };
-
-//   const handleCreatePost = () => {
-//     if (!newPostContent.trim()) return;
-
-//     const newPost = {
-//       id: posts.length,
-//       school: newPostSchool,
-//       author: "You",
-//       role: "User",
-//       time: "Just now",
-//       content: newPostContent,
-//       image: newPostImage,
-//       likes: 0,
-//       comments: [],
-//       isPublic: newPostVisibility === "public",
-//     };
-
-//     setPosts([newPost, ...posts]);
-//     setNewPostContent("");
-//     setNewPostImage(undefined);
-//     setNewPostVisibility("public");
-//     setIsCreateDialogOpen(false);
-//     toast({
-//       title: "Post created!",
-//       description: "Your post has been shared with the community.",
-//     });
-//   };
-
-//   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     const file = e.target.files?.[0];
-//     if (file) {
-//       const reader = new FileReader();
-//       reader.onloadend = () => {
-//         setNewPostImage(reader.result as string);
-//       };
-//       reader.readAsDataURL(file);
-//     }
-//   };
-
-//   const handleDeletePost = (postId: number) => {
-//     setPosts(posts.filter(post => post.id !== postId));
-//     toast({
-//       title: "Post deleted",
-//       description: "Your post has been removed.",
-//     });
-//   };
-
-//   const handleEditPost = (postId: number) => {
-//     if (!editPostText.trim()) return;
-
-//     setPosts(posts.map(post =>
-//       post.id === postId ? { ...post, content: editPostText } : post
-//     ));
-//     setEditingPost(null);
-//     toast({
-//       title: "Post updated",
-//       description: "Your post has been updated successfully.",
-//     });
-//   };
-
-//   const handleDeleteComment = (postId: number, commentIdx: number) => {
-//     setPosts(posts.map(post =>
-//       post.id === postId
-//         ? { ...post, comments: post.comments.filter((_, idx) => idx !== commentIdx) }
-//         : post
-//     ));
-//     toast({
-//       title: "Comment deleted",
-//       description: "Your comment has been removed.",
-//     });
-//   };
-
-//   const handleEditComment = (postId: number, commentIdx: number) => {
-//     if (!editCommentText.trim()) return;
-
-//     setPosts(posts.map(post =>
-//       post.id === postId
-//         ? {
-//             ...post,
-//             comments: post.comments.map((comment, idx) =>
-//               idx === commentIdx ? { ...comment, content: editCommentText } : comment
-//             )
-//           }
-//         : post
-//     ));
-//     setEditingComment(null);
-//     toast({
-//       title: "Comment updated",
-//       description: "Your comment has been updated successfully.",
-//     });
-//   };
-
-//   const filteredPosts = posts.filter(post => {
-//     if (activeFilter === "public") return post.isPublic;
-//     if (activeFilter === "myPosts") return post.author === "You";
-//     if (activeFilter === "mySchool") return post.school === "Lincoln Elementary"; // Replace with actual user school
-//     return true;
-//   });
-
-//   return (
-//     <div className="min-h-screen py-12 bg-gradient-to-b from-background to-secondary/20">
-//       <div className="container max-w-4xl">
-//         <div className="text-center mb-12">
-//           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-//             {t('community.title')}
-//           </h1>
-//           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-//             {t('community.subtitle')}
-//           </p>
-//         </div>
-
-//         {/* Filter badges */}
-//         <div className="flex flex-wrap gap-2 mb-4 justify-center">
-//           <Badge
-//             variant={activeFilter === "public" ? "default" : "outline"}
-//             className="cursor-pointer gap-1"
-//             onClick={() => setActiveFilter("public")}
-//           >
-//             <Users className="h-3 w-3" />
-//             {t('community.public')}
-//           </Badge>
-//           <Badge
-//             variant={activeFilter === "mySchool" ? "default" : "outline"}
-//             className="cursor-pointer gap-1"
-//             onClick={() => setActiveFilter("mySchool")}
-//           >
-//             <School className="h-3 w-3" />
-//             {t('community.mySchool')}
-//           </Badge>
-//           <Badge
-//             variant={activeFilter === "myPosts" ? "default" : "outline"}
-//             className="cursor-pointer gap-1"
-//             onClick={() => setActiveFilter("myPosts")}
-//           >
-//             <Users className="h-3 w-3" />
-//             {t('community.myPosts')}
-//           </Badge>
-//         </div>
-
-//         {/* Create Post Button */}
-//         <div className="flex justify-center mb-8">
-//           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-//             <DialogTrigger asChild>
-//               <Button size="lg" className="gap-2 px-8 py-6 text-lg">
-//                 <Plus className="h-6 w-6" />
-//                 {t('community.createPost')}
-//               </Button>
-//             </DialogTrigger>
-//             <DialogContent className="sm:max-w-[500px]">
-//               <DialogHeader>
-//                 <DialogTitle>Create a New Post</DialogTitle>
-//               </DialogHeader>
-//               <div className="space-y-4 pt-4">
-//                 <div>
-//                   <label className="text-sm font-medium mb-2 block">School</label>
-//                   <Input
-//                     value={newPostSchool}
-//                     onChange={(e) => setNewPostSchool(e.target.value)}
-//                     placeholder="Your school name"
-//                   />
-//                 </div>
-//                 <div>
-//                   <label className="text-sm font-medium mb-2 block">Visibility</label>
-//                   <div className="flex gap-2">
-//                     <Button
-//                       type="button"
-//                       variant={newPostVisibility === "public" ? "default" : "outline"}
-//                       onClick={() => setNewPostVisibility("public")}
-//                       className="flex-1"
-//                     >
-//                       <Users className="h-4 w-4 mr-2" />
-//                       Public
-//                     </Button>
-//                     <Button
-//                       type="button"
-//                       variant={newPostVisibility === "school" ? "default" : "outline"}
-//                       onClick={() => setNewPostVisibility("school")}
-//                       className="flex-1"
-//                     >
-//                       <School className="h-4 w-4 mr-2" />
-//                       My School Only
-//                     </Button>
-//                   </div>
-//                 </div>
-//                 <div>
-//                   <label className="text-sm font-medium mb-2 block">What's happening?</label>
-//                   <Textarea
-//                     value={newPostContent}
-//                     onChange={(e) => setNewPostContent(e.target.value)}
-//                     placeholder="Share your environmental achievements..."
-//                     className="min-h-[120px]"
-//                   />
-//                 </div>
-//                 <div>
-//                   <label className="text-sm font-medium mb-2 block">Add Image (Optional)</label>
-//                   <div className="space-y-2">
-//                     <Input
-//                       type="file"
-//                       accept="image/*"
-//                       onChange={handleImageUpload}
-//                       className="cursor-pointer"
-//                     />
-//                     {newPostImage && (
-//                       <div className="relative rounded-lg overflow-hidden">
-//                         <img src={newPostImage} alt="Preview" className="w-full h-auto" />
-//                         <Button
-//                           type="button"
-//                           variant="destructive"
-//                           size="icon"
-//                           className="absolute top-2 right-2"
-//                           onClick={() => setNewPostImage(undefined)}
-//                         >
-//                           <Trash2 className="h-4 w-4" />
-//                         </Button>
-//                       </div>
-//                     )}
-//                   </div>
-//                 </div>
-//                 <Button
-//                   onClick={handleCreatePost}
-//                   disabled={!newPostContent.trim()}
-//                   className="w-full"
-//                 >
-//                   Post to Community
-//                 </Button>
-//               </div>
-//             </DialogContent>
-//           </Dialog>
-//         </div>
-
-//         {/* Posts Feed */}
-//         <div className="space-y-6">
-//           {filteredPosts.map((post) => (
-//             <Card key={post.id} className="border-border bg-card">
-//               <CardHeader>
-//                 <div className="flex items-start justify-between">
-//                   <div className="flex items-center gap-3">
-//                     <Avatar>
-//                       <AvatarFallback className="bg-primary text-primary-foreground">
-//                         {post.author.split(' ').map(n => n[0]).join('')}
-//                       </AvatarFallback>
-//                     </Avatar>
-//                     <div>
-//                       <div className="flex items-center gap-2">
-//                         <span className="font-semibold">{post.author}</span>
-//                         <Badge variant="secondary" className="text-xs">
-//                           {post.role}
-//                         </Badge>
-//                       </div>
-//                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-//                         <School className="h-3 w-3" />
-//                         <span>{post.school}</span>
-//                         <span>•</span>
-//                         <span>{post.time}</span>
-//                       </div>
-//                     </div>
-//                   </div>
-//                   <Badge variant={post.isPublic ? "default" : "outline"}>
-//                     {post.isPublic ? "Public" : "School Only"}
-//                   </Badge>
-//                 </div>
-//               </CardHeader>
-//               <CardContent className="space-y-4">
-//                 {editingPost === post.id ? (
-//                   <div className="space-y-2">
-//                     <Textarea
-//                       value={editPostText}
-//                       onChange={(e) => setEditPostText(e.target.value)}
-//                       className="min-h-[100px]"
-//                     />
-//                     <div className="flex gap-2">
-//                       <Button size="sm" onClick={() => handleEditPost(post.id)}>
-//                         Save
-//                       </Button>
-//                       <Button size="sm" variant="outline" onClick={() => setEditingPost(null)}>
-//                         Cancel
-//                       </Button>
-//                     </div>
-//                   </div>
-//                 ) : (
-//                   <div className="space-y-2">
-//                     <p className="text-foreground leading-relaxed">{post.content}</p>
-//                     {post.author === "You" && (
-//                       <div className="flex gap-2">
-//                         <Button
-//                           variant="ghost"
-//                           size="sm"
-//                           className="gap-2"
-//                           onClick={() => {
-//                             setEditingPost(post.id);
-//                             setEditPostText(post.content);
-//                           }}
-//                         >
-//                           <Edit className="h-3 w-3" />
-//                           Edit
-//                         </Button>
-//                         <Button
-//                           variant="ghost"
-//                           size="sm"
-//                           className="gap-2 text-destructive hover:text-destructive"
-//                           onClick={() => handleDeletePost(post.id)}
-//                         >
-//                           <Trash2 className="h-3 w-3" />
-//                           Delete
-//                         </Button>
-//                       </div>
-//                     )}
-//                   </div>
-//                 )}
-
-//                 {post.image && (
-//                   <div className="rounded-lg overflow-hidden">
-//                     <img
-//                       src={post.image}
-//                       alt="Post content"
-//                       className="w-full h-auto object-cover"
-//                     />
-//                   </div>
-//                 )}
-
-//                 <div className="flex items-center gap-4 pt-4 border-t border-border">
-//                   <Button
-//                     variant="ghost"
-//                     size="sm"
-//                     className="gap-2"
-//                     onClick={() => toggleLike(post.id)}
-//                   >
-//                     <Heart className={`h-4 w-4 ${likedPosts.has(post.id) ? 'fill-red-500 text-red-500' : ''}`} />
-//                     <span>{post.likes}</span>
-//                   </Button>
-//                   <Button
-//                     variant="ghost"
-//                     size="sm"
-//                     className="gap-2"
-//                     onClick={() => toggleComments(post.id)}
-//                   >
-//                     <MessageCircle className="h-4 w-4" />
-//                     <span>{post.comments.length}</span>
-//                   </Button>
-//                   <Button
-//                     variant="ghost"
-//                     size="sm"
-//                     className="gap-2"
-//                     onClick={() => {
-//                       toast({
-//                         title: "Shared!",
-//                         description: "Post link copied to clipboard.",
-//                       });
-//                     }}
-//                   >
-//                     <Share2 className="h-4 w-4" />
-//                     Share
-//                   </Button>
-//                 </div>
-
-//                 {/* Comments Section */}
-//                 {showComments.has(post.id) && (
-//                   <div className="pt-4 border-t border-border space-y-4">
-//                     {post.comments.length > 0 ? (
-//                       <div className="space-y-3">
-//                         {post.comments.map((comment, idx) => (
-//                           <div key={idx} className="flex gap-3">
-//                             <Avatar className="h-8 w-8">
-//                               <AvatarFallback className="bg-secondary text-xs">
-//                                 {comment.author.split(' ').map(n => n[0]).join('')}
-//                               </AvatarFallback>
-//                             </Avatar>
-//                             <div className="flex-1">
-//                               {editingComment?.postId === post.id && editingComment?.commentIdx === idx ? (
-//                                 <div className="space-y-2">
-//                                   <Textarea
-//                                     value={editCommentText}
-//                                     onChange={(e) => setEditCommentText(e.target.value)}
-//                                     className="min-h-[60px]"
-//                                   />
-//                                   <div className="flex gap-2">
-//                                     <Button size="sm" onClick={() => handleEditComment(post.id, idx)}>
-//                                       Save
-//                                     </Button>
-//                                     <Button size="sm" variant="outline" onClick={() => setEditingComment(null)}>
-//                                       Cancel
-//                                     </Button>
-//                                   </div>
-//                                 </div>
-//                               ) : (
-//                                 <>
-//                                   <div className="flex items-center gap-2">
-//                                     <span className="text-sm font-semibold">{comment.author}</span>
-//                                     <Badge variant="outline" className="text-xs">
-//                                       {comment.role}
-//                                     </Badge>
-//                                     <span className="text-xs text-muted-foreground">{comment.time}</span>
-//                                   </div>
-//                                   <p className="text-sm text-foreground mt-1">{comment.content}</p>
-//                                   {comment.author === "You" && (
-//                                     <div className="flex gap-2 mt-2">
-//                                       <Button
-//                                         variant="ghost"
-//                                         size="sm"
-//                                         className="h-7 text-xs gap-1"
-//                                         onClick={() => {
-//                                           setEditingComment({ postId: post.id, commentIdx: idx });
-//                                           setEditCommentText(comment.content);
-//                                         }}
-//                                       >
-//                                         <Edit className="h-3 w-3" />
-//                                         Edit
-//                                       </Button>
-//                                       <Button
-//                                         variant="ghost"
-//                                         size="sm"
-//                                         className="h-7 text-xs gap-1 text-destructive hover:text-destructive"
-//                                         onClick={() => handleDeleteComment(post.id, idx)}
-//                                       >
-//                                         <Trash2 className="h-3 w-3" />
-//                                         Delete
-//                                       </Button>
-//                                     </div>
-//                                   )}
-//                                 </>
-//                               )}
-//                             </div>
-//                           </div>
-//                         ))}
-//                       </div>
-//                     ) : (
-//                       <p className="text-sm text-muted-foreground">No comments yet. Be the first to comment!</p>
-//                     )}
-
-//                     <div className="flex gap-2">
-//                       <Textarea
-//                         placeholder="Write a comment..."
-//                         value={newComment[post.id] || ""}
-//                         onChange={(e) => setNewComment({ ...newComment, [post.id]: e.target.value })}
-//                         className="min-h-[60px]"
-//                       />
-//                       <Button
-//                         size="icon"
-//                         onClick={() => handleAddComment(post.id)}
-//                         disabled={!newComment[post.id]?.trim()}
-//                       >
-//                         <Send className="h-4 w-4" />
-//                       </Button>
-//                     </div>
-//                   </div>
-//                 )}
-//               </CardContent>
-//             </Card>
-//           ))}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Community;
