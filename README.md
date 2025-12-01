@@ -11,7 +11,7 @@
 * **🌍 Eco-Challenges:** Interactive tasks for students to complete.
 * **🏆 Global Leaderboards:** Compete with other "Eco-Champions."
 * **⚡ Serverless Backend:** Powered by Azure Functions for fast, scalable API responses.
-* **🎨 Modern UI:** Built with shadcn/ui and Tailwind CSS for a sleek, responsive experience.
+* **🎨 Modern UI:** Built with Tailwind CSS for a sleek, responsive experience.
 
 ---
 
@@ -34,7 +34,7 @@ This project uses a modern **Serverless** architecture hosted on Azure.
 To run this project locally, you need to run both the Frontend (React) and the Backend (Azure Functions).
 
 ### Prerequisites
-* **Node.js:** Version 20 or higher.
+* **Node.js:** Version 22.
 * **Azure Functions Core Tools:** (Optional, but recommended for backend debugging).
 * **SWA CLI:** (`npm install -g @azure/static-web-apps-cli`)
 
@@ -53,7 +53,6 @@ npm install
 # 3. Install Backend Dependencies
 cd api
 npm install
-cd ..
 ```
 
 ### 2. Run app
