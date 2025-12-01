@@ -5,7 +5,7 @@
 
 ## 📖 About The Project
 
-**Paint IT Green (PIG)** is an educational platform designed to gamify environmental conservation. This project was built to solve the problem of [insert specific problem, e.g., lack of student engagement in nature] by providing an interactive way to participate in eco-challenges.
+**Paint IT Green (PIG)** is an educational platform designed to gamify environmental conservation. This project was built to solve the problem of lack of student engagement in nature by providing an interactive way to participate in eco-challenges.
 
 ### Key Features
 * **🌍 Eco-Challenges:** Interactive tasks for students to complete.
