@@ -177,7 +177,7 @@ const EventCalendar = () => {
   );
 
   return (
-    <div className="flex flex-col gap-6 max-h-[70vh] overflow-y-auto pr-2">
+    <div className="flex flex-col gap-6 max-h-[70vh] overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-muted-foreground/20 [&::-webkit-scrollbar-thumb]:rounded-full">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* LEAFLET MAP */}
         <div className="rounded-lg border overflow-hidden h-[350px] z-0 relative">
@@ -324,7 +324,7 @@ const EventCalendar = () => {
   );
 };
 
-// --- Main Compete Component ---
+// --- Main Compete Component ----------------------------------------------------------------------------------------------------------------------
 const Compete = () => {
   const { t } = useLanguage();
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
