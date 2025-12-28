@@ -27,7 +27,7 @@ import {
   Shield,
   Menu,
   X,
-  LayoutGrid
+  LayoutGrid,
 } from "lucide-react";
 import studentsImage from "@/assets/students-planting.jpg";
 import { useToast } from "@/hooks/use-toast";
@@ -79,12 +79,12 @@ type Post = {
 const Community = () => {
   const { toast } = useToast();
   const t = (key: string) => {
-     const translations: {[key:string]: string} = {
-         "community.public": "Public",
-         "community.title": "Community"
-     };
-     return translations[key] || key;
-  }
+    const translations: { [key: string]: string } = {
+      "community.public": "Public",
+      "community.title": "Community",
+    };
+    return translations[key] || key;
+  };
 
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
   const [showComments, setShowComments] = useState<Set<number>>(new Set());
@@ -106,7 +106,7 @@ const Community = () => {
     undefined
   );
   const [activeFeed, setActiveFeed] = useState<string>("public");
-  
+
   // Mobile Sidebar State
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -195,7 +195,7 @@ const Community = () => {
       role: "Teacher",
       time: "30 minutes ago",
       content:
-        "Reminder: Field trip permission slips for the class garden visit are due tomorrow! Only for my 5th graders.",
+        "Reminder: Field trip permission slips for the class garden visit are due tomorrow!",
       likes: 5,
       comments: [],
       visibility: "class",
@@ -416,29 +416,79 @@ const Community = () => {
   };
 
   const getFeedSubtitle = () => {
-    if (activeFeed === "public") return "Environmental initiatives from schools around the world";
+    if (activeFeed === "public")
+      return "Environmental initiatives from schools around the world";
     if (activeFeed === "mySchool") return "Updates and events from your school";
     if (activeFeed === "myClass") return "Class discussions and projects";
     return "Group updates";
   };
 
+  // --- DYNAMIC HEADER INFO ---
+  const getHeaderDetails = () => {
+    if (activeFeed === "public") {
+      return {
+        title: t("community.public") || "Public Feed",
+        subtitle: "Global Community",
+        icon: <Globe size={20} />,
+      };
+    }
+    if (activeFeed === "mySchool") {
+      return {
+        title: MOCK_USER.school,
+        subtitle: "My School",
+        icon: <School size={20} />,
+      };
+    }
+    if (activeFeed === "myClass") {
+      return {
+        title: MOCK_USER.class,
+        subtitle: "My Class",
+        icon: <Users size={20} />,
+      };
+    }
+    // Moderator views specific school
+    if (ALL_SCHOOLS.includes(activeFeed)) {
+      return {
+        title: activeFeed,
+        subtitle: "School Group",
+        icon: <School size={20} />,
+      };
+    }
+    // Moderator views specific class
+    if (ALL_CLASSES.includes(activeFeed)) {
+      return {
+        title: activeFeed,
+        subtitle: "Class Group",
+        icon: <Users size={20} />,
+      };
+    }
+    // Fallback
+    return {
+      title: "Community",
+      subtitle: "Paint IT Green",
+      icon: <LayoutGrid size={20} />,
+    };
+  };
+
+  const headerDetails = getHeaderDetails();
+
   // --- REUSABLE SIDEBAR BUTTON COMPONENT ---
-  const SidebarButton = ({ 
-    active, 
-    icon, 
-    label, 
-    onClick 
-  }: { 
-    active: boolean; 
-    icon: React.ReactNode; 
-    label: string; 
-    onClick: () => void; 
+  const SidebarButton = ({
+    active,
+    icon,
+    label,
+    onClick,
+  }: {
+    active: boolean;
+    icon: React.ReactNode;
+    label: string;
+    onClick: () => void;
   }) => (
     <Button
       variant={active ? "secondary" : "ghost"}
       className={`w-full justify-start gap-3 h-12 px-4 mb-1 relative transition-all duration-200 ${
-        active 
-          ? "bg-primary/10 text-primary font-semibold" 
+        active
+          ? "bg-primary/10 text-primary font-semibold"
           : "text-muted-foreground hover:bg-muted hover:text-foreground"
       }`}
       onClick={() => {
@@ -450,147 +500,163 @@ const Community = () => {
       {active && (
         <div className="absolute left-0 top-1/4 bottom-1/4 w-1 bg-primary rounded-r-full" />
       )}
-      <span className={active ? "text-primary" : "text-muted-foreground"}>{icon}</span>
+      <span className={active ? "text-primary" : "text-muted-foreground"}>
+        {icon}
+      </span>
       <span className="truncate">{label}</span>
     </Button>
   );
 
   return (
     <div className="flex w-full min-h-screen bg-background relative">
-      
       {/* --- MOBILE OVERLAY (Darkens background when sidebar is open) --- */}
       {isMobileMenuOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/60 z-40 md:hidden backdrop-blur-sm"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
       {/* --- SIDEBAR NAVIGATION (LEFT) --- */}
-      <aside 
+      <aside
         className={`
           fixed md:sticky top-0 h-screen w-[280px] z-50 
           bg-card border-r shadow-lg md:shadow-none
           transform transition-transform duration-300 ease-in-out
-          ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
-          flex flex-col /* Changed: Removed overflow-y-auto from here */
+          ${
+            isMobileMenuOpen
+              ? "translate-x-0"
+              : "-translate-x-full md:translate-x-0"
+          }
+          flex flex-col
         `}
       >
-        {/* FIXED HEADER SECTION */}
+        {/* FIXED HEADER SECTION - NOW DYNAMIC */}
         <div className="p-6 shrink-0 border-b border-border/40">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground">
-              <LayoutGrid size={20} />
+            <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground transition-all duration-300">
+              {headerDetails.icon}
             </div>
-            <div>
-              <h2 className="font-bold text-lg leading-tight tracking-tight">Community</h2>
-              <p className="text-xs text-muted-foreground">Paint IT Green</p>
+            <div className="overflow-hidden">
+              <h2 className="font-bold text-lg leading-tight tracking-tight truncate">
+                {headerDetails.title}
+              </h2>
+              <p className="text-xs text-muted-foreground truncate">
+                {headerDetails.subtitle}
+              </p>
             </div>
           </div>
         </div>
 
         {/* SCROLLABLE NAVIGATION SECTION */}
         <nav className="flex-1 overflow-y-auto p-6">
-            {/* Main Feeds */}
+          {/* Main Feeds */}
+          <div>
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 pl-4">
+              Feeds
+            </h3>
+            <SidebarButton
+              active={activeFeed === "public"}
+              icon={<Globe size={18} />}
+              label={t("community.public") || "Public Feed"}
+              onClick={() => setActiveFeed("public")}
+            />
+          </div>
+
+          {/* Groups */}
+          {MOCK_USER.role === "student" && (
             <div>
-              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 pl-4">
-                Feeds
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 pl-4 mt-6">
+                My Groups
               </h3>
               <SidebarButton
-                active={activeFeed === "public"}
-                icon={<Globe size={18} />}
-                label={t("community.public") || "Public Feed"}
-                onClick={() => setActiveFeed("public")}
+                active={activeFeed === "mySchool"}
+                icon={<School size={18} />}
+                label={MOCK_USER.school}
+                onClick={() => setActiveFeed("mySchool")}
+              />
+              <SidebarButton
+                active={activeFeed === "myClass"}
+                icon={<Users size={18} />}
+                label={MOCK_USER.class}
+                onClick={() => setActiveFeed("myClass")}
               />
             </div>
+          )}
 
-            {/* Groups */}
-            {MOCK_USER.role === "student" && (
-              <div>
-                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 pl-4 mt-6">
-                  My Groups
-                </h3>
+          {/* Moderator Tools */}
+          {MOCK_USER.role === "moderator" && (
+            <div>
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 pl-4 mt-6 flex items-center gap-2">
+                <Shield size={12} /> Moderation
+              </h3>
+              {ALL_SCHOOLS.map((school) => (
                 <SidebarButton
-                  active={activeFeed === "mySchool"}
+                  key={school}
+                  active={activeFeed === school}
                   icon={<School size={18} />}
-                  label={MOCK_USER.school}
-                  onClick={() => setActiveFeed("mySchool")}
+                  label={school}
+                  onClick={() => setActiveFeed(school)}
                 />
+              ))}
+              <div className="my-2 border-t border-border/50" />
+              {ALL_CLASSES.map((cls) => (
                 <SidebarButton
-                  active={activeFeed === "myClass"}
+                  key={cls}
+                  active={activeFeed === cls}
                   icon={<Users size={18} />}
-                  label={MOCK_USER.class}
-                  onClick={() => setActiveFeed("myClass")}
+                  label={cls}
+                  onClick={() => setActiveFeed(cls)}
                 />
-              </div>
-            )}
-
-            {/* Moderator Tools */}
-            {MOCK_USER.role === "moderator" && (
-              <div>
-                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 pl-4 mt-6 flex items-center gap-2">
-                  <Shield size={12} /> Moderation
-                </h3>
-                {ALL_SCHOOLS.map((school) => (
-                  <SidebarButton
-                    key={school}
-                    active={activeFeed === school}
-                    icon={<School size={18} />}
-                    label={school}
-                    onClick={() => setActiveFeed(school)}
-                  />
-                ))}
-                <div className="my-2 border-t border-border/50" />
-                {ALL_CLASSES.map((cls) => (
-                  <SidebarButton
-                    key={cls}
-                    active={activeFeed === cls}
-                    icon={<Users size={18} />}
-                    label={cls}
-                    onClick={() => setActiveFeed(cls)}
-                  />
-                ))}
-              </div>
-            )}
+              ))}
+            </div>
+          )}
         </nav>
-        
-        {/* FOOTER REMOVED HERE */}
       </aside>
 
       {/* --- MAIN CONTENT AREA --- */}
       <main className="flex-1 w-full min-w-0 bg-secondary/5 dark:bg-background">
-        
         {/* Mobile Header Bar (Visible only on small screens) */}
         <div className="md:hidden sticky top-0 z-30 bg-background/80 backdrop-blur-md border-b px-4 h-16 flex items-center justify-between">
-            <div className="flex items-center gap-2 font-semibold">
-                {activeFeed === "public" && <Globe className="w-5 h-5 text-primary" />}
-                {activeFeed === "mySchool" && <School className="w-5 h-5 text-primary" />}
-                {activeFeed === "myClass" && <Users className="w-5 h-5 text-primary" />}
-                <span className="truncate max-w-[200px]">{getFeedTitle()}</span>
-            </div>
-            <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(true)}>
-                <Menu />
-            </Button>
+          <div className="flex items-center gap-2 font-semibold">
+            {activeFeed === "public" && (
+              <Globe className="w-5 h-5 text-primary" />
+            )}
+            {activeFeed === "mySchool" && (
+              <School className="w-5 h-5 text-primary" />
+            )}
+            {activeFeed === "myClass" && (
+              <Users className="w-5 h-5 text-primary" />
+            )}
+            <span className="truncate max-w-[200px]">{getFeedTitle()}</span>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsMobileMenuOpen(true)}
+          >
+            <Menu />
+          </Button>
         </div>
 
         <div className="max-w-3xl mx-auto p-4 md:p-8 space-y-6">
-          
           {/* Page Header (Desktop) */}
           <div className="hidden md:block mb-8 space-y-2">
             <h1 className="text-3xl font-bold tracking-tight text-foreground">
               {getFeedTitle()}
             </h1>
-            <p className="text-muted-foreground text-lg">
-              {getFeedSubtitle()}
-            </p>
+            <p className="text-muted-foreground text-lg">{getFeedSubtitle()}</p>
           </div>
 
           {/* Action Bar */}
           <div className="flex items-center justify-between mb-6">
-            <Dialog open={isCreateDialogOpen} onOpenChange={handleOpenCreateDialog}>
+            <Dialog
+              open={isCreateDialogOpen}
+              onOpenChange={handleOpenCreateDialog}
+            >
               <DialogTrigger asChild>
                 <Button className="rounded-full shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all">
-                  <Plus className="mr-2 h-4 w-4" /> 
+                  <Plus className="mr-2 h-4 w-4" />
                   Create Post
                 </Button>
               </DialogTrigger>
@@ -614,7 +680,9 @@ const Community = () => {
                       </div>
                       <Textarea
                         placeholder={`Share something with ${
-                          newPostVisibility === "public" ? "everyone" : "your group"
+                          newPostVisibility === "public"
+                            ? "everyone"
+                            : "your group"
                         }...`}
                         value={newPostContent}
                         onChange={(e) => setNewPostContent(e.target.value)}
@@ -647,7 +715,9 @@ const Community = () => {
                           variant="ghost"
                           size="sm"
                           className="text-muted-foreground hover:text-primary"
-                          onClick={() => document.getElementById("image-upload")?.click()}
+                          onClick={() =>
+                            document.getElementById("image-upload")?.click()
+                          }
                         >
                           <ImageIcon className="h-4 w-4 mr-2" />
                           Photo
@@ -661,7 +731,10 @@ const Community = () => {
                         onChange={handleImageUpload}
                       />
                     </div>
-                    <Button onClick={handleCreatePost} disabled={!newPostContent.trim()}>
+                    <Button
+                      onClick={handleCreatePost}
+                      disabled={!newPostContent.trim()}
+                    >
                       Post
                     </Button>
                   </div>
@@ -679,12 +752,16 @@ const Community = () => {
                 </div>
                 <h3 className="text-lg font-medium">No posts yet</h3>
                 <p className="text-muted-foreground max-w-sm mx-auto mt-2">
-                  Be the first to share something with the {getFeedTitle()} community!
+                  Be the first to share something with the {getFeedTitle()}{" "}
+                  community!
                 </p>
               </div>
             ) : (
               filteredPosts.map((post) => (
-                <Card key={post.id} className="overflow-hidden border-border/60 hover:border-border transition-colors">
+                <Card
+                  key={post.id}
+                  className="overflow-hidden border-border/60 hover:border-border transition-colors"
+                >
                   <CardHeader className="flex flex-row items-start gap-4 p-4 md:p-6 pb-2">
                     <Avatar className="h-10 w-10 border">
                       <AvatarFallback className="bg-primary/5 text-primary">
@@ -694,13 +771,18 @@ const Community = () => {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
                         <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                          <p className="font-semibold text-sm truncate">{post.author}</p>
-                          <Badge variant="secondary" className="w-fit text-[10px] h-5 px-1.5 font-normal">
+                          <p className="font-semibold text-sm truncate">
+                            {post.author}
+                          </p>
+                          <Badge
+                            variant="secondary"
+                            className="w-fit text-[10px] h-5 px-1.5 font-normal"
+                          >
                             {post.role}
                           </Badge>
                           {post.school !== MOCK_USER.school && (
                             <span className="text-xs text-muted-foreground hidden sm:inline">
-                                • {post.school}
+                              • {post.school}
                             </span>
                           )}
                         </div>
@@ -752,7 +834,9 @@ const Community = () => {
                         )}
                       </div>
                       <div className="flex items-center gap-2 mt-1">
-                        <p className="text-xs text-muted-foreground">{post.time}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {post.time}
+                        </p>
                         <span className="text-xs text-muted-foreground">•</span>
                         {post.visibility === "public" && (
                           <Globe className="h-3 w-3 text-muted-foreground" />
@@ -796,12 +880,16 @@ const Community = () => {
                         variant="ghost"
                         size="sm"
                         className={`gap-2 ${
-                          likedPosts.has(post.id) ? "text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30" : "text-muted-foreground"
+                          likedPosts.has(post.id)
+                            ? "text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
+                            : "text-muted-foreground"
                         }`}
                         onClick={() => toggleLike(post.id)}
                       >
                         <Heart
-                          className={`h-4 w-4 ${likedPosts.has(post.id) ? "fill-current" : ""}`}
+                          className={`h-4 w-4 ${
+                            likedPosts.has(post.id) ? "fill-current" : ""
+                          }`}
                         />
                         <span>{post.likes}</span>
                       </Button>
@@ -814,7 +902,11 @@ const Community = () => {
                         <MessageCircle className="h-4 w-4" />
                         <span>{post.comments.length}</span>
                       </Button>
-                      <Button variant="ghost" size="sm" className="ml-auto gap-2 text-muted-foreground">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="ml-auto gap-2 text-muted-foreground"
+                      >
                         <Share2 className="h-4 w-4" />
                       </Button>
                     </div>
@@ -846,7 +938,10 @@ const Community = () => {
                                         size="icon"
                                         className="h-6 w-6"
                                         onClick={() => {
-                                          setEditingComment({ postId: post.id, commentIdx: idx });
+                                          setEditingComment({
+                                            postId: post.id,
+                                            commentIdx: idx,
+                                          });
                                           setEditCommentText(comment.content);
                                         }}
                                       >
@@ -856,24 +951,31 @@ const Community = () => {
                                         variant="ghost"
                                         size="icon"
                                         className="h-6 w-6 text-destructive"
-                                        onClick={() => handleDeleteComment(post.id, idx)}
+                                        onClick={() =>
+                                          handleDeleteComment(post.id, idx)
+                                        }
                                       >
                                         <Trash2 className="h-3 w-3" />
                                       </Button>
                                     </div>
                                   )}
                                 </div>
-                                {editingComment?.postId === post.id && editingComment.commentIdx === idx ? (
+                                {editingComment?.postId === post.id &&
+                                editingComment.commentIdx === idx ? (
                                   <div className="flex gap-2">
                                     <Input
                                       value={editCommentText}
-                                      onChange={(e) => setEditCommentText(e.target.value)}
+                                      onChange={(e) =>
+                                        setEditCommentText(e.target.value)
+                                      }
                                       className="h-8 text-sm"
                                     />
                                     <Button
                                       size="sm"
                                       className="h-8"
-                                      onClick={() => handleEditComment(post.id, idx)}
+                                      onClick={() =>
+                                        handleEditComment(post.id, idx)
+                                      }
                                     >
                                       Save
                                     </Button>
@@ -896,7 +998,10 @@ const Community = () => {
                               placeholder="Write a comment..."
                               value={newComment[post.id] || ""}
                               onChange={(e) =>
-                                setNewComment({ ...newComment, [post.id]: e.target.value })
+                                setNewComment({
+                                  ...newComment,
+                                  [post.id]: e.target.value,
+                                })
                               }
                               onKeyDown={(e) => {
                                 if (e.key === "Enter" && !e.shiftKey) {

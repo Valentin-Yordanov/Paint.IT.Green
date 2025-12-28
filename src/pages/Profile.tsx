@@ -56,85 +56,71 @@ const Profile = () => {
     { title: t('achievement.champion'), description: t('achievement.championDesc'), icon: Trophy, date: `2 ${t('time.weeksAgo')}` },
   ];
 
-  // FETCH DATA ON LOAD
+  // --- MOCK DATA FETCH ON LOAD ---
   useEffect(() => {
     const fetchProfile = async () => {
-      if (!user?.email) return;
+      // Simulate a loading delay
+      setIsLoading(true);
+      
+      // We are ignoring the database for now and setting mock data directly
+      // setTimeout simulates the network wait time
+      setTimeout(() => {
+        const mockData = {
+          name: "Test Student",
+          role: "Eco Warrior",
+          schoolId: "Green Valley High", 
+          email: user?.email || "student@example.com", // Uses your auth email if logged in
+          points: 1250,
+          rank: "Gold",
+          treesPlanted: 15,
+          challengesCompleted: 8,
+          lessonsFinished: 12,
+        };
 
-      try {
-        setIsLoading(true);
-        // Assuming your Azure Function is at /api/ProfileHandler
-        const response = await fetch(`/api/ProfileHandler?email=${user.email}`);
+        setUserStats({
+          name: mockData.name,
+          role: mockData.role,
+          school: mockData.schoolId, 
+          email: mockData.email,
+          points: mockData.points,
+          rank: mockData.rank,
+          treesPlanted: mockData.treesPlanted,
+          challengesCompleted: mockData.challengesCompleted,
+          lessonsFinished: mockData.lessonsFinished,
+        });
         
-        if (response.ok) {
-          const data = await response.json();
-          setUserStats({
-            name: data.name || "User",
-            role: data.role || "Student",
-            school: data.schoolId || "Not Set", 
-            email: data.email,
-            points: data.points || 0,
-            rank: data.rank || "Bronze",
-            treesPlanted: data.treesPlanted || 0,
-            challengesCompleted: data.challengesCompleted || 0,
-            lessonsFinished: data.lessonsFinished || 0,
-          });
-          
-          // Initialize edit form with fetched data
-          setEditedName(data.name || "");
-          setEditedSchool(data.schoolId || "");
-          setEditedEmail(data.email || "");
-          setEditedRole(data.role || "");
-        } else {
-          console.error("Failed to fetch profile");
-        }
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-      } finally {
+        // Initialize edit form with mock data
+        setEditedName(mockData.name);
+        setEditedSchool(mockData.schoolId);
+        setEditedEmail(mockData.email);
+        setEditedRole(mockData.role);
+        
         setIsLoading(false);
-      }
+      }, 800); // 800ms delay to make it feel realistic
     };
 
     fetchProfile();
   }, [user]);
 
-  // HANDLE UPDATE PROFILE
-  const handleSaveProfile = async () => {
-    try {
-      const response = await fetch('/api/ProfileHandler', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: userStats.email, 
-          name: editedName,
-          school: editedSchool,
-          role: editedRole
-        })
-      });
+  // --- HANDLE MOCK UPDATE PROFILE ---
+  const handleSaveProfile = () => {
+    // Instead of sending a PUT request, we just update the local state
+    
+    // Update the main display state
+    setUserStats({
+      ...userStats,
+      name: editedName,
+      school: editedSchool,
+      email: editedEmail,
+      role: editedRole,
+    });
 
-      if (response.ok) {
-        setUserStats({
-          ...userStats,
-          name: editedName,
-          school: editedSchool,
-          email: editedEmail,
-          role: editedRole,
-        });
-        setEditMode(false);
-        toast({
-          title: t('profile.updated'),
-          description: t('profile.updatedDesc'),
-        });
-      } else {
-        throw new Error('Failed to update');
-      }
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Could not save changes. Please try again.",
-      });
-    }
+    setEditMode(false);
+    
+    toast({
+      title: t('profile.updated'),
+      description: t('profile.updatedDesc'),
+    });
   };
 
   const handleCancelEdit = () => {

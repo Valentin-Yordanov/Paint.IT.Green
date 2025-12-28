@@ -14,9 +14,7 @@ const CONTAINER_NAME = 'Events';
 // 🌟 CORRECTED: Matches your local.settings.json key
 const CONNECTION_SETTING = 'COSMOS_DB_CONNECTION_STRING'; 
 
-// -------------------------------------------------------------------
 // 1. INPUT BINDING (Read)
-// -------------------------------------------------------------------
 const cosmosInput = input.cosmosDB({
     databaseName: DATABASE_NAME,
     containerName: CONTAINER_NAME,
@@ -24,9 +22,7 @@ const cosmosInput = input.cosmosDB({
     sqlQuery: 'SELECT * FROM c'
 });
 
-// -------------------------------------------------------------------
 // 2. OUTPUT BINDING (Write)
-// -------------------------------------------------------------------
 const cosmosOutput = output.cosmosDB({
     databaseName: DATABASE_NAME,
     containerName: CONTAINER_NAME,
@@ -34,9 +30,7 @@ const cosmosOutput = output.cosmosDB({
     createIfNotExists: true
 });
 
-// -------------------------------------------------------------------
 // 3. MAIN HANDLER FUNCTION
-// -------------------------------------------------------------------
 export async function CalendarHandler(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     const method = request.method;
     context.log(`CalendarHandler received a ${method} request.`);
@@ -66,7 +60,6 @@ export async function CalendarHandler(request: HttpRequest, context: InvocationC
                 createdAt: new Date().toISOString()
             };
 
-            // Write data using the 'cosmosOutput' binding
             context.extraOutputs.set(cosmosOutput, newEvent);
 
             context.log(`Successfully created event: ${newEvent.id}`);
@@ -88,9 +81,7 @@ export async function CalendarHandler(request: HttpRequest, context: InvocationC
     };
 }
 
-// -------------------------------------------------------------------
 // 4. FUNCTION REGISTRATION
-// -------------------------------------------------------------------
 app.http('CalendarHandler', {
     methods: ['GET', 'POST'],
     authLevel: 'anonymous',

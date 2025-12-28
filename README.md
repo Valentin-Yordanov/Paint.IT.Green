@@ -22,8 +22,8 @@ This project uses a modern **Serverless** architecture hosted on Azure.
 | Area | Technology |
 | :--- | :--- |
 | **Frontend** | React, TypeScript, Vite |
-| **Styling** | Tailwind CSS|
-| **Backend** | Azure Functions (Node.js v4 Model) |
+| **Styling** | Tailwind CSS |
+| **Backend** | Azure Functions |
 | **Hosting** | Azure Static Web Apps (SWA) |
 | **CI/CD** | GitHub Actions |
 

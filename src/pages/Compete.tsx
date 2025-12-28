@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +9,20 @@ import { Label } from "@/components/ui/label";
 import { Trophy, Medal, Award, TrendingUp, CalendarDays, Pin, Clock, Star, Plus, Loader2, Trash2, Edit } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
+import L from "leaflet";
+import type { LatLngExpression } from "leaflet";
+import "leaflet/dist/leaflet.css";
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
+const DefaultIcon = L.icon({
+    iconUrl: markerIcon,
+    shadowUrl: markerShadow,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41]
+});
+L.Marker.prototype.options.icon = DefaultIcon;
 
 const IS_LOGGED_IN = true; 
 const CURRENT_USER_ID = "user-123-mock"; 
@@ -31,6 +45,16 @@ const getRankIcon = (rank: number) => {
   }
 };
 
+function MapClickHandler({ onLocationSelect }: { onLocationSelect: (lat: number, lng: number) => void }) {
+  useMapEvents({
+    click(e) {
+      if (!IS_LOGGED_IN) return;
+      onLocationSelect(e.latlng.lat, e.latlng.lng);
+    },
+  });
+  return null;
+}
+
 // --- Calendar Component ---
 const EventCalendar = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
@@ -39,6 +63,8 @@ const EventCalendar = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [newEvent, setNewEvent] = useState({ title: "", time: "", location: "" });
+
+  const mapCenter: LatLngExpression = useMemo(() => [42.6977, 23.3219], []);
 
   const fetchEvents = async () => {
     setIsLoading(true);
@@ -149,20 +175,52 @@ const EventCalendar = () => {
     selectedDate && new Date(e.dateString).toDateString() === selectedDate.toDateString()
   );
 
-  // --- RETURN JSX ---
   return (
-    <div className="flex flex-col md:flex-row gap-6">
-      <div className="flex justify-center border-r-0 md:border-r border-border pr-0 md:pr-6">
-        <Calendar
-          mode="single"
-          selected={selectedDate}
-          onSelect={setSelectedDate}
-          className="rounded-md border shadow bg-card"
-          modifiers={{ event: events.map(e => new Date(e.dateString)) }}
-          modifiersStyles={{
-            event: { fontWeight: 'bold', backgroundColor: 'hsl(var(--primary) / 0.1)', color: 'hsl(var(--primary))', border: '2px solid hsl(var(--primary))' }
-          }}
-        />
+    <div className="flex flex-col gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* LEAFLET MAP - Fixed property typing */}
+        <div className="rounded-lg border overflow-hidden h-[350px] z-0 relative">
+          <MapContainer 
+            center={mapCenter} 
+            zoom={13} 
+            style={{ height: "100%", width: "100%" }}
+          >
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            <MapClickHandler onLocationSelect={(lat, lng) => {
+              setNewEvent(prev => ({ ...prev, location: `${lat.toFixed(4)}, ${lng.toFixed(4)}` }));
+              setIsFormOpen(true);
+            }} />
+            {events.map((event) => {
+              const parts = event.location.split(',').map(p => parseFloat(p.trim()));
+              if (parts.length === 2 && !isNaN(parts[0])) {
+                return (
+                  <Marker key={event.id} position={[parts[0], parts[1]] as LatLngExpression}>
+                    <Popup>
+                      <div className="text-xs">
+                        <p className="font-bold">{event.title}</p>
+                        <p>{event.time}</p>
+                      </div>
+                    </Popup>
+                  </Marker>
+                );
+              }
+              return null;
+            })}
+          </MapContainer>
+        </div>
+
+        <div className="flex justify-center border rounded-lg bg-card p-2 h-[350px]">
+          <Calendar
+            mode="single"
+            selected={selectedDate}
+            onSelect={setSelectedDate}
+            className="w-full h-full"
+            modifiers={{ event: events.map(e => new Date(e.dateString)) }}
+            modifiersStyles={{
+              event: { fontWeight: 'bold', backgroundColor: 'hsl(var(--primary) / 0.1)', color: 'hsl(var(--primary))', border: '2px solid hsl(var(--primary))' }
+            }}
+          />
+        </div>
       </div>
 
       <div className="flex-1 space-y-6">
@@ -174,9 +232,9 @@ const EventCalendar = () => {
             {IS_LOGGED_IN && <Badge variant="secondary">Admin Mode</Badge>}
         </div>
 
-        <div className="space-y-3 min-h-[120px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 min-h-[120px]">
            {selectedEvents.length === 0 ? (
-               <p className="text-muted-foreground text-sm italic py-4">No events scheduled for this day.</p>
+               <p className="text-muted-foreground text-sm italic py-4 col-span-2">No events scheduled for this day.</p>
            ) : (
                selectedEvents.map((event) => (
                 <Card key={event.id} className="border-l-4 border-l-primary shadow-sm bg-secondary/20">
@@ -203,48 +261,8 @@ const EventCalendar = () => {
                ))
            )}
         </div>
-
-        {IS_LOGGED_IN && selectedDate ? (
-            <div className="pt-6 border-t border-border">
-                {!isFormOpen ? (
-                     <Button variant="ghost" className="w-full justify-start p-0 h-auto hover:bg-transparent hover:text-primary" onClick={() => setIsFormOpen(true)}>
-                        <h4 className="font-medium text-sm flex items-center gap-2 text-primary">
-                            <Plus className="w-4 h-4" /> Add New Event
-                        </h4>
-                    </Button>
-                ) : (
-                    <div className="space-y-3 mt-4 animate-in fade-in slide-in-from-top-2 border p-4 rounded-md bg-secondary/10">
-                        <h4 className="text-sm font-bold mb-2">{editingId ? "Edit Event" : "New Event"}</h4>
-                        <div className="grid gap-2">
-                            <Label htmlFor="title" className="text-xs">Event Title</Label>
-                            <Input id="title" value={newEvent.title} onChange={(e) => setNewEvent({...newEvent, title: e.target.value})}/>
-                        </div>
-                        <div className="grid grid-cols-2 gap-2">
-                            <div>
-                                <Label htmlFor="time" className="text-xs">Time</Label>
-                                <Input id="time" value={newEvent.time} onChange={(e) => setNewEvent({...newEvent, time: e.target.value})}/>
-                            </div>
-                            <div>
-                                <Label htmlFor="loc" className="text-xs">Location</Label>
-                                <Input id="loc" value={newEvent.location} onChange={(e) => setNewEvent({...newEvent, location: e.target.value})}/>
-                            </div>
-                        </div>
-                        <div className="flex gap-2 mt-2">
-                            <Button onClick={handleSaveEvent} className="flex-1" disabled={isLoading}>
-                                {isLoading ? "Saving..." : (editingId ? "Update Event" : "Save Event")}
-                            </Button>
-                            <Button variant="outline" onClick={handleCancel} disabled={isLoading}>Cancel</Button>
-                        </div>
-                    </div>
-                )}
-            </div>
-        ) : (
-            <div className="pt-4 border-t text-center text-xs text-muted-foreground">
-                <p>Login to add events to this calendar.</p>
-            </div>
-        )}
       </div>
-    </div>
+    </div>     
   );
 };
 

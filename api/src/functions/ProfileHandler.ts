@@ -65,7 +65,7 @@ export async function userHandler(request: HttpRequest, context: InvocationConte
         const passwordHash = await bcrypt.hash(password, salt);
 
         // 5. Determine Role
-        const role = requestedRole || "Student"; // Changed default to "Student" for clarity
+        const role = requestedRole || "Student"; // Default is Student change it------------------------------------------------------------------
 
         // 6. Create the User Object
         const newUser: UserSchema = {

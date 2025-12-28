@@ -18,7 +18,7 @@ import Contact from "./pages/Contact";
 import FAQ from "./pages/FAQ";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
-import NotFound from "./pages/NotFound";
+//import NotFound from "./pages/NotFound";
 import OurGoal from "./pages/OurGoal";
 import OurCommunity from "./pages/OurCommunity";
 import OurImpact from "./pages/OurImpact";
@@ -60,7 +60,7 @@ const App = () => (
                 <Route path="/our-values" element={<OurValues />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
-                <Route path="*" element={<NotFound />} />
+                {/* <Route path="*" element={<NotFound />} /> */}
               </Routes>
               <Footer />
             </AuthProvider>

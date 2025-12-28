@@ -18,15 +18,21 @@ const Navbar = () => {
     { path: "/compete", label: t("nav.compete"), icon: Trophy },
     { path: "/community", label: t("nav.community"), icon: Users },
     { path: "/profile", label: t("nav.profile"), icon: User },
-  ].filter(link => link.path !== "/profile" || isAuthenticated); // Filter out /profile if not authenticated
+  ];
 
-  const NavLinks = () => (
+  // 1. UPDATED: Removed 'justify-start' so text stays in the center
+  const NavLinks = ({ isMobile = false }: { isMobile?: boolean }) => (
     <>
       {navLinks.map(({ path, label, icon: Icon }) => (
-        <Link key={path} to={path}>
+        <Link 
+          key={path} 
+          to={path} 
+          className={isMobile ? "w-full" : ""}
+        >
           <Button
             variant={isActive(path) ? "default" : "outline"}
-            className="gap-2"
+            // We keep 'w-full' for width, but removed 'justify-start' to center text
+            className={`gap-2 ${isMobile ? "w-full" : ""}`}
           >
             <Icon className="h-4 w-4" />
             {label}
@@ -37,12 +43,10 @@ const Navbar = () => {
   );
 
   const AuthButtons = ({ isMobile = false }) => {
-    // If the user is logged in, we render nothing (null)
     if (isAuthenticated) {
       return null;
     }
 
-    // If the user is NOT logged in, we show Login and Signup
     return (
       <>
         <Link to="/login" className={isMobile ? "w-full" : ""}>
@@ -88,7 +92,9 @@ const Navbar = () => {
           </SheetTrigger>
           <SheetContent>
             <div className="flex flex-col gap-4 mt-8">
-              <NavLinks />
+              {/* Pass isMobile={true} here */}
+              <NavLinks isMobile={true} />
+              
               <div className="mt-4 border-t pt-4 flex flex-col gap-4">
                 <AuthButtons isMobile={true} />
               </div>
