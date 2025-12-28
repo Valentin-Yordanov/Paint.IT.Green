@@ -177,7 +177,7 @@ const EventCalendar = () => {
   );
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 max-h-[70vh] overflow-y-auto pr-2">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* LEAFLET MAP */}
         <div className="rounded-lg border overflow-hidden h-[350px] z-0 relative">
@@ -224,8 +224,49 @@ const EventCalendar = () => {
         </div>
       </div>
 
-      {/* Create Event Button & Form */}
-      <div className="space-y-4">
+      {/* Events List */}
+      <div className="flex-1 space-y-4">
+        <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-lg flex items-center gap-2">
+                {selectedDate ? selectedDate.toDateString() : t('compete.selectDate')}
+                {isLoading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground"/>}
+            </h3>
+            {IS_LOGGED_IN && <Badge variant="secondary">{t('compete.adminMode')}</Badge>}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 min-h-[80px]">
+           {selectedEvents.length === 0 ? (
+               <p className="text-muted-foreground text-sm italic py-4 col-span-2">{t('compete.noEvents')}</p>
+           ) : (
+               selectedEvents.map((event) => (
+                <Card key={event.id} className="border-l-4 border-l-primary shadow-sm bg-secondary/20">
+                  <CardContent className="p-3">
+                    <div className="flex justify-between items-start">
+                        <h4 className="font-bold">{event.title}</h4>
+                        {event.createdBy === CURRENT_USER_ID && (
+                            <div className="flex gap-1">
+                                <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-blue-500" onClick={() => handleEditClick(event)}>
+                                    <Edit className="h-3 w-3"/>
+                                </Button>
+                                <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive" onClick={() => handleDelete(event.id)}>
+                                    <Trash2 className="h-3 w-3"/>
+                                </Button>
+                            </div>
+                        )}
+                    </div>
+                    <div className="flex gap-4 mt-2 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1"><Clock className="w-3 h-3"/> {event.time}</span>
+                        <span className="flex items-center gap-1"><Pin className="w-3 h-3"/> {event.location}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+               ))
+           )}
+        </div>
+      </div>
+
+      {/* Create Event Button & Form - Now at the bottom */}
+      <div className="space-y-4 border-t pt-4">
         {!isFormOpen ? (
           <Button onClick={() => setIsFormOpen(true)} className="gap-2">
             <Plus className="h-4 w-4" />
@@ -279,47 +320,7 @@ const EventCalendar = () => {
           </Card>
         )}
       </div>
-
-      <div className="flex-1 space-y-6">
-        <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-lg flex items-center gap-2">
-                {selectedDate ? selectedDate.toDateString() : t('compete.selectDate')}
-                {isLoading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground"/>}
-            </h3>
-            {IS_LOGGED_IN && <Badge variant="secondary">{t('compete.adminMode')}</Badge>}
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 min-h-[120px]">
-           {selectedEvents.length === 0 ? (
-               <p className="text-muted-foreground text-sm italic py-4 col-span-2">{t('compete.noEvents')}</p>
-           ) : (
-               selectedEvents.map((event) => (
-                <Card key={event.id} className="border-l-4 border-l-primary shadow-sm bg-secondary/20">
-                  <CardContent className="p-3">
-                    <div className="flex justify-between items-start">
-                        <h4 className="font-bold">{event.title}</h4>
-                        {event.createdBy === CURRENT_USER_ID && (
-                            <div className="flex gap-1">
-                                <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-blue-500" onClick={() => handleEditClick(event)}>
-                                    <Edit className="h-3 w-3"/>
-                                </Button>
-                                <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive" onClick={() => handleDelete(event.id)}>
-                                    <Trash2 className="h-3 w-3"/>
-                                </Button>
-                            </div>
-                        )}
-                    </div>
-                    <div className="flex gap-4 mt-2 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1"><Clock className="w-3 h-3"/> {event.time}</span>
-                        <span className="flex items-center gap-1"><Pin className="w-3 h-3"/> {event.location}</span>
-                    </div>
-                  </CardContent>
-                </Card>
-               ))
-           )}
-        </div>
-      </div>
-    </div>     
+    </div>
   );
 };
 
