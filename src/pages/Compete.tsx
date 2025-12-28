@@ -57,6 +57,7 @@ function MapClickHandler({ onLocationSelect }: { onLocationSelect: (lat: number,
 
 // --- Calendar Component ---
 const EventCalendar = () => {
+  const { t } = useLanguage();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -134,7 +135,7 @@ const EventCalendar = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if(!confirm("Are you sure you want to delete this event?")) return;
+    if(!confirm(t('compete.confirmDelete'))) return;
     setIsLoading(true);
     try {
         const res = await fetch(`http://localhost:7071/api/CalendarHandler?id=${id}`, {
@@ -146,7 +147,7 @@ const EventCalendar = () => {
         if (res.ok) {
             fetchEvents();
         } else {
-            alert("Failed to delete. You might not be the owner.");
+            alert(t('compete.deleteError'));
         }
     } catch (e) {
         console.error(e);
@@ -178,7 +179,7 @@ const EventCalendar = () => {
   return (
     <div className="flex flex-col gap-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* LEAFLET MAP - Fixed property typing */}
+        {/* LEAFLET MAP */}
         <div className="rounded-lg border overflow-hidden h-[350px] z-0 relative">
           <MapContainer 
             center={mapCenter} 
@@ -223,18 +224,74 @@ const EventCalendar = () => {
         </div>
       </div>
 
+      {/* Create Event Button & Form */}
+      <div className="space-y-4">
+        {!isFormOpen ? (
+          <Button onClick={() => setIsFormOpen(true)} className="gap-2">
+            <Plus className="h-4 w-4" />
+            {t('compete.createEvent')}
+          </Button>
+        ) : (
+          <Card className="border-primary">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">
+                {editingId ? t('compete.editEvent') : t('compete.createEvent')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="event-title">{t('compete.eventTitle')}</Label>
+                <Input
+                  id="event-title"
+                  placeholder={t('compete.eventTitlePlaceholder')}
+                  value={newEvent.title}
+                  onChange={(e) => setNewEvent(prev => ({ ...prev, title: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="event-time">{t('compete.eventTime')}</Label>
+                <Input
+                  id="event-time"
+                  type="time"
+                  value={newEvent.time}
+                  onChange={(e) => setNewEvent(prev => ({ ...prev, time: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="event-location">{t('compete.eventLocation')}</Label>
+                <Input
+                  id="event-location"
+                  placeholder={t('compete.eventLocationPlaceholder')}
+                  value={newEvent.location}
+                  onChange={(e) => setNewEvent(prev => ({ ...prev, location: e.target.value }))}
+                />
+                <p className="text-xs text-muted-foreground">{t('compete.clickMapHint')}</p>
+              </div>
+              <div className="flex gap-2">
+                <Button onClick={handleSaveEvent} disabled={isLoading || !newEvent.title}>
+                  {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : t('compete.saveEvent')}
+                </Button>
+                <Button variant="outline" onClick={handleCancel}>
+                  {t('compete.cancel')}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+
       <div className="flex-1 space-y-6">
         <div className="flex items-center justify-between">
             <h3 className="font-semibold text-lg flex items-center gap-2">
-                {selectedDate ? selectedDate.toDateString() : "Select a date"}
+                {selectedDate ? selectedDate.toDateString() : t('compete.selectDate')}
                 {isLoading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground"/>}
             </h3>
-            {IS_LOGGED_IN && <Badge variant="secondary">Admin Mode</Badge>}
+            {IS_LOGGED_IN && <Badge variant="secondary">{t('compete.adminMode')}</Badge>}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 min-h-[120px]">
            {selectedEvents.length === 0 ? (
-               <p className="text-muted-foreground text-sm italic py-4 col-span-2">No events scheduled for this day.</p>
+               <p className="text-muted-foreground text-sm italic py-4 col-span-2">{t('compete.noEvents')}</p>
            ) : (
                selectedEvents.map((event) => (
                 <Card key={event.id} className="border-l-4 border-l-primary shadow-sm bg-secondary/20">
@@ -268,8 +325,7 @@ const EventCalendar = () => {
 
 // --- Main Compete Component ---
 const Compete = () => {
-  const useLanguageMock = () => ({ t: (key: string, def: string) => def || key });
-  const { t } = useLanguageMock();
+  const { t } = useLanguage();
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   // --- MOCK DATA ---
@@ -327,10 +383,10 @@ const Compete = () => {
       <div className="container">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            {t('compete.title', 'Competitions & Leaderboards')}
+            {t('compete.title')}
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            {t('compete.subtitle', 'See how cities, schools, and students are competing to make the biggest environmental impact')}
+            {t('compete.subtitle')}
           </p>
         </div>
 
@@ -340,12 +396,12 @@ const Compete = () => {
             <DialogTrigger asChild>
               <Button size="lg" className="gap-2 px-8 py-6 text-lg">
                 <CalendarDays className="h-6 w-6" />
-                {t('compete.viewEvents', 'View Local Events')}
+                {t('compete.viewEvents')}
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[800px]">
               <DialogHeader>
-                <DialogTitle>{t('compete.eventCalendar', 'Event Calendar')}</DialogTitle>
+                <DialogTitle>{t('compete.eventCalendar')}</DialogTitle>
               </DialogHeader>
               <EventCalendar />
             </DialogContent>
@@ -354,12 +410,12 @@ const Compete = () => {
 
         {/* --- Challenges Timeline --- */}
         <div className="mb-12">
-          <h2 className="text-3xl font-bold mb-8 text-center">{t('compete.challenges', 'Challenges Timeline')}</h2>
+          <h2 className="text-3xl font-bold mb-8 text-center">{t('compete.challenges')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-5 gap-6 items-start">
             {pastChallenges.map((comp, index) => (
               <Card key={index} className="border-border bg-card opacity-70">
                 <CardHeader>
-                  <Badge variant="outline" className="w-fit">Past</Badge>
+                  <Badge variant="outline" className="w-fit">{t('compete.past')}</Badge>
                   <div className="flex items-center gap-3 pt-2">
                     <span className="text-3xl">{comp.icon}</span>
                     <div>
@@ -376,7 +432,7 @@ const Compete = () => {
             {activeChallenge && (
               <Card className="border-primary border-2 bg-card shadow-lg shadow-primary/10 transform scale-105">
                 <CardHeader>
-                  <Badge variant="default" className="w-fit">Active</Badge>
+                  <Badge variant="default" className="w-fit">{t('compete.active')}</Badge>
                   <div className="flex items-center gap-3 pt-2">
                     <span className="text-4xl">{activeChallenge.icon}</span>
                     <div>
@@ -393,7 +449,7 @@ const Compete = () => {
             {upcomingChallenges.map((comp, index) => (
               <Card key={index} className="border-border bg-card border-dashed">
                 <CardHeader>
-                  <Badge variant="secondary" className="w-fit">Upcoming</Badge>
+                  <Badge variant="secondary" className="w-fit">{t('compete.upcoming')}</Badge>
                   <div className="flex items-center gap-3 pt-2">
                     <span className="text-3xl">{comp.icon}</span>
                     <div>
@@ -411,29 +467,29 @@ const Compete = () => {
         </div>
 
         {/* --- Leaderboards --- */}
-        <h2 className="text-3xl font-bold mb-8 text-center">{t('compete.leaderboards', 'Leaderboards')}</h2>
+        <h2 className="text-3xl font-bold mb-8 text-center">{t('compete.leaderboards')}</h2>
         
         <Tabs defaultValue="current" className="space-y-8">
           <TabsList className="grid grid-cols-3 h-auto gap-2 bg-secondary/50 p-1">
             <TabsTrigger value="current" className="flex flex-col sm:flex-row gap-1 sm:gap-2 p-2 h-full data-[state=active]:bg-background shadow-none">
               <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5" />
               <div className="flex flex-col sm:block text-xs sm:text-base font-medium leading-tight">
-                <span className="sm:hidden">Current</span>
-                <span className="hidden sm:inline">{t('compete.currentMonth', 'Current Month')}</span>
+                <span className="sm:hidden">{t('compete.current')}</span>
+                <span className="hidden sm:inline">{t('compete.currentMonth')}</span>
               </div>
             </TabsTrigger>
             <TabsTrigger value="lastMonth" className="flex flex-col sm:flex-row gap-1 sm:gap-2 p-2 h-full data-[state=active]:bg-background shadow-none">
               <Trophy className="h-4 w-4 sm:h-5 sm:w-5" />
               <div className="flex flex-col sm:block text-xs sm:text-base font-medium leading-tight">
-                <span className="sm:hidden">Winners</span>
-                <span className="hidden sm:inline">{t('compete.lastWinners', 'Last Month\'s Winners')}</span>
+                <span className="sm:hidden">{t('compete.winners')}</span>
+                <span className="hidden sm:inline">{t('compete.lastWinners')}</span>
               </div>
             </TabsTrigger>
             <TabsTrigger value="allTime" className="flex flex-col sm:flex-row gap-1 sm:gap-2 p-2 h-full data-[state=active]:bg-background shadow-none">
               <Star className="h-4 w-4 sm:h-5 sm:w-5" />
               <div className="flex flex-col sm:block text-xs sm:text-base font-medium leading-tight">
-                <span className="sm:hidden">All-Time</span>
-                <span className="hidden sm:inline">{t('compete.allTime', 'All-Time Wins')}</span>
+                <span className="sm:hidden">{t('compete.allTimeShort')}</span>
+                <span className="hidden sm:inline">{t('compete.allTime')}</span>
               </div>
             </TabsTrigger>
           </TabsList>
@@ -441,13 +497,13 @@ const Compete = () => {
           <TabsContent value="current">
             <Tabs defaultValue="cities" className="space-y-8">
               <TabsList className="grid grid-cols-3 h-auto gap-2 bg-secondary p-1">
-                <TabsTrigger value="cities" className="flex gap-2 p-2 text-xs sm:text-sm h-auto"><Trophy className="h-3 w-3 sm:h-4 sm:w-4" />{t('compete.cities', 'Cities')}</TabsTrigger>
-                <TabsTrigger value="schools" className="flex gap-2 p-2 text-xs sm:text-sm h-auto"><Medal className="h-3 w-3 sm:h-4 sm:w-4" />{t('compete.schools', 'Schools')}</TabsTrigger>
-                <TabsTrigger value="students" className="flex gap-2 p-2 text-xs sm:text-sm h-auto"><Award className="h-3 w-3 sm:h-4 sm:w-4" />{t('compete.students', 'Students')}</TabsTrigger>
+                <TabsTrigger value="cities" className="flex gap-2 p-2 text-xs sm:text-sm h-auto"><Trophy className="h-3 w-3 sm:h-4 sm:w-4" />{t('compete.cities')}</TabsTrigger>
+                <TabsTrigger value="schools" className="flex gap-2 p-2 text-xs sm:text-sm h-auto"><Medal className="h-3 w-3 sm:h-4 sm:w-4" />{t('compete.schools')}</TabsTrigger>
+                <TabsTrigger value="students" className="flex gap-2 p-2 text-xs sm:text-sm h-auto"><Award className="h-3 w-3 sm:h-4 sm:w-4" />{t('compete.students')}</TabsTrigger>
               </TabsList>
               <TabsContent value="cities">
                 <Card className="border-border bg-card">
-                  <CardHeader><CardTitle>{t('compete.cityRankings', 'City Rankings')} - {activeChallenge?.period}</CardTitle></CardHeader>
+                  <CardHeader><CardTitle>{t('compete.cityRankings')} - {activeChallenge?.period}</CardTitle></CardHeader>
                   <CardContent>
                     <div className="space-y-4">
                       {cityLeaderboard.map((entry) => (
@@ -465,7 +521,7 @@ const Compete = () => {
               </TabsContent>
               <TabsContent value="schools">
                 <Card className="border-border bg-card">
-                  <CardHeader><CardTitle>{t('compete.schoolRankings', 'School Rankings')} - {activeChallenge?.period}</CardTitle></CardHeader>
+                  <CardHeader><CardTitle>{t('compete.schoolRankings')} - {activeChallenge?.period}</CardTitle></CardHeader>
                   <CardContent>
                     <div className="space-y-4">
                       {schoolLeaderboard.map((entry) => (
@@ -483,7 +539,7 @@ const Compete = () => {
               </TabsContent>
               <TabsContent value="students">
                 <Card className="border-border bg-card">
-                  <CardHeader><CardTitle>{t('compete.studentRankings', 'Student Rankings')} - {activeChallenge?.period}</CardTitle></CardHeader>
+                  <CardHeader><CardTitle>{t('compete.studentRankings')} - {activeChallenge?.period}</CardTitle></CardHeader>
                   <CardContent>
                     <div className="space-y-4">
                       {studentLeaderboard.map((entry) => (
@@ -505,7 +561,7 @@ const Compete = () => {
           <TabsContent value="lastMonth">
             <Card className="border-border bg-card">
               <CardHeader>
-                <CardTitle className="text-lg sm:text-xl">{t('compete.lastWinnersRanking', 'Top Schools in Last Challenge:')}</CardTitle>
+                <CardTitle className="text-lg sm:text-xl">{t('compete.lastWinnersRanking')}</CardTitle>
                 <p className="text-muted-foreground text-sm">{lastChallengeTitle}</p>
               </CardHeader>
               <CardContent>
@@ -520,7 +576,7 @@ const Compete = () => {
                           <Badge variant="secondary" className="mt-1 text-xs">{entry.achievement}</Badge>
                         </div>
                       </div>
-                      <div className="text-base sm:text-lg font-bold text-primary sm:self-center pl-12 sm:pl-0">{entry.score.toLocaleString()} points</div>
+                      <div className="text-base sm:text-lg font-bold text-primary sm:self-center pl-12 sm:pl-0">{entry.score.toLocaleString()} {t('compete.points')}</div>
                     </div>
                   ))}
                 </div>
@@ -530,7 +586,7 @@ const Compete = () => {
 
           <TabsContent value="allTime">
             <Card className="border-border bg-card">
-              <CardHeader><CardTitle>{t('compete.allTimeRankings', 'All-Time Win Rankings')}</CardTitle></CardHeader>
+              <CardHeader><CardTitle>{t('compete.allTimeRankings')}</CardTitle></CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {allTimeWins.map((entry) => (
@@ -539,7 +595,7 @@ const Compete = () => {
                         <div className="w-8 sm:w-12 flex justify-center">{getRankIcon(entry.rank)}</div>
                         <div><div className="font-semibold text-sm sm:text-base">{entry.name}</div></div>
                       </div>
-                      <div className="flex items-center gap-2 text-base sm:text-lg font-bold text-primary">{entry.wins}<span className="text-xs sm:text-sm font-medium text-muted-foreground">wins</span></div>
+                      <div className="flex items-center gap-2 text-base sm:text-lg font-bold text-primary">{entry.wins}<span className="text-xs sm:text-sm font-medium text-muted-foreground">{t('compete.wins')}</span></div>
                     </div>
                   ))}
                 </div>
