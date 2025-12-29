@@ -195,19 +195,19 @@ const Learn = () => {
         </div>
 
         {/* 4-column grid of topic buttons */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {topics.map((topic) => (
             <button
               key={topic.id}
               onClick={() => setSelectedTopic(selectedTopic === topic.id ? null : topic.id)}
-              className={`flex flex-col items-center gap-2 p-4 rounded-lg border transition-all ${
+              className={`flex flex-col items-center justify-center gap-3 p-6 rounded-sm border-2 transition-all aspect-square shadow-sm hover:shadow-md ${
                 selectedTopic === topic.id
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-card border-border hover:border-primary/50"
+                  ? "bg-primary text-primary-foreground border-primary shadow-lg"
+                  : "bg-card border-border hover:border-primary/50 hover:bg-accent/50"
               }`}
             >
-              <topic.icon className="h-5 w-5" />
-              <span className="text-sm font-medium text-center">{topic.title}</span>
+              <topic.icon className="h-8 w-8" />
+              <span className="text-sm font-semibold text-center leading-tight">{topic.title}</span>
             </button>
           ))}
         </div>
