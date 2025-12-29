@@ -1,11 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TreePine, Droplets, Wind, Heart, Recycle, Users } from "lucide-react";
+import { TreePine, Droplets, Wind, Heart, Recycle, Users, Leaf, Sun, Mountain, Fish, Bird, Flower2, Globe, Lightbulb, BookOpen, Sprout } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 const Learn = () => {
   const { t } = useLanguage();
+  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+
   const topics = [
     {
       id: "wildlife",
@@ -97,7 +98,89 @@ const Learn = () => {
         },
       ],
     },
+    {
+      id: "climate",
+      title: "Climate Change",
+      icon: Sun,
+      content: [
+        { subtitle: "Coming Soon", text: "Content will be added here." },
+      ],
+    },
+    {
+      id: "biodiversity",
+      title: "Biodiversity",
+      icon: Leaf,
+      content: [
+        { subtitle: "Coming Soon", text: "Content will be added here." },
+      ],
+    },
+    {
+      id: "mountains",
+      title: "Mountain Ecosystems",
+      icon: Mountain,
+      content: [
+        { subtitle: "Coming Soon", text: "Content will be added here." },
+      ],
+    },
+    {
+      id: "oceans",
+      title: "Ocean Life",
+      icon: Fish,
+      content: [
+        { subtitle: "Coming Soon", text: "Content will be added here." },
+      ],
+    },
+    {
+      id: "birds",
+      title: "Bird Conservation",
+      icon: Bird,
+      content: [
+        { subtitle: "Coming Soon", text: "Content will be added here." },
+      ],
+    },
+    {
+      id: "gardens",
+      title: "Sustainable Gardens",
+      icon: Flower2,
+      content: [
+        { subtitle: "Coming Soon", text: "Content will be added here." },
+      ],
+    },
+    {
+      id: "global",
+      title: "Global Initiatives",
+      icon: Globe,
+      content: [
+        { subtitle: "Coming Soon", text: "Content will be added here." },
+      ],
+    },
+    {
+      id: "energy",
+      title: "Green Energy",
+      icon: Lightbulb,
+      content: [
+        { subtitle: "Coming Soon", text: "Content will be added here." },
+      ],
+    },
+    {
+      id: "education",
+      title: "Eco Education",
+      icon: BookOpen,
+      content: [
+        { subtitle: "Coming Soon", text: "Content will be added here." },
+      ],
+    },
+    {
+      id: "agriculture",
+      title: "Sustainable Farming",
+      icon: Sprout,
+      content: [
+        { subtitle: "Coming Soon", text: "Content will be added here." },
+      ],
+    },
   ];
+
+  const selectedTopicData = topics.find((t) => t.id === selectedTopic);
 
   return (
     <div className="min-h-screen py-12 bg-gradient-to-b from-background to-secondary/20">
@@ -111,47 +194,49 @@ const Learn = () => {
           </p>
         </div>
 
-        <Tabs defaultValue="wildlife" className="space-y-8">
-          <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 h-auto gap-2 bg-transparent ">
-            {topics.map((topic) => (
-              <TabsTrigger
-                key={topic.id}
-                value={topic.id}
-                className="flex flex-col gap-2 p-4 border border-border data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:border-primary" // Added border classes here
-              >
-                <topic.icon className="h-5 w-5" />
-                <span className="text-sm">{topic.title}</span>
-              </TabsTrigger>
-            ))}
-          </TabsList>
-
+        {/* 4-column grid of topic buttons */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
           {topics.map((topic) => (
-            <TabsContent key={topic.id} value={topic.id} className="space-y-6">
-              <Card className="border-border bg-card">
-                <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <topic.icon className="h-6 w-6 text-primary" />
-                    </div>
-                    <CardTitle className="text-2xl">{topic.title}</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {topic.content.map((section, index) => (
-                    <div key={index} className="space-y-2">
-                      <h3 className="text-lg font-semibold text-foreground">
-                        {section.subtitle}
-                      </h3>
-                      <p className="text-muted-foreground leading-relaxed">
-                        {section.text}
-                      </p>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            </TabsContent>
+            <button
+              key={topic.id}
+              onClick={() => setSelectedTopic(selectedTopic === topic.id ? null : topic.id)}
+              className={`flex flex-col items-center gap-2 p-4 rounded-lg border transition-all ${
+                selectedTopic === topic.id
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "bg-card border-border hover:border-primary/50"
+              }`}
+            >
+              <topic.icon className="h-5 w-5" />
+              <span className="text-sm font-medium text-center">{topic.title}</span>
+            </button>
           ))}
-        </Tabs>
+        </div>
+
+        {/* Content panel - only shown when a topic is selected */}
+        {selectedTopicData && (
+          <Card className="border-border bg-card animate-in fade-in-50 duration-300">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <selectedTopicData.icon className="h-6 w-6 text-primary" />
+                </div>
+                <CardTitle className="text-2xl">{selectedTopicData.title}</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {selectedTopicData.content.map((section, index) => (
+                <div key={index} className="space-y-2">
+                  <h3 className="text-lg font-semibold text-foreground">
+                    {section.subtitle}
+                  </h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    {section.text}
+                  </p>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
 
         <Card className="mt-12 bg-primary text-primary-foreground border-0">
           <CardContent className="p-8 text-center">
