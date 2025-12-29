@@ -200,14 +200,14 @@ const Learn = () => {
             <button
               key={topic.id}
               onClick={() => setSelectedTopic(selectedTopic === topic.id ? null : topic.id)}
-              className={`flex flex-col items-center justify-center gap-2 p-4 rounded-sm border-2 transition-all aspect-square shadow-sm hover:shadow-md ${
+              className={`flex flex-col items-center justify-center gap-1.5 p-3 rounded-sm border-2 transition-all aspect-square shadow-sm hover:shadow-md ${
                 selectedTopic === topic.id
                   ? "bg-primary text-primary-foreground border-primary shadow-lg"
                   : "bg-card border-border hover:border-primary/50 hover:bg-accent/50"
               }`}
             >
-              <topic.icon className="h-6 w-6" />
-              <span className="text-xs font-semibold text-center leading-tight">{topic.title}</span>
+              <topic.icon className="h-5 w-5" />
+              <span className="text-[10px] font-semibold text-center leading-tight">{topic.title}</span>
             </button>
           ))}
         </div>
