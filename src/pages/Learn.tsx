@@ -1,11 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { TreePine, Droplets, Wind, Heart, Recycle, Users, Leaf, Sun, Mountain, Fish, Bird, Flower2, Globe, Lightbulb, BookOpen, Sprout } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { TreePine, Droplets, Wind, Heart, Recycle, Users, Leaf, Sun, Mountain, Fish, Bird, Flower2, Globe, Lightbulb, BookOpen, Sprout, Search } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useState } from "react";
 
 const Learn = () => {
   const { t } = useLanguage();
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const topics = [
     {
@@ -180,6 +182,10 @@ const Learn = () => {
     },
   ];
 
+  const filteredTopics = topics.filter((topic) =>
+    topic.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const selectedTopicData = topics.find((t) => t.id === selectedTopic);
 
   return (
@@ -194,9 +200,21 @@ const Learn = () => {
           </p>
         </div>
 
+        {/* Search bar */}
+        <div className="relative mb-6">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+          <Input
+            type="text"
+            placeholder="Search topics..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 bg-card border-border"
+          />
+        </div>
+
         {/* 4-column grid of topic buttons */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          {topics.map((topic) => (
+          {filteredTopics.map((topic) => (
             <button
               key={topic.id}
               onClick={() => setSelectedTopic(selectedTopic === topic.id ? null : topic.id)}
