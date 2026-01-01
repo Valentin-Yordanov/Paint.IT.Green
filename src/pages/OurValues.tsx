@@ -23,10 +23,9 @@ const OurValues = () => {
       <section className="container py-16">
         <div className="max-w-4xl mx-auto space-y-12">
           <div>
-            <h2 className="text-3xl font-bold mb-4">What We Stand For</h2>
+            <h2 className="text-3xl font-bold mb-4">{t('ourValues.whatWeStandFor')}</h2>
             <p className="text-muted-foreground text-lg mb-4">
-              Our values guide every decision we make and shape the culture of our global community. 
-              They reflect our commitment to creating a better world for all living things.
+              {t('ourValues.whatWeStandForText')}
             </p>
           </div>
 
@@ -35,16 +34,14 @@ const OurValues = () => {
               <div className="flex items-start gap-4">
                 <Lightbulb className="h-12 w-12 text-primary flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="font-semibold text-2xl mb-3">Education</h3>
+                  <h3 className="font-semibold text-2xl mb-3">{t('ourValues.education')}</h3>
                   <p className="text-muted-foreground mb-4">
-                    Knowledge is power. We believe in making environmental education accessible, engaging, 
-                    and actionable. Every student deserves to understand the science behind climate change 
-                    and the solutions within their reach.
+                    {t('ourValues.educationText')}
                   </p>
                   <ul className="space-y-2 text-muted-foreground">
-                    <li>• Evidence-based learning materials</li>
-                    <li>• Accessible to all, regardless of background</li>
-                    <li>• Practical knowledge that leads to action</li>
+                    <li>• {t('ourValues.educationPoint1')}</li>
+                    <li>• {t('ourValues.educationPoint2')}</li>
+                    <li>• {t('ourValues.educationPoint3')}</li>
                   </ul>
                 </div>
               </div>
@@ -54,15 +51,14 @@ const OurValues = () => {
               <div className="flex items-start gap-4">
                 <Sprout className="h-12 w-12 text-primary flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="font-semibold text-2xl mb-3">Action</h3>
+                  <h3 className="font-semibold text-2xl mb-3">{t('ourValues.action')}</h3>
                   <p className="text-muted-foreground mb-4">
-                    Learning must lead to doing. We empower students to take meaningful action in their 
-                    communities, turning awareness into impact. Every small action contributes to larger change.
+                    {t('ourValues.actionText')}
                   </p>
                   <ul className="space-y-2 text-muted-foreground">
-                    <li>• Hands-on environmental projects</li>
-                    <li>• Community-led initiatives</li>
-                    <li>• Measurable, real-world impact</li>
+                    <li>• {t('ourValues.actionPoint1')}</li>
+                    <li>• {t('ourValues.actionPoint2')}</li>
+                    <li>• {t('ourValues.actionPoint3')}</li>
                   </ul>
                 </div>
               </div>
@@ -72,15 +68,14 @@ const OurValues = () => {
               <div className="flex items-start gap-4">
                 <Heart className="h-12 w-12 text-primary flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="font-semibold text-2xl mb-3">Compassion</h3>
+                  <h3 className="font-semibold text-2xl mb-3">{t('ourValues.compassion')}</h3>
                   <p className="text-muted-foreground mb-4">
-                    Environmental protection starts with caring—for our planet, for all species, and for 
-                    each other. We foster a community built on empathy, respect, and kindness.
+                    {t('ourValues.compassionText')}
                   </p>
                   <ul className="space-y-2 text-muted-foreground">
-                    <li>• Respect for all living things</li>
-                    <li>• Inclusive and supportive community</li>
-                    <li>• Understanding diverse perspectives</li>
+                    <li>• {t('ourValues.compassionPoint1')}</li>
+                    <li>• {t('ourValues.compassionPoint2')}</li>
+                    <li>• {t('ourValues.compassionPoint3')}</li>
                   </ul>
                 </div>
               </div>
@@ -90,15 +85,14 @@ const OurValues = () => {
               <div className="flex items-start gap-4">
                 <HandHeart className="h-12 w-12 text-primary flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="font-semibold text-2xl mb-3">Collaboration</h3>
+                  <h3 className="font-semibold text-2xl mb-3">{t('ourValues.collaboration')}</h3>
                   <p className="text-muted-foreground mb-4">
-                    No one can solve the climate crisis alone. We believe in the power of collective action, 
-                    bringing together students, schools, and communities worldwide.
+                    {t('ourValues.collaborationText')}
                   </p>
                   <ul className="space-y-2 text-muted-foreground">
-                    <li>• Global network of change-makers</li>
-                    <li>• Shared knowledge and resources</li>
-                    <li>• Stronger together than apart</li>
+                    <li>• {t('ourValues.collaborationPoint1')}</li>
+                    <li>• {t('ourValues.collaborationPoint2')}</li>
+                    <li>• {t('ourValues.collaborationPoint3')}</li>
                   </ul>
                 </div>
               </div>
@@ -106,24 +100,22 @@ const OurValues = () => {
           </div>
 
           <div className="bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20 rounded-lg p-8">
-            <h3 className="text-2xl font-bold mb-4">Living Our Values</h3>
+            <h3 className="text-2xl font-bold mb-4">{t('ourValues.livingOurValues')}</h3>
             <p className="text-muted-foreground mb-4">
-              These aren't just words on a page—they're principles we practice every day. From how we design 
-              our curriculum to how we support our community, our values guide us forward.
+              {t('ourValues.livingOurValuesText1')}
             </p>
             <p className="text-muted-foreground">
-              When you join P.I.G, you become part of a movement that prioritizes education, celebrates 
-              action, practices compassion, and thrives on collaboration.
+              {t('ourValues.livingOurValuesText2')}
             </p>
           </div>
 
           <div className="bg-primary/5 border border-primary/20 rounded-lg p-8">
-            <h3 className="text-2xl font-bold mb-4">Join Our Mission</h3>
+            <h3 className="text-2xl font-bold mb-4">{t('ourValues.joinMission')}</h3>
             <p className="text-muted-foreground mb-6">
-              Ready to be part of a community that lives these values every day? Start your journey with P.I.G.
+              {t('ourValues.joinMissionText')}
             </p>
             <Link to="/about">
-              <Button size="lg">Learn More About Us</Button>
+              <Button size="lg">{t('ourValues.learnMore')}</Button>
             </Link>
           </div>
         </div>

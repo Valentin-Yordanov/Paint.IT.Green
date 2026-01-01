@@ -23,55 +23,50 @@ const OurGoal = () => {
       <section className="container py-16">
         <div className="max-w-4xl mx-auto space-y-12">
           <div>
-            <h2 className="text-3xl font-bold mb-4">Breaking Down Barriers</h2>
+            <h2 className="text-3xl font-bold mb-4">{t('ourGoal.breakingBarriers')}</h2>
             <p className="text-muted-foreground text-lg mb-4">
-              We believe that every student, regardless of their location, economic status, or background, 
-              deserves access to quality environmental education. Our platform removes traditional barriers 
-              by providing free, engaging, and comprehensive learning resources.
+              {t('ourGoal.breakingBarriersText')}
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-card border rounded-lg p-6">
               <BookOpen className="h-10 w-10 text-primary mb-4" />
-              <h3 className="font-semibold text-xl mb-2">Free Resources</h3>
+              <h3 className="font-semibold text-xl mb-2">{t('ourGoal.freeResources')}</h3>
               <p className="text-sm text-muted-foreground">
-                All our educational materials are completely free and available to students worldwide.
+                {t('ourGoal.freeResourcesText')}
               </p>
             </div>
             <div className="bg-card border rounded-lg p-6">
               <Globe className="h-10 w-10 text-primary mb-4" />
-              <h3 className="font-semibold text-xl mb-2">Global Reach</h3>
+              <h3 className="font-semibold text-xl mb-2">{t('ourGoal.globalReach')}</h3>
               <p className="text-sm text-muted-foreground">
-                Available in multiple languages, reaching students across continents and cultures.
+                {t('ourGoal.globalReachText')}
               </p>
             </div>
             <div className="bg-card border rounded-lg p-6">
               <Users className="h-10 w-10 text-primary mb-4" />
-              <h3 className="font-semibold text-xl mb-2">Inclusive Learning</h3>
+              <h3 className="font-semibold text-xl mb-2">{t('ourGoal.inclusiveLearning')}</h3>
               <p className="text-sm text-muted-foreground">
-                Designed for diverse learning styles and abilities, ensuring everyone can participate.
+                {t('ourGoal.inclusiveLearningText')}
               </p>
             </div>
           </div>
 
           <div>
-            <h2 className="text-3xl font-bold mb-4">Our Vision for the Future</h2>
+            <h2 className="text-3xl font-bold mb-4">{t('ourGoal.vision')}</h2>
             <p className="text-muted-foreground text-lg mb-4">
-              By 2030, we aim to reach 10 million students across 150 countries, creating a generation 
-              of environmentally conscious global citizens. We're not just teaching about climate change—we're 
-              empowering students to become active participants in solving it.
+              {t('ourGoal.visionText')}
             </p>
           </div>
 
           <div className="bg-primary/5 border border-primary/20 rounded-lg p-8">
-            <h3 className="text-2xl font-bold mb-4">Join Our Mission</h3>
+            <h3 className="text-2xl font-bold mb-4">{t('ourGoal.joinMission')}</h3>
             <p className="text-muted-foreground mb-6">
-              Whether you're a student, teacher, or school administrator, you can be part of this global movement 
-              to make environmental education accessible to all.
+              {t('ourGoal.joinMissionText')}
             </p>
             <Link to="/learn">
-              <Button size="lg">Start Learning Today</Button>
+              <Button size="lg">{t('ourGoal.startLearning')}</Button>
             </Link>
           </div>
         </div>
