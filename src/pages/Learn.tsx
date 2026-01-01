@@ -12,172 +12,172 @@ const Learn = () => {
   const topics = [
     {
       id: "wildlife",
-      title: "Wildlife Protection",
+      title: t('learn.topics.wildlife.title'),
       icon: Heart,
       content: [
         {
-          subtitle: "Why Every Animal Matters",
-          text: "Every creature, from the smallest insect to the largest whale, plays a crucial role in our ecosystem. When one species disappears, it affects the entire food chain and can have devastating consequences for our planet.",
+          subtitle: t('learn.topics.wildlife.content1.subtitle'),
+          text: t('learn.topics.wildlife.content1.text'),
         },
         {
-          subtitle: "How You Can Help",
-          text: "Create wildlife-friendly spaces in your garden, avoid using harmful pesticides, support conservation organizations, and never litter in natural habitats. Small actions add up to big changes!",
+          subtitle: t('learn.topics.wildlife.content2.subtitle'),
+          text: t('learn.topics.wildlife.content2.text'),
         },
       ],
     },
     {
       id: "pollution",
-      title: "Fighting Pollution",
+      title: t('learn.topics.pollution.title'),
       icon: Wind,
       content: [
         {
-          subtitle: "The Impact of Pollution",
-          text: "Pollution harms our air, water, and soil. It affects not just wildlife, but our own health too. Plastic waste, chemical runoff, and air pollution are some of the biggest threats to our environment.",
+          subtitle: t('learn.topics.pollution.content1.subtitle'),
+          text: t('learn.topics.pollution.content1.text'),
         },
         {
-          subtitle: "Taking Action",
-          text: "Reduce single-use plastics, properly dispose of waste, use eco-friendly products, and encourage others to do the same. Every piece of trash properly disposed of is one less threat to our planet.",
+          subtitle: t('learn.topics.pollution.content2.subtitle'),
+          text: t('learn.topics.pollution.content2.text'),
         },
       ],
     },
     {
       id: "recycling",
-      title: "Recycling & Reusing",
+      title: t('learn.topics.recycling.title'),
       icon: Recycle,
       content: [
         {
-          subtitle: "The Power of Recycling",
-          text: "Recycling saves natural resources, reduces landfill waste, and conserves energy. When we recycle paper, we save trees. When we recycle plastic, we reduce ocean pollution.",
+          subtitle: t('learn.topics.recycling.content1.subtitle'),
+          text: t('learn.topics.recycling.content1.text'),
         },
         {
-          subtitle: "How to Recycle Right",
-          text: "Learn what can be recycled in your area, clean items before recycling, reduce waste by reusing items, and compost organic waste. Make recycling a daily habit!",
+          subtitle: t('learn.topics.recycling.content2.subtitle'),
+          text: t('learn.topics.recycling.content2.text'),
         },
       ],
     },
     {
       id: "forests",
-      title: "Forest Conservation",
+      title: t('learn.topics.forests.title'),
       icon: TreePine,
       content: [
         {
-          subtitle: "Why Forests Matter",
-          text: "Forests are the lungs of our planet. They produce oxygen, store carbon dioxide, provide homes for countless species, and help regulate our climate. Protecting forests is crucial for our survival.",
+          subtitle: t('learn.topics.forests.content1.subtitle'),
+          text: t('learn.topics.forests.content1.text'),
         },
         {
-          subtitle: "What You Can Do",
-          text: "Plant trees, use less paper, choose sustainable wood products, and support reforestation efforts. Even planting one tree makes a difference!",
+          subtitle: t('learn.topics.forests.content2.subtitle'),
+          text: t('learn.topics.forests.content2.text'),
         },
       ],
     },
     {
       id: "water",
-      title: "Water Conservation",
+      title: t('learn.topics.water.title'),
       icon: Droplets,
       content: [
         {
-          subtitle: "Water Is Precious",
-          text: "Clean water is essential for all life on Earth. Yet, pollution and waste threaten our water sources. Only 3% of Earth's water is fresh water, and much of it is frozen in glaciers.",
+          subtitle: t('learn.topics.water.content1.subtitle'),
+          text: t('learn.topics.water.content1.text'),
         },
         {
-          subtitle: "Save Water Daily",
-          text: "Turn off taps when not in use, fix leaks, take shorter showers, and never pollute water sources. Every drop saved helps ensure water for future generations.",
+          subtitle: t('learn.topics.water.content2.subtitle'),
+          text: t('learn.topics.water.content2.text'),
         },
       ],
     },
     {
       id: "community",
-      title: "Community Action",
+      title: t('learn.topics.community.title'),
       icon: Users,
       content: [
         {
-          subtitle: "Stronger Together",
-          text: "Individual actions are important, but when communities work together, we can achieve amazing things. Organize clean-up events, start recycling programs, and inspire others to join the cause.",
+          subtitle: t('learn.topics.community.content1.subtitle'),
+          text: t('learn.topics.community.content1.text'),
         },
         {
-          subtitle: "Getting Involved",
-          text: "Talk to your teachers about starting environmental projects, join or create eco-clubs, participate in community clean-ups, and share what you learn with friends and family.",
+          subtitle: t('learn.topics.community.content2.subtitle'),
+          text: t('learn.topics.community.content2.text'),
         },
       ],
     },
     {
       id: "climate",
-      title: "Climate Change",
+      title: t('learn.topics.climate.title'),
       icon: Sun,
       content: [
-        { subtitle: "Coming Soon", text: "Content will be added here." },
+        { subtitle: t('learn.topics.comingSoon'), text: t('learn.topics.comingSoonText') },
       ],
     },
     {
       id: "biodiversity",
-      title: "Biodiversity",
+      title: t('learn.topics.biodiversity.title'),
       icon: Leaf,
       content: [
-        { subtitle: "Coming Soon", text: "Content will be added here." },
+        { subtitle: t('learn.topics.comingSoon'), text: t('learn.topics.comingSoonText') },
       ],
     },
     {
       id: "mountains",
-      title: "Mountain Ecosystems",
+      title: t('learn.topics.mountains.title'),
       icon: Mountain,
       content: [
-        { subtitle: "Coming Soon", text: "Content will be added here." },
+        { subtitle: t('learn.topics.comingSoon'), text: t('learn.topics.comingSoonText') },
       ],
     },
     {
       id: "oceans",
-      title: "Ocean Life",
+      title: t('learn.topics.oceans.title'),
       icon: Fish,
       content: [
-        { subtitle: "Coming Soon", text: "Content will be added here." },
+        { subtitle: t('learn.topics.comingSoon'), text: t('learn.topics.comingSoonText') },
       ],
     },
     {
       id: "birds",
-      title: "Bird Conservation",
+      title: t('learn.topics.birds.title'),
       icon: Bird,
       content: [
-        { subtitle: "Coming Soon", text: "Content will be added here." },
+        { subtitle: t('learn.topics.comingSoon'), text: t('learn.topics.comingSoonText') },
       ],
     },
     {
       id: "gardens",
-      title: "Sustainable Gardens",
+      title: t('learn.topics.gardens.title'),
       icon: Flower2,
       content: [
-        { subtitle: "Coming Soon", text: "Content will be added here." },
+        { subtitle: t('learn.topics.comingSoon'), text: t('learn.topics.comingSoonText') },
       ],
     },
     {
       id: "global",
-      title: "Global Initiatives",
+      title: t('learn.topics.global.title'),
       icon: Globe,
       content: [
-        { subtitle: "Coming Soon", text: "Content will be added here." },
+        { subtitle: t('learn.topics.comingSoon'), text: t('learn.topics.comingSoonText') },
       ],
     },
     {
       id: "energy",
-      title: "Green Energy",
+      title: t('learn.topics.energy.title'),
       icon: Lightbulb,
       content: [
-        { subtitle: "Coming Soon", text: "Content will be added here." },
+        { subtitle: t('learn.topics.comingSoon'), text: t('learn.topics.comingSoonText') },
       ],
     },
     {
       id: "education",
-      title: "Eco Education",
+      title: t('learn.topics.education.title'),
       icon: BookOpen,
       content: [
-        { subtitle: "Coming Soon", text: "Content will be added here." },
+        { subtitle: t('learn.topics.comingSoon'), text: t('learn.topics.comingSoonText') },
       ],
     },
     {
       id: "agriculture",
-      title: "Sustainable Farming",
+      title: t('learn.topics.agriculture.title'),
       icon: Sprout,
       content: [
-        { subtitle: "Coming Soon", text: "Content will be added here." },
+        { subtitle: t('learn.topics.comingSoon'), text: t('learn.topics.comingSoonText') },
       ],
     },
   ];
@@ -205,7 +205,7 @@ const Learn = () => {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input
             type="text"
-            placeholder="Search topics..."
+            placeholder={t('learn.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10 bg-card border-border"

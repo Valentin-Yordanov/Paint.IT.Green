@@ -317,7 +317,7 @@ const Profile = () => {
                       
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">{goal.progress}% Complete</span>
+                          <span className="text-sm font-medium">{goal.progress}% {t('profile.complete')}</span>
                           <div className="flex items-center gap-2">
                             <Button
                               variant="outline"

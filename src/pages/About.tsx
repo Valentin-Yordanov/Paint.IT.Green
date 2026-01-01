@@ -32,23 +32,23 @@ const About = () => {
           <div className="grid grid-cols-2 gap-6">
             <Link to="/our-goal" className="bg-card border rounded-lg p-6 hover:shadow-lg transition-all hover:scale-105 cursor-pointer">
               <Target className="h-8 w-8 text-primary mb-3" />
-              <h3 className="font-semibold mb-2">Our Goal</h3>
-              <p className="text-sm text-muted-foreground">Making environmental education accessible to every student worldwide</p>
+              <h3 className="font-semibold mb-2">{t('about.ourGoal')}</h3>
+              <p className="text-sm text-muted-foreground">{t('about.ourGoalDesc')}</p>
             </Link>
             <Link to="/our-community" className="bg-card border rounded-lg p-6 hover:shadow-lg transition-all hover:scale-105 cursor-pointer">
               <Users className="h-8 w-8 text-primary mb-3" />
-              <h3 className="font-semibold mb-2">Our Community</h3>
-              <p className="text-sm text-muted-foreground">Connecting schools and students across the globe</p>
+              <h3 className="font-semibold mb-2">{t('about.ourCommunity')}</h3>
+              <p className="text-sm text-muted-foreground">{t('about.ourCommunityDesc')}</p>
             </Link>
             <Link to="/our-impact" className="bg-card border rounded-lg p-6 hover:shadow-lg transition-all hover:scale-105 cursor-pointer">
               <Leaf className="h-8 w-8 text-primary mb-3" />
-              <h3 className="font-semibold mb-2">Our Impact</h3>
-              <p className="text-sm text-muted-foreground">Real environmental change through collective action</p>
+              <h3 className="font-semibold mb-2">{t('about.ourImpact')}</h3>
+              <p className="text-sm text-muted-foreground">{t('about.ourImpactDesc')}</p>
             </Link>
             <Link to="/our-values" className="bg-card border rounded-lg p-6 hover:shadow-lg transition-all hover:scale-105 cursor-pointer">
               <Heart className="h-8 w-8 text-primary mb-3" />
-              <h3 className="font-semibold mb-2">Our Values</h3>
-              <p className="text-sm text-muted-foreground">Education, action, and compassion for all living things</p>
+              <h3 className="font-semibold mb-2">{t('about.ourValues')}</h3>
+              <p className="text-sm text-muted-foreground">{t('about.ourValuesDesc')}</p>
             </Link>
           </div>
         </div>

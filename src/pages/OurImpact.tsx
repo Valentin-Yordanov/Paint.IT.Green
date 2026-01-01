@@ -23,10 +23,9 @@ const OurImpact = () => {
       <section className="container py-16">
         <div className="max-w-4xl mx-auto space-y-12">
           <div>
-            <h2 className="text-3xl font-bold mb-4">Measurable Environmental Change</h2>
+            <h2 className="text-3xl font-bold mb-4">{t('ourImpact.measurableChange')}</h2>
             <p className="text-muted-foreground text-lg mb-4">
-              Every action taken by our community creates real, lasting impact. From reducing plastic waste 
-              to planting forests, we track and celebrate every positive change our students make.
+              {t('ourImpact.measurableChangeText')}
             </p>
           </div>
 
@@ -34,68 +33,65 @@ const OurImpact = () => {
             <div className="bg-card border rounded-lg p-8">
               <TreeDeciduous className="h-12 w-12 text-primary mb-4" />
               <div className="text-4xl font-bold text-primary mb-2">52,000+</div>
-              <h3 className="font-semibold text-xl mb-2">Trees Planted</h3>
+              <h3 className="font-semibold text-xl mb-2">{t('ourImpact.treesPlanted')}</h3>
               <p className="text-sm text-muted-foreground">
-                Our reforestation projects have planted over 52,000 trees, absorbing thousands of tons of CO2 annually.
+                {t('ourImpact.treesPlantedText')}
               </p>
             </div>
             <div className="bg-card border rounded-lg p-8">
               <Droplets className="h-12 w-12 text-primary mb-4" />
               <div className="text-4xl font-bold text-primary mb-2">2M+</div>
-              <h3 className="font-semibold text-xl mb-2">Plastic Items Removed</h3>
+              <h3 className="font-semibold text-xl mb-2">{t('ourImpact.plasticRemoved')}</h3>
               <p className="text-sm text-muted-foreground">
-                Beach and community cleanups have removed over 2 million plastic items from natural environments.
+                {t('ourImpact.plasticRemovedText')}
               </p>
             </div>
             <div className="bg-card border rounded-lg p-8">
               <TrendingUp className="h-12 w-12 text-primary mb-4" />
               <div className="text-4xl font-bold text-primary mb-2">85%</div>
-              <h3 className="font-semibold text-xl mb-2">Behavior Change</h3>
+              <h3 className="font-semibold text-xl mb-2">{t('ourImpact.behaviorChange')}</h3>
               <p className="text-sm text-muted-foreground">
-                85% of students report lasting changes in their environmental habits after completing our programs.
+                {t('ourImpact.behaviorChangeText')}
               </p>
             </div>
             <div className="bg-card border rounded-lg p-8">
               <Leaf className="h-12 w-12 text-primary mb-4" />
               <div className="text-4xl font-bold text-primary mb-2">150+</div>
-              <h3 className="font-semibold text-xl mb-2">School Gardens</h3>
+              <h3 className="font-semibold text-xl mb-2">{t('ourImpact.schoolGardens')}</h3>
               <p className="text-sm text-muted-foreground">
-                Student-led initiatives have established over 150 sustainable school gardens worldwide.
+                {t('ourImpact.schoolGardensText')}
               </p>
             </div>
           </div>
 
           <div>
-            <h2 className="text-3xl font-bold mb-4">Beyond Numbers</h2>
+            <h2 className="text-3xl font-bold mb-4">{t('ourImpact.beyondNumbers')}</h2>
             <p className="text-muted-foreground text-lg mb-4">
-              Our impact extends beyond statistics. Students develop leadership skills, schools implement 
-              sustainable policies, and communities become more environmentally conscious. We're creating 
-              a ripple effect that touches families, neighborhoods, and entire regions.
+              {t('ourImpact.beyondNumbersText')}
             </p>
           </div>
 
           <div className="bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20 rounded-lg p-8">
-            <h3 className="text-2xl font-bold mb-4">Student Stories</h3>
+            <h3 className="text-2xl font-bold mb-4">{t('ourImpact.studentStories')}</h3>
             <div className="space-y-4">
               <blockquote className="border-l-4 border-primary pl-4 italic text-muted-foreground">
-                "Through P.I.G, our school planted 500 trees and inspired our entire city to start a recycling program. 
-                We're not just learning—we're leading change."
-                <footer className="mt-2 not-italic font-semibold">— Maria, 16, Brazil</footer>
+                {t('ourImpact.story1')}
+                <footer className="mt-2 not-italic font-semibold">{t('ourImpact.story1Author')}</footer>
               </blockquote>
               <blockquote className="border-l-4 border-primary pl-4 italic text-muted-foreground">
-                "I organized my first beach cleanup thanks to P.I.G. Now we do it monthly with 50+ volunteers!"
-                <footer className="mt-2 not-italic font-semibold">— David, 14, Philippines</footer>
+                {t('ourImpact.story2')}
+                <footer className="mt-2 not-italic font-semibold">{t('ourImpact.story2Author')}</footer>
               </blockquote>
             </div>
           </div>
 
           <div className="bg-primary/5 border border-primary/20 rounded-lg p-8">
-            <h3 className="text-2xl font-bold mb-4">Be Part of the Impact</h3>
+            <h3 className="text-2xl font-bold mb-4">{t('ourImpact.bePartOfImpact')}</h3>
             <p className="text-muted-foreground mb-6">
-              Join thousands of students creating real environmental change. Your actions matter.
+              {t('ourImpact.bePartOfImpactText')}
             </p>
             <Link to="/compete">
-              <Button size="lg">Start Making Impact</Button>
+              <Button size="lg">{t('ourImpact.startMakingImpact')}</Button>
             </Link>
           </div>
         </div>

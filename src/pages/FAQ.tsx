@@ -10,36 +10,36 @@ const FAQ = () => {
   const { t } = useLanguage();
   const faqs = [
     {
-      question: "What is P.I.G?",
-      answer: "P.I.G is an educational platform that teaches students about environmental conservation through interactive learning, competitions, and community engagement."
+      question: t('faq.q1'),
+      answer: t('faq.a1')
     },
     {
-      question: "Who can join P.I.G?",
-      answer: "P.I.G is open to students of all ages, teachers, school administrators, and parents. Each user type has different access levels and features."
+      question: t('faq.q2'),
+      answer: t('faq.a2')
     },
     {
-      question: "How do the competitions work?",
-      answer: "Competitions run weekly, monthly, and yearly at city, school, and individual student levels. Participants earn points for completing environmental challenges and actions."
+      question: t('faq.q3'),
+      answer: t('faq.a3')
     },
     {
-      question: "Is P.I.G free to use?",
-      answer: "Yes! P.I.G is completely free for all students and educators. Our mission is to make environmental education accessible to everyone."
+      question: t('faq.q4'),
+      answer: t('faq.a4')
     },
     {
-      question: "How can my school join?",
-      answer: "School administrators can register their school through our platform. Once registered, teachers can create groups and invite students to join."
+      question: t('faq.q5'),
+      answer: t('faq.a5')
     },
     {
-      question: "What kind of activities can we post?",
-      answer: "Schools can share photos and updates about recycling drives, tree planting events, clean-up activities, and any environmental initiatives undertaken by students."
+      question: t('faq.q6'),
+      answer: t('faq.a6')
     },
     {
-      question: "How are winners determined in competitions?",
-      answer: "Winners are determined by points earned through verified environmental actions. Schools and cities with the most active participants receive recognition."
+      question: t('faq.q7'),
+      answer: t('faq.a7')
     },
     {
-      question: "Can parents track their child's progress?",
-      answer: "Yes! Parents with accounts can follow their child's school group and see the environmental activities they're participating in."
+      question: t('faq.q8'),
+      answer: t('faq.a8')
     }
   ];
 

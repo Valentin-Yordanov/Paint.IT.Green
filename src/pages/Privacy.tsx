@@ -17,43 +17,35 @@ const Privacy = () => {
 
       {/* Content Section */}
       <section className="container py-16 max-w-4xl prose prose-slate dark:prose-invert">
-        <h2>Introduction</h2>
-        <p>
-          At P.I.G, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform.
-        </p>
+        <h2>{t('privacy.introTitle')}</h2>
+        <p>{t('privacy.introText')}</p>
 
-        <h2>Information We Collect</h2>
-        <p>We collect information that you provide directly to us, including:</p>
+        <h2>{t('privacy.collectTitle')}</h2>
+        <p>{t('privacy.collectIntro')}</p>
         <ul>
-          <li>Name, email address, and school information</li>
-          <li>Account credentials</li>
-          <li>Profile information and photos</li>
-          <li>Posts, comments, and other content you share</li>
+          <li>{t('privacy.collectItem1')}</li>
+          <li>{t('privacy.collectItem2')}</li>
+          <li>{t('privacy.collectItem3')}</li>
+          <li>{t('privacy.collectItem4')}</li>
         </ul>
 
-        <h2>How We Use Your Information</h2>
-        <p>We use the information we collect to:</p>
+        <h2>{t('privacy.useTitle')}</h2>
+        <p>{t('privacy.useIntro')}</p>
         <ul>
-          <li>Provide and maintain our services</li>
-          <li>Facilitate competitions and community features</li>
-          <li>Send you important updates and notifications</li>
-          <li>Improve our platform and user experience</li>
+          <li>{t('privacy.useItem1')}</li>
+          <li>{t('privacy.useItem2')}</li>
+          <li>{t('privacy.useItem3')}</li>
+          <li>{t('privacy.useItem4')}</li>
         </ul>
 
-        <h2>Information Sharing</h2>
-        <p>
-          We do not sell your personal information. We may share information with schools and parents as part of our educational mission, but only with appropriate consent.
-        </p>
+        <h2>{t('privacy.sharingTitle')}</h2>
+        <p>{t('privacy.sharingText')}</p>
 
-        <h2>Children's Privacy</h2>
-        <p>
-          We are committed to protecting the privacy of children. Parents and guardians have control over their children's accounts and can review or delete information at any time.
-        </p>
+        <h2>{t('privacy.childrenTitle')}</h2>
+        <p>{t('privacy.childrenText')}</p>
 
-        <h2>Contact Us</h2>
-        <p>
-          If you have questions about this Privacy Policy, please contact us at ENTER EMAIL.
-        </p>
+        <h2>{t('privacy.contactTitle')}</h2>
+        <p>{t('privacy.contactText')}</p>
       </section>
     </div>
   );

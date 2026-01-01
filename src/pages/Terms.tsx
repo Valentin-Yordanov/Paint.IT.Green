@@ -17,58 +17,44 @@ const Terms = () => {
 
       {/* Content Section */}
       <section className="container py-16 max-w-4xl prose prose-slate dark:prose-invert">
-        <h2>Acceptance of Terms</h2>
-        <p>
-          By accessing and using P.I.G, you accept and agree to be bound by the terms and provisions of this agreement.
-        </p>
+        <h2>{t('terms.acceptanceTitle')}</h2>
+        <p>{t('terms.acceptanceText')}</p>
 
-        <h2>Use of Platform</h2>
-        <p>P.I.G is intended for educational purposes. Users agree to:</p>
+        <h2>{t('terms.useTitle')}</h2>
+        <p>{t('terms.useIntro')}</p>
         <ul>
-          <li>Provide accurate information during registration</li>
-          <li>Maintain the security of their account</li>
-          <li>Use the platform responsibly and respectfully</li>
-          <li>Not post harmful, offensive, or inappropriate content</li>
+          <li>{t('terms.useItem1')}</li>
+          <li>{t('terms.useItem2')}</li>
+          <li>{t('terms.useItem3')}</li>
+          <li>{t('terms.useItem4')}</li>
         </ul>
 
-        <h2>School and Student Accounts</h2>
-        <p>
-          School administrators are responsible for managing their school's presence on the platform. Students under 13 must have parental consent to use the platform.
-        </p>
+        <h2>{t('terms.accountsTitle')}</h2>
+        <p>{t('terms.accountsText')}</p>
 
-        <h2>Competition Rules</h2>
-        <p>
-          Participants in competitions must follow all rules and guidelines. P.I.G reserves the right to disqualify participants who violate competition rules or engage in fraudulent activities.
-        </p>
+        <h2>{t('terms.competitionTitle')}</h2>
+        <p>{t('terms.competitionText')}</p>
 
-        <h2>Content Ownership</h2>
-        <p>
-          Users retain ownership of the content they post, but grant P.I.G a license to use, display, and distribute that content within the platform.
-        </p>
+        <h2>{t('terms.contentTitle')}</h2>
+        <p>{t('terms.contentText')}</p>
 
-        <h2>Prohibited Activities</h2>
-        <p>Users may not:</p>
+        <h2>{t('terms.prohibitedTitle')}</h2>
+        <p>{t('terms.prohibitedIntro')}</p>
         <ul>
-          <li>Violate any laws or regulations</li>
-          <li>Harass or harm other users</li>
-          <li>Attempt to access unauthorized areas of the platform</li>
-          <li>Upload malicious code or spam</li>
+          <li>{t('terms.prohibitedItem1')}</li>
+          <li>{t('terms.prohibitedItem2')}</li>
+          <li>{t('terms.prohibitedItem3')}</li>
+          <li>{t('terms.prohibitedItem4')}</li>
         </ul>
 
-        <h2>Termination</h2>
-        <p>
-          We reserve the right to terminate or suspend accounts that violate these terms or engage in inappropriate behavior.
-        </p>
+        <h2>{t('terms.terminationTitle')}</h2>
+        <p>{t('terms.terminationText')}</p>
 
-        <h2>Changes to Terms</h2>
-        <p>
-          We may update these terms from time to time. Continued use of the platform after changes constitutes acceptance of the new terms.
-        </p>
+        <h2>{t('terms.changesTitle')}</h2>
+        <p>{t('terms.changesText')}</p>
 
-        <h2>Contact</h2>
-        <p>
-          Questions about these Terms of Service can be directed to lENTER EMAIL.
-        </p>
+        <h2>{t('terms.contactTitle')}</h2>
+        <p>{t('terms.contactText')}</p>
       </section>
     </div>
   );
