@@ -12,172 +12,172 @@ const Learn = () => {
   const topics = [
     {
       id: "wildlife",
-      title: t('learn.topics.wildlife.title'),
+      title: t('learn.topic.wildlife.title'),
       icon: Heart,
       content: [
         {
-          subtitle: t('learn.topics.wildlife.content1.subtitle'),
-          text: t('learn.topics.wildlife.content1.text'),
+          subtitle: t('learn.topic.wildlife.subtitle1'),
+          text: t('learn.topic.wildlife.text1'),
         },
         {
-          subtitle: t('learn.topics.wildlife.content2.subtitle'),
-          text: t('learn.topics.wildlife.content2.text'),
+          subtitle: t('learn.topic.wildlife.subtitle2'),
+          text: t('learn.topic.wildlife.text2'),
         },
       ],
     },
     {
       id: "pollution",
-      title: t('learn.topics.pollution.title'),
+      title: t('learn.topic.pollution.title'),
       icon: Wind,
       content: [
         {
-          subtitle: t('learn.topics.pollution.content1.subtitle'),
-          text: t('learn.topics.pollution.content1.text'),
+          subtitle: t('learn.topic.pollution.subtitle1'),
+          text: t('learn.topic.pollution.text1'),
         },
         {
-          subtitle: t('learn.topics.pollution.content2.subtitle'),
-          text: t('learn.topics.pollution.content2.text'),
+          subtitle: t('learn.topic.pollution.subtitle2'),
+          text: t('learn.topic.pollution.text2'),
         },
       ],
     },
     {
       id: "recycling",
-      title: t('learn.topics.recycling.title'),
+      title: t('learn.topic.recycling.title'),
       icon: Recycle,
       content: [
         {
-          subtitle: t('learn.topics.recycling.content1.subtitle'),
-          text: t('learn.topics.recycling.content1.text'),
+          subtitle: t('learn.topic.recycling.subtitle1'),
+          text: t('learn.topic.recycling.text1'),
         },
         {
-          subtitle: t('learn.topics.recycling.content2.subtitle'),
-          text: t('learn.topics.recycling.content2.text'),
+          subtitle: t('learn.topic.recycling.subtitle2'),
+          text: t('learn.topic.recycling.text2'),
         },
       ],
     },
     {
       id: "forests",
-      title: t('learn.topics.forests.title'),
+      title: t('learn.topic.forests.title'),
       icon: TreePine,
       content: [
         {
-          subtitle: t('learn.topics.forests.content1.subtitle'),
-          text: t('learn.topics.forests.content1.text'),
+          subtitle: t('learn.topic.forests.subtitle1'),
+          text: t('learn.topic.forests.text1'),
         },
         {
-          subtitle: t('learn.topics.forests.content2.subtitle'),
-          text: t('learn.topics.forests.content2.text'),
+          subtitle: t('learn.topic.forests.subtitle2'),
+          text: t('learn.topic.forests.text2'),
         },
       ],
     },
     {
       id: "water",
-      title: t('learn.topics.water.title'),
+      title: t('learn.topic.water.title'),
       icon: Droplets,
       content: [
         {
-          subtitle: t('learn.topics.water.content1.subtitle'),
-          text: t('learn.topics.water.content1.text'),
+          subtitle: t('learn.topic.water.subtitle1'),
+          text: t('learn.topic.water.text1'),
         },
         {
-          subtitle: t('learn.topics.water.content2.subtitle'),
-          text: t('learn.topics.water.content2.text'),
+          subtitle: t('learn.topic.water.subtitle2'),
+          text: t('learn.topic.water.text2'),
         },
       ],
     },
     {
       id: "community",
-      title: t('learn.topics.community.title'),
+      title: t('learn.topic.community.title'),
       icon: Users,
       content: [
         {
-          subtitle: t('learn.topics.community.content1.subtitle'),
-          text: t('learn.topics.community.content1.text'),
+          subtitle: t('learn.topic.community.subtitle1'),
+          text: t('learn.topic.community.text1'),
         },
         {
-          subtitle: t('learn.topics.community.content2.subtitle'),
-          text: t('learn.topics.community.content2.text'),
+          subtitle: t('learn.topic.community.subtitle2'),
+          text: t('learn.topic.community.text2'),
         },
       ],
     },
     {
       id: "climate",
-      title: t('learn.topics.climate.title'),
+      title: t('learn.topic.climate.title'),
       icon: Sun,
       content: [
-        { subtitle: t('learn.topics.comingSoon'), text: t('learn.topics.comingSoonText') },
+        { subtitle: t('learn.topic.comingSoon'), text: t('learn.topic.comingSoonText') },
       ],
     },
     {
       id: "biodiversity",
-      title: t('learn.topics.biodiversity.title'),
+      title: t('learn.topic.biodiversity.title'),
       icon: Leaf,
       content: [
-        { subtitle: t('learn.topics.comingSoon'), text: t('learn.topics.comingSoonText') },
+        { subtitle: t('learn.topic.comingSoon'), text: t('learn.topic.comingSoonText') },
       ],
     },
     {
       id: "mountains",
-      title: t('learn.topics.mountains.title'),
+      title: t('learn.topic.mountains.title'),
       icon: Mountain,
       content: [
-        { subtitle: t('learn.topics.comingSoon'), text: t('learn.topics.comingSoonText') },
+        { subtitle: t('learn.topic.comingSoon'), text: t('learn.topic.comingSoonText') },
       ],
     },
     {
       id: "oceans",
-      title: t('learn.topics.oceans.title'),
+      title: t('learn.topic.oceans.title'),
       icon: Fish,
       content: [
-        { subtitle: t('learn.topics.comingSoon'), text: t('learn.topics.comingSoonText') },
+        { subtitle: t('learn.topic.comingSoon'), text: t('learn.topic.comingSoonText') },
       ],
     },
     {
       id: "birds",
-      title: t('learn.topics.birds.title'),
+      title: t('learn.topic.birds.title'),
       icon: Bird,
       content: [
-        { subtitle: t('learn.topics.comingSoon'), text: t('learn.topics.comingSoonText') },
+        { subtitle: t('learn.topic.comingSoon'), text: t('learn.topic.comingSoonText') },
       ],
     },
     {
       id: "gardens",
-      title: t('learn.topics.gardens.title'),
+      title: t('learn.topic.gardens.title'),
       icon: Flower2,
       content: [
-        { subtitle: t('learn.topics.comingSoon'), text: t('learn.topics.comingSoonText') },
+        { subtitle: t('learn.topic.comingSoon'), text: t('learn.topic.comingSoonText') },
       ],
     },
     {
       id: "global",
-      title: t('learn.topics.global.title'),
+      title: t('learn.topic.global.title'),
       icon: Globe,
       content: [
-        { subtitle: t('learn.topics.comingSoon'), text: t('learn.topics.comingSoonText') },
+        { subtitle: t('learn.topic.comingSoon'), text: t('learn.topic.comingSoonText') },
       ],
     },
     {
       id: "energy",
-      title: t('learn.topics.energy.title'),
+      title: t('learn.topic.energy.title'),
       icon: Lightbulb,
       content: [
-        { subtitle: t('learn.topics.comingSoon'), text: t('learn.topics.comingSoonText') },
+        { subtitle: t('learn.topic.comingSoon'), text: t('learn.topic.comingSoonText') },
       ],
     },
     {
       id: "education",
-      title: t('learn.topics.education.title'),
+      title: t('learn.topic.education.title'),
       icon: BookOpen,
       content: [
-        { subtitle: t('learn.topics.comingSoon'), text: t('learn.topics.comingSoonText') },
+        { subtitle: t('learn.topic.comingSoon'), text: t('learn.topic.comingSoonText') },
       ],
     },
     {
       id: "agriculture",
-      title: t('learn.topics.agriculture.title'),
+      title: t('learn.topic.agriculture.title'),
       icon: Sprout,
       content: [
-        { subtitle: t('learn.topics.comingSoon'), text: t('learn.topics.comingSoonText') },
+        { subtitle: t('learn.topic.comingSoon'), text: t('learn.topic.comingSoonText') },
       ],
     },
   ];
