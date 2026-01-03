@@ -187,10 +187,6 @@ const Profile = () => {
       <div className="container max-w-5xl relative z-10">
         {/* Header with animated accent */}
         <div className="mb-10 text-center md:text-left">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-            <Sparkles className="h-4 w-4" />
-            {t('profile.welcome') || 'Welcome back'}
-          </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-3 bg-gradient-to-r from-foreground via-foreground to-primary bg-clip-text">
             {t('profile.title')}
           </h1>
@@ -221,11 +217,11 @@ const Profile = () => {
             {/* Profile Header Card */}
             <Card className="overflow-hidden border-0 shadow-xl bg-gradient-to-br from-card via-card to-primary/5">
               <CardContent className="p-0">
-                {/* Hero banner */}
-                <div className="h-24 md:h-32 bg-gradient-to-r from-primary/80 via-primary to-accent/80 relative">
-                  <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzRoLTJ2LTRoMnY0em0wLTZoLTJ2LTRoMnY0em0tNiA2aC0ydi00aDJ2NHptMC02aC0ydi00aDJ2NHoiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-30" />
-                </div>
-                
+              <div className="h-24 md:h-32 bg-gradient-to-r from-primary/40 via-primary/30 to-accent/40 relative">
+                {/* This adds a slight dark tint to help white text pop */}
+                <div className="absolute inset-0 bg-black/20" /> 
+                <div className="absolute inset-0 bg-[url(...)] opacity-10" />
+              </div>
                 <div className="px-6 pb-6 -mt-12 md:-mt-16 relative">
                   <div className="flex flex-col md:flex-row items-center gap-6">
                     <Avatar className="h-24 w-24 md:h-32 md:w-32 ring-4 ring-background shadow-2xl">
