@@ -78,13 +78,7 @@ type Post = {
 
 const Community = () => {
   const { toast } = useToast();
-  const t = (key: string) => {
-    const translations: { [key: string]: string } = {
-      "community.public": "Public",
-      "community.title": "Community",
-    };
-    return translations[key] || key;
-  };
+  const { t } = useLanguage();
 
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
   const [showComments, setShowComments] = useState<Set<number>>(new Set());
@@ -256,8 +250,8 @@ const Community = () => {
     );
     setNewComment({ ...newComment, [postId]: "" });
     toast({
-      title: "Comment added!",
-      description: "Your comment has been posted successfully.",
+      title: t('community.commentAdded'),
+      description: t('community.commentAddedDesc'),
     });
   };
 
@@ -283,8 +277,8 @@ const Community = () => {
     setNewPostImage(undefined);
     setIsCreateDialogOpen(false);
     toast({
-      title: "Post created!",
-      description: "Your post has been shared.",
+      title: t('community.postCreated'),
+      description: t('community.postCreatedDesc'),
     });
   };
 
@@ -302,8 +296,8 @@ const Community = () => {
   const handleDeletePost = (postId: number) => {
     setPosts(posts.filter((post) => post.id !== postId));
     toast({
-      title: "Post deleted",
-      description: "Your post has been removed.",
+      title: t('community.postDeleted'),
+      description: t('community.postDeletedDesc'),
     });
   };
 
@@ -316,8 +310,8 @@ const Community = () => {
     );
     setEditingPost(null);
     toast({
-      title: "Post updated",
-      description: "Your post has been updated successfully.",
+      title: t('community.postUpdated'),
+      description: t('community.postUpdatedDesc'),
     });
   };
 
@@ -333,8 +327,8 @@ const Community = () => {
       )
     );
     toast({
-      title: "Comment deleted",
-      description: "Your comment has been removed.",
+      title: t('community.commentDeleted'),
+      description: t('community.commentDeletedDesc'),
     });
   };
 
@@ -356,8 +350,8 @@ const Community = () => {
     );
     setEditingComment(null);
     toast({
-      title: "Comment updated",
-      description: "Your comment has been updated successfully.",
+      title: t('community.commentUpdated'),
+      description: t('community.commentUpdatedDesc'),
     });
   };
 
@@ -407,42 +401,42 @@ const Community = () => {
   });
 
   const getFeedTitle = () => {
-    if (activeFeed === "public") return t("community.public") || "Public Feed";
+    if (activeFeed === "public") return t("community.public");
     if (activeFeed === "mySchool") return MOCK_USER.school;
     if (activeFeed === "myClass") return MOCK_USER.class;
     if (ALL_SCHOOLS.includes(activeFeed)) return activeFeed;
     if (ALL_CLASSES.includes(activeFeed)) return activeFeed;
-    return t("community.title") || "Community";
+    return t("community.title");
   };
 
   const getFeedSubtitle = () => {
     if (activeFeed === "public")
-      return "Environmental initiatives from schools around the world";
-    if (activeFeed === "mySchool") return "Updates and events from your school";
-    if (activeFeed === "myClass") return "Class discussions and projects";
-    return "Group updates";
+      return t("community.publicSubtitle");
+    if (activeFeed === "mySchool") return t("community.schoolSubtitle");
+    if (activeFeed === "myClass") return t("community.classSubtitle");
+    return t("community.groupUpdates");
   };
 
   // --- DYNAMIC HEADER INFO ---
   const getHeaderDetails = () => {
     if (activeFeed === "public") {
       return {
-        title: t("community.public") || "Public Feed",
-        subtitle: "Global Community",
+        title: t("community.public"),
+        subtitle: t("community.globalCommunity"),
         icon: <Globe size={20} />,
       };
     }
     if (activeFeed === "mySchool") {
       return {
         title: MOCK_USER.school,
-        subtitle: "My School",
+        subtitle: t("community.mySchool"),
         icon: <School size={20} />,
       };
     }
     if (activeFeed === "myClass") {
       return {
         title: MOCK_USER.class,
-        subtitle: "My Class",
+        subtitle: t("community.myClass"),
         icon: <Users size={20} />,
       };
     }
@@ -450,7 +444,7 @@ const Community = () => {
     if (ALL_SCHOOLS.includes(activeFeed)) {
       return {
         title: activeFeed,
-        subtitle: "School Group",
+        subtitle: t("community.schoolGroup"),
         icon: <School size={20} />,
       };
     }
@@ -458,13 +452,13 @@ const Community = () => {
     if (ALL_CLASSES.includes(activeFeed)) {
       return {
         title: activeFeed,
-        subtitle: "Class Group",
+        subtitle: t("community.classGroup"),
         icon: <Users size={20} />,
       };
     }
     // Fallback
     return {
-      title: "Community",
+      title: t("community.title"),
       subtitle: "Paint IT Green",
       icon: <LayoutGrid size={20} />,
     };
@@ -553,12 +547,12 @@ const Community = () => {
           {/* Main Feeds */}
           <div>
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 pl-4">
-              Feeds
+              {t("community.feeds")}
             </h3>
             <SidebarButton
               active={activeFeed === "public"}
               icon={<Globe size={18} />}
-              label={t("community.public") || "Public Feed"}
+              label={t("community.public")}
               onClick={() => setActiveFeed("public")}
             />
           </div>
@@ -567,7 +561,7 @@ const Community = () => {
           {MOCK_USER.role === "student" && (
             <div>
               <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 pl-4 mt-6">
-                My Groups
+                {t("community.myGroups")}
               </h3>
               <SidebarButton
                 active={activeFeed === "mySchool"}
@@ -588,7 +582,7 @@ const Community = () => {
           {MOCK_USER.role === "moderator" && (
             <div>
               <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 pl-4 mt-6 flex items-center gap-2">
-                <Shield size={12} /> Moderation
+                <Shield size={12} /> {t("community.moderation")}
               </h3>
               {ALL_SCHOOLS.map((school) => (
                 <SidebarButton
@@ -657,12 +651,12 @@ const Community = () => {
               <DialogTrigger asChild>
                 <Button className="rounded-full shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all">
                   <Plus className="mr-2 h-4 w-4" />
-                  Create Post
+                  {t("community.createPost")}
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
-                  <DialogTitle>Create a new post</DialogTitle>
+                  <DialogTitle>{t("community.createNewPost")}</DialogTitle>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                   <div className="flex items-start gap-4">
@@ -679,10 +673,10 @@ const Community = () => {
                         </Badge>
                       </div>
                       <Textarea
-                        placeholder={`Share something with ${
+                        placeholder={`${t("community.sharePlaceholder")} ${
                           newPostVisibility === "public"
-                            ? "everyone"
-                            : "your group"
+                            ? t("community.everyone")
+                            : t("community.yourGroup")
                         }...`}
                         value={newPostContent}
                         onChange={(e) => setNewPostContent(e.target.value)}
@@ -720,7 +714,7 @@ const Community = () => {
                           }
                         >
                           <ImageIcon className="h-4 w-4 mr-2" />
-                          Photo
+                          {t("community.photo")}
                         </Button>
                       </label>
                       <Input
@@ -735,7 +729,7 @@ const Community = () => {
                       onClick={handleCreatePost}
                       disabled={!newPostContent.trim()}
                     >
-                      Post
+                      {t("community.post")}
                     </Button>
                   </div>
                 </div>
@@ -750,10 +744,10 @@ const Community = () => {
                 <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-muted mb-4">
                   <MessageCircle className="h-6 w-6 text-muted-foreground" />
                 </div>
-                <h3 className="text-lg font-medium">No posts yet</h3>
+                <h3 className="text-lg font-medium">{t("community.noPostsYet")}</h3>
                 <p className="text-muted-foreground max-w-sm mx-auto mt-2">
-                  Be the first to share something with the {getFeedTitle()}{" "}
-                  community!
+                  {t("community.beTheFirst")} {getFeedTitle()}{" "}
+                  {t("community.communityWord")}
                 </p>
               </div>
             ) : (
@@ -977,7 +971,7 @@ const Community = () => {
                                         handleEditComment(post.id, idx)
                                       }
                                     >
-                                      Save
+                                      {t("community.save")}
                                     </Button>
                                   </div>
                                 ) : (
@@ -995,7 +989,7 @@ const Community = () => {
                           </Avatar>
                           <div className="flex-1 relative">
                             <Input
-                              placeholder="Write a comment..."
+                              placeholder={t("community.writeComment")}
                               value={newComment[post.id] || ""}
                               onChange={(e) =>
                                 setNewComment({
