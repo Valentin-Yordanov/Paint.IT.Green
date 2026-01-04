@@ -31,8 +31,7 @@ const Navbar = () => {
         >
           <Button
             variant={isActive(path) ? "default" : "outline"}
-            // We keep 'w-full' for width, but removed 'justify-start' to center text
-            className={`gap-2 ${isMobile ? "w-full" : ""}`}
+            className={`gap-2 min-w-[120px] justify-center ${isMobile ? "w-full" : ""}`}
           >
             <Icon className="h-4 w-4" />
             {label}
