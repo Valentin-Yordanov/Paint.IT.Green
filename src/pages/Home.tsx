@@ -55,11 +55,6 @@ const Home = () => {
         
         <div className="container relative z-10 py-20">
           <div className="mx-auto max-w-4xl text-center space-y-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-sm">
-              <Sparkles className="h-4 w-4 text-primary animate-pulse" />
-              <span className="text-sm font-medium text-primary">Join the Green Movement</span>
-            </div>
-            
             <h1 className="text-5xl md:text-7xl font-bold text-foreground leading-tight">
               {t('home.hero.title')}
               <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"> {t('home.hero.title.highlight')}</span>

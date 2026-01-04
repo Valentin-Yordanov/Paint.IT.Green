@@ -76,10 +76,10 @@ const Learn = () => {
       <div className="container relative py-16">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-sm mb-6">
+          {/* <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-sm mb-6">
             <Sparkles className="h-4 w-4 text-primary animate-pulse" />
-            <span className="text-sm font-medium text-primary">Environmental Education</span>
-          </div>
+            <span className="text-sm font-medium text-primary">Environmental Education</span> ------------------------------------------------------------- Gotin efect
+          </div> */}
           <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
             {t('learn.title')}
           </h1>
