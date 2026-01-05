@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { TreePine, Droplets, Wind, Heart, Recycle, Users, Leaf, Sun, Mountain, Fish, Bird, Flower2, Globe, Lightbulb, BookOpen, Sprout, Search, Sparkles, X } from "lucide-react";
+import { TreePine, Droplets, Wind, Heart, Recycle, Users, Leaf, Sun, Mountain, Fish, Bird, Flower2, Globe, Lightbulb, BookOpen, Sprout, Search, X, GraduationCap, ArrowRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useState, useRef, MouseEvent } from "react";
 import { Button } from "@/components/ui/button";
@@ -72,41 +72,50 @@ const Learn = () => {
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5" />
       <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-pulse" />
       <div className="absolute bottom-40 right-10 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse delay-1000" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-primary/5 to-accent/5 rounded-full blur-3xl" />
       
-      <div className="container relative py-16">
-        {/* Header */}
-        <div className="text-center mb-12">
-          {/* <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-sm mb-6">
-            <Sparkles className="h-4 w-4 text-primary animate-pulse" />
-            <span className="text-sm font-medium text-primary">Environmental Education</span> ------------------------------------------------------------- Gotin efect
-          </div> */}
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-            {t('learn.title')}
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            {t('learn.subtitle')}
-          </p>
-        </div>
+      {/* Hero Section */}
+      <div className="relative pt-20 pb-12">
+        <div className="container">
+          <div className="max-w-4xl mx-auto text-center space-y-6">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-accent shadow-xl mb-4">
+              <GraduationCap className="h-10 w-10 text-white" />
+            </div>
+            
+            <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent">
+              {t('learn.title')}
+            </h1>
+            
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              {t('learn.subtitle')}
+            </p>
 
-        {/* Search bar */}
-        <div className="relative mb-10 max-w-xl mx-auto">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-          <Input
-            type="text"
-            placeholder={t('learn.searchPlaceholder')}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-12 h-14 rounded-2xl bg-card/80 backdrop-blur-sm border-border/50 shadow-lg text-lg focus:border-primary transition-all"
-          />
+            {/* Enhanced Search bar */}
+            <div className="relative max-w-xl mx-auto pt-4">
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 rounded-2xl blur-xl" />
+              <div className="relative">
+                <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder={t('learn.searchPlaceholder')}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-14 pr-6 h-16 rounded-2xl bg-card/90 backdrop-blur-md border-border/50 shadow-2xl text-lg focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                />
+              </div>
+            </div>
+          </div>
         </div>
-        
+      </div>
+      
+      <div className="container relative pb-16">
         {/* Topic Grid */}
         <div 
           ref={gridRef}
           onMouseMove={handleGridMouseMove}
-          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-10 group/grid"
+          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5 mb-12 group/grid"
         >
-          {filteredTopics.map((topic) => {
+          {filteredTopics.map((topic, index) => {
             const isSelected = selectedTopic === topic.id;
             
             return (
@@ -114,6 +123,7 @@ const Learn = () => {
                 key={topic.id}
                 onClick={() => setSelectedTopic(isSelected ? null : topic.id)}
                 className="spotlight-card-wrapper relative rounded-2xl aspect-square focus:outline-none group"
+                style={{ animationDelay: `${index * 50}ms` }}
               >
                 {/* Spotlight glow effect */}
                 <div 
@@ -123,18 +133,18 @@ const Learn = () => {
                   }}
                 />
                 
-                {/* Card background */}
+                {/* Card background with gradient border */}
                 <div className={`absolute inset-0 rounded-2xl transition-all duration-300 ${
                   isSelected 
-                    ? `bg-gradient-to-br ${topic.gradient}` 
-                    : "bg-secondary/50"
+                    ? `bg-gradient-to-br ${topic.gradient} shadow-2xl` 
+                    : "bg-gradient-to-br from-border/50 to-border/20"
                 }`} />
                 
                 {/* Card content */}
                 <div 
                   className={`
-                    relative h-full w-full rounded-2xl m-[1px] 
-                    flex flex-col items-center justify-center gap-3 p-4 
+                    relative h-full w-full rounded-[15px] m-[1px] 
+                    flex flex-col items-center justify-center gap-4 p-4 
                     overflow-hidden transition-all duration-300
                     ${isSelected 
                       ? "bg-transparent text-white" 
@@ -152,19 +162,30 @@ const Learn = () => {
                     />
                   )}
 
-                  <div className={`h-14 w-14 rounded-xl flex items-center justify-center transition-all duration-300 ${
+                  {/* Icon container */}
+                  <div className={`relative h-16 w-16 rounded-2xl flex items-center justify-center transition-all duration-300 ${
                     isSelected 
-                      ? "bg-white/20 backdrop-blur-sm" 
-                      : `bg-gradient-to-br ${topic.gradient} shadow-lg group-hover:scale-110`
+                      ? "bg-white/20 backdrop-blur-sm scale-110" 
+                      : `bg-gradient-to-br ${topic.gradient} shadow-lg group-hover:scale-110 group-hover:shadow-xl`
                   }`}>
-                    <topic.icon className={`h-7 w-7 ${isSelected ? "text-white" : "text-white"}`} />
+                    <topic.icon className="h-8 w-8 text-white" />
+                    
+                    {/* Shine effect */}
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-white/0 via-white/20 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </div>
                   
-                  <span className={`text-sm font-semibold text-center leading-tight ${
-                    isSelected ? "text-white" : "text-foreground"
+                  <span className={`text-sm font-semibold text-center leading-tight transition-colors duration-300 ${
+                    isSelected ? "text-white" : "text-foreground group-hover:text-primary"
                   }`}>
                     {topic.title}
                   </span>
+
+                  {/* Selection indicator */}
+                  {isSelected && (
+                    <div className="absolute bottom-3 right-3">
+                      <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                    </div>
+                  )}
                 </div>
               </button>
             );
@@ -173,30 +194,41 @@ const Learn = () => {
 
         {/* Selected Topic Content */}
         {selectedTopicData && (
-          <Card className="border-0 shadow-2xl bg-card/80 backdrop-blur-sm animate-in fade-in-50 slide-in-from-bottom-4 duration-500 overflow-hidden">
-            <div className={`h-2 bg-gradient-to-r ${selectedTopicData.gradient}`} />
-            <CardHeader className="pb-4">
+          <Card className="border-0 shadow-2xl bg-card/90 backdrop-blur-md animate-in fade-in-50 slide-in-from-bottom-4 duration-500 overflow-hidden">
+            {/* Gradient header bar */}
+            <div className={`h-1.5 bg-gradient-to-r ${selectedTopicData.gradient}`} />
+            
+            <CardHeader className="pb-6 pt-8">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className={`h-14 w-14 rounded-xl bg-gradient-to-br ${selectedTopicData.gradient} flex items-center justify-center shadow-lg`}>
-                    <selectedTopicData.icon className="h-7 w-7 text-white" />
+                <div className="flex items-center gap-5">
+                  <div className={`relative h-16 w-16 rounded-2xl bg-gradient-to-br ${selectedTopicData.gradient} flex items-center justify-center shadow-xl`}>
+                    <selectedTopicData.icon className="h-8 w-8 text-white" />
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-white/0 via-white/20 to-white/0" />
                   </div>
-                  <CardTitle className="text-3xl">{selectedTopicData.title}</CardTitle>
+                  <div>
+                    <CardTitle className="text-3xl font-bold">{selectedTopicData.title}</CardTitle>
+                    <p className="text-muted-foreground mt-1">Explore and learn more</p>
+                  </div>
                 </div>
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="rounded-full hover:bg-secondary"
+                  className="rounded-full hover:bg-secondary h-12 w-12"
                   onClick={() => setSelectedTopic(null)}
                 >
                   <X className="h-5 w-5" />
                 </Button>
               </div>
             </CardHeader>
-            <CardContent className="space-y-8 pb-8">
+            
+            <CardContent className="space-y-8 pb-10">
               {selectedTopicData.content.map((section, index) => (
-                <div key={index} className="space-y-3 pl-4 border-l-2 border-primary/30">
-                  <h3 className="text-xl font-bold text-foreground">
+                <div 
+                  key={index} 
+                  className="relative pl-6 border-l-2 border-primary/30 hover:border-primary/60 transition-colors duration-300"
+                >
+                  <div className="absolute left-0 top-0 w-2 h-2 -translate-x-[5px] rounded-full bg-primary/50" />
+                  <h3 className="text-xl font-bold text-foreground mb-3">
                     {section.subtitle}
                   </h3>
                   <p className="text-muted-foreground text-lg leading-relaxed">
@@ -209,12 +241,36 @@ const Learn = () => {
         )}
 
         {/* Call to Action Card */}
-        <Card className="mt-16 border-0 shadow-2xl overflow-hidden">
-          <div className="bg-gradient-to-r from-primary via-primary/90 to-accent p-10 text-center">
-            <h2 className="text-3xl font-bold mb-4 text-primary-foreground">{t('learn.remember')}</h2>
-            <p className="text-xl text-primary-foreground/90 max-w-3xl mx-auto leading-relaxed">
-              {t('learn.rememberText')}
-            </p>
+        <Card className="mt-16 border-0 shadow-2xl overflow-hidden group">
+          <div className="relative bg-gradient-to-r from-primary via-primary/90 to-accent p-12 text-center overflow-hidden">
+            {/* Animated background elements */}
+            <div className="absolute inset-0 opacity-20">
+              <div className="absolute top-0 left-1/4 w-64 h-64 bg-white/20 rounded-full blur-3xl animate-pulse" />
+              <div className="absolute bottom-0 right-1/4 w-48 h-48 bg-white/20 rounded-full blur-3xl animate-pulse delay-500" />
+            </div>
+            
+            <div className="relative z-10">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm mb-6">
+                <Leaf className="h-8 w-8 text-white" />
+              </div>
+              
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-primary-foreground">
+                {t('learn.remember')}
+              </h2>
+              
+              <p className="text-xl text-primary-foreground/90 max-w-3xl mx-auto leading-relaxed mb-8">
+                {t('learn.rememberText')}
+              </p>
+              
+              <Button 
+                size="lg" 
+                variant="secondary"
+                className="rounded-full px-8 h-14 text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 group-hover:scale-105"
+              >
+                Start Learning
+                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </div>
           </div>
         </Card>
       </div>
