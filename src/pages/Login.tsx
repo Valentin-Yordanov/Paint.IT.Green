@@ -62,9 +62,18 @@ const Login = () => {
       <div className="absolute top-1/2 left-1/4 w-48 h-48 bg-accent/10 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '2s' }} />
       
       {/* Floating Icons */}
-      <Leaf className="absolute top-32 right-20 h-8 w-8 text-primary/20 animate-bounce" style={{ animationDuration: '3s' }} />
-      <Sparkles className="absolute bottom-40 left-20 h-6 w-6 text-accent/30 animate-bounce" style={{ animationDuration: '4s', animationDelay: '1s' }} />
+      <Leaf className="absolute top-20 right-16 h-8 w-8 text-primary/20 animate-bounce" style={{ animationDuration: '3s' }} />
+      <Sparkles className="absolute bottom-32 left-16 h-6 w-6 text-accent/30 animate-bounce" style={{ animationDuration: '4s', animationDelay: '1s' }} />
       <Leaf className="absolute top-1/2 right-1/4 h-10 w-10 text-primary/15 animate-bounce" style={{ animationDuration: '5s', animationDelay: '2s' }} />
+      <Leaf className="absolute top-1/4 left-20 h-7 w-7 text-primary/25 animate-bounce" style={{ animationDuration: '4s', animationDelay: '0.5s' }} />
+      <Sparkles className="absolute top-40 right-1/3 h-5 w-5 text-accent/25 animate-bounce" style={{ animationDuration: '3.5s', animationDelay: '1.5s' }} />
+      <Leaf className="absolute bottom-1/4 right-16 h-9 w-9 text-primary/20 animate-bounce" style={{ animationDuration: '4.5s', animationDelay: '0.8s' }} />
+      <Sparkles className="absolute top-16 left-1/3 h-4 w-4 text-accent/20 animate-bounce" style={{ animationDuration: '5s', animationDelay: '2.5s' }} />
+      <Leaf className="absolute bottom-20 right-1/4 h-6 w-6 text-primary/15 animate-bounce" style={{ animationDuration: '3.8s', animationDelay: '1.2s' }} />
+      <Sparkles className="absolute top-1/3 right-10 h-5 w-5 text-accent/25 animate-bounce" style={{ animationDuration: '4.2s', animationDelay: '0.3s' }} />
+      <Leaf className="absolute bottom-40 left-1/4 h-8 w-8 text-primary/20 animate-bounce" style={{ animationDuration: '3.2s', animationDelay: '1.8s' }} />
+      <Sparkles className="absolute bottom-16 right-20 h-4 w-4 text-accent/30 animate-bounce" style={{ animationDuration: '4.8s', animationDelay: '2.2s' }} />
+      <Leaf className="absolute top-28 left-10 h-5 w-5 text-primary/25 animate-bounce" style={{ animationDuration: '5.2s', animationDelay: '0.7s' }} />
 
       {/* Card */}
       <Card className="w-full max-w-md relative z-10 backdrop-blur-xl bg-card/80 border-primary/20 shadow-2xl shadow-primary/10">
