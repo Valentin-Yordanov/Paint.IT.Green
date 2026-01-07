@@ -20,7 +20,6 @@ const Navbar = () => {
     { path: "/profile", label: t("nav.profile"), icon: User },
   ];
 
-  // 1. UPDATED: Removed 'justify-start' so text stays in the center
   const NavLinks = ({ isMobile = false }: { isMobile?: boolean }) => (
     <>
       {navLinks.map(({ path, label, icon: Icon }) => (

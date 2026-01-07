@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Loader2, XCircle, CheckCircle, Leaf, Sparkles } from "lucide-react";
+import { Loader2, XCircle, CheckCircle, Leaf, Sparkles, Sprout, Flower2, Cloud, Droplets } from "lucide-react";
 
 interface ApiResponseData {
   body?: string;
@@ -65,11 +65,7 @@ const Signup: React.FC = () => {
       if (response.ok) {
         const message = data.message || t('signup.successMessage');
         setSuccessMessage(message);
-
-        setTimeout(() => {
-          navigate('/login');
-        }, 2000);
-
+        setTimeout(() => navigate('/login'), 2000);
       } else {
         const errorMessage = data.body || data.message || t('signup.error.generic');
         setError(errorMessage);
@@ -77,35 +73,46 @@ const Signup: React.FC = () => {
 
     } catch (err) {
       console.error("API call error:", err);
-      setError(t('signup.error.serverOffline') || `Could not connect to the backend server. (Check if API is running).`);
+      setError(t('signup.error.serverOffline') || `Could not connect to the backend server.`);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-8 relative overflow-hidden">
-      {/* Animated Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 via-background to-primary/5" />
+    <div className="min-h-screen flex items-center justify-center px-4 py-8 relative overflow-hidden bg-background">
+      
+      {/*Background Pattern*/}
+      <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-30" />
 
-      {/* Decorative Elements */}
-      <div className="absolute top-10 right-20 w-80 h-80 bg-primary/10 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-10 left-20 w-96 h-96 bg-secondary/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-      <div className="absolute top-1/3 right-1/3 w-64 h-64 bg-accent/10 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '2s' }} />
+      {/*Large Color Blobs*/}
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/4"/>
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-secondary/15 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/4"/>
 
-      {/* Floating Icons */}
-      <Leaf className="absolute top-20 left-16 h-8 w-8 text-primary/20 animate-bounce" style={{ animationDuration: '3s' }} />
-      <Sparkles className="absolute bottom-32 right-20 h-6 w-6 text-accent/30 animate-bounce" style={{ animationDuration: '4s', animationDelay: '1s' }} />
-      <Leaf className="absolute bottom-1/3 left-1/4 h-10 w-10 text-primary/15 animate-bounce" style={{ animationDuration: '5s', animationDelay: '2s' }} />
-      <Leaf className="absolute top-1/4 right-16 h-7 w-7 text-primary/25 animate-bounce" style={{ animationDuration: '4s', animationDelay: '0.5s' }} />
-      <Sparkles className="absolute top-36 left-1/3 h-5 w-5 text-accent/25 animate-bounce" style={{ animationDuration: '3.5s', animationDelay: '1.5s' }} />
-      <Leaf className="absolute bottom-1/4 left-12 h-9 w-9 text-primary/20 animate-bounce" style={{ animationDuration: '4.5s', animationDelay: '0.8s' }} />
-      <Sparkles className="absolute top-16 right-1/3 h-4 w-4 text-accent/20 animate-bounce" style={{ animationDuration: '5s', animationDelay: '2.5s' }} />
-      <Leaf className="absolute bottom-24 right-1/4 h-6 w-6 text-primary/15 animate-bounce" style={{ animationDuration: '3.8s', animationDelay: '1.2s' }} />
-      <Sparkles className="absolute top-1/3 left-10 h-5 w-5 text-accent/25 animate-bounce" style={{ animationDuration: '4.2s', animationDelay: '0.3s' }} />
-      <Leaf className="absolute bottom-40 right-1/4 h-8 w-8 text-primary/20 animate-bounce" style={{ animationDuration: '3.2s', animationDelay: '1.8s' }} />
-      <Sparkles className="absolute bottom-16 left-24 h-4 w-4 text-accent/30 animate-bounce" style={{ animationDuration: '4.8s', animationDelay: '2.2s' }} />
-      <Leaf className="absolute top-28 right-10 h-5 w-5 text-primary/25 animate-bounce" style={{ animationDuration: '5.2s', animationDelay: '0.7s' }} />
+      {/*DIVERSE FLOATING ICONS*/}
+      
+      {/* Top Left Zone */}
+      <Cloud className="absolute top-10 left-10 h-16 w-16 text-primary/10"/>
+      <Leaf className="absolute top-28 left-24 h-6 w-6 text-primary/30" />
+      <Sparkles className="absolute top-12 left-1/3 h-4 w-4 text-accent/40 " />
+
+      {/* Top Right Zone */}
+      <Sprout className="absolute top-12 right-12 h-12 w-12 text-secondary/20"/>
+      <Droplets className="absolute top-32 right-32 h-6 w-6 text-primary/20"/>
+      
+      {/* Middle Sides */}
+      <Flower2 className="absolute top-1/2 left-6 h-10 w-10 text-accent/20"/>
+      <Leaf className="absolute top-1/3 right-0 h-8 w-8 text-primary/25"/>
+      
+      {/* Bottom Left Zone */}
+      <Sprout className="absolute bottom-16 left-16 h-12 w-12 text-primary/20"/>
+      <Sparkles className="absolute bottom-1/3 left-12 h-5 w-5 text-accent/30" />
+
+      {/* Bottom Right Zone */}
+      <Flower2 className="absolute bottom-12 right-12 h-14 w-14 text-primary/10"/>
+      <Cloud className="absolute bottom-24 right-32 h-10 w-10 text-secondary/10"/>
+      <Leaf className="absolute bottom-40 right-10 h-6 w-6 text-primary/30"/>
+
 
       {/* Card */}
       <Card className="w-full max-w-md relative z-10 backdrop-blur-xl bg-card/80 border-primary/20 shadow-2xl shadow-primary/10">
@@ -116,101 +123,46 @@ const Signup: React.FC = () => {
           <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
             {t('signup.title')}
           </CardTitle>
-          <CardDescription className="text-muted-foreground">
-            {t('Help Paint IT Green today')}
-          </CardDescription>
+          <CardDescription className="text-muted-foreground">{t('Help Paint IT Green today')}</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
-            {/* Success Message Display */}
             {successMessage && (
-              <div className="flex items-center justify-center p-3 rounded-lg bg-primary/10 text-primary border border-primary/20 backdrop-blur-sm">
-                <CheckCircle className="h-5 w-5 mr-2 flex-shrink-0" />
-                <span className="text-sm font-medium text-center">{successMessage}</span>
+              <div className="flex items-center justify-center p-3 rounded-lg bg-primary/10 text-primary border border-primary/20">
+                <CheckCircle className="h-5 w-5 mr-2" />
+                <span className="text-sm font-medium">{successMessage}</span>
               </div>
             )}
-
-            {/* Error Message Display */}
             {error && (
-              <div className="flex items-center justify-center p-3 rounded-lg bg-destructive/10 text-destructive border border-destructive/20 backdrop-blur-sm">
-                <XCircle className="h-5 w-5 mr-2 flex-shrink-0" />
-                <span className="text-sm font-medium text-center">{error}</span>
+              <div className="flex items-center justify-center p-3 rounded-lg bg-destructive/10 text-destructive border border-destructive/20">
+                <XCircle className="h-5 w-5 mr-2" />
+                <span className="text-sm font-medium">{error}</span>
               </div>
             )}
-
+            {/* Form Inputs */}
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-foreground/80">{t('signup.name')}</Label>
-              <Input
-                id="name"
-                type="text"
-                placeholder={t('signup.namePlaceholder')}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                disabled={isLoading}
-                className="bg-background/50 border-primary/20 focus:border-primary/50 transition-colors"
-              />
+              <Label htmlFor="name">{t('signup.name')}</Label>
+              <Input id="name" type="text" placeholder={t('signup.namePlaceholder')} value={name} onChange={(e) => setName(e.target.value)} required disabled={isLoading} className="bg-background/50 border-primary/20 focus:border-primary/50" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-foreground/80">{t('signup.email')}</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder={t('signup.emailPlaceholder')}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                disabled={isLoading}
-                className="bg-background/50 border-primary/20 focus:border-primary/50 transition-colors"
-              />
+              <Label htmlFor="email">{t('signup.email')}</Label>
+              <Input id="email" type="email" placeholder={t('signup.emailPlaceholder')} value={email} onChange={(e) => setEmail(e.target.value)} required disabled={isLoading} className="bg-background/50 border-primary/20 focus:border-primary/50" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-foreground/80">{t('signup.password')}</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder={t('signup.passwordPlaceholder')}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                disabled={isLoading}
-                className="bg-background/50 border-primary/20 focus:border-primary/50 transition-colors"
-              />
+              <Label htmlFor="password">{t('signup.password')}</Label>
+              <Input id="password" type="password" placeholder={t('signup.passwordPlaceholder')} value={password} onChange={(e) => setPassword(e.target.value)} required disabled={isLoading} className="bg-background/50 border-primary/20 focus:border-primary/50" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword" className="text-foreground/80">{t('signup.confirmPassword')}</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                placeholder={t('signup.confirmPasswordPlaceholder')}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                disabled={isLoading}
-                className="bg-background/50 border-primary/20 focus:border-primary/50 transition-colors"
-              />
+              <Label htmlFor="confirmPassword">{t('signup.confirmPassword')}</Label>
+              <Input id="confirmPassword" type="password" placeholder={t('signup.confirmPasswordPlaceholder')} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required disabled={isLoading} className="bg-background/50 border-primary/20 focus:border-primary/50" />
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4 pt-2">
-            <Button
-              type="submit"
-              className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/25 transition-all duration-300"
-              disabled={isLoading || !!successMessage}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t('signup.loading') || 'Signing up...'}
-                </>
-              ) : (
-                t('signup.signupButton')
-              )}
+            <Button type="submit" className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/25" disabled={isLoading || !!successMessage}>
+              {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t('signup.loading')}</> : t('signup.signupButton')}
             </Button>
             <p className="text-sm text-muted-foreground text-center">
-              {t('signup.haveAccount')}{" "}
-              <Link to="/login" className="text-primary hover:text-primary/80 hover:underline font-medium transition-colors">
-                {t('signup.loginLink')}
-              </Link>
+              {t('signup.haveAccount')}{" "}<Link to="/login" className="text-primary hover:underline">{t('signup.loginLink')}</Link>
             </p>
           </CardFooter>
         </form>

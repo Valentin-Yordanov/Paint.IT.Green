@@ -10,7 +10,7 @@ const Privacy = () => {
         <div className="container">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">{t('privacy.title')}</h1>
           <p className="text-xl text-muted-foreground max-w-3xl">
-            {t('privacy.lastUpdated')} {new Date().toLocaleDateString()}
+            {t('privacy.lastUpdated')} {new Date("2026-01-01").toLocaleDateString()}
           </p>
         </div>
       </section>

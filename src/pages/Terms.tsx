@@ -10,7 +10,7 @@ const Terms = () => {
         <div className="container">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">{t('terms.title')}</h1>
           <p className="text-xl text-muted-foreground max-w-3xl">
-            {t('terms.lastUpdated')} {new Date().toLocaleDateString()}
+            {t('terms.lastUpdated')} {new Date("2026-01-01").toLocaleDateString()}
           </p>
         </div>
       </section>

@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { Loader2, XCircle, Leaf, Sparkles } from "lucide-react";
+import { Loader2, XCircle, Leaf, Sparkles, Wind, Sun, Sprout } from "lucide-react";
 
 const Login = () => {
   const { t } = useLanguage();
@@ -33,8 +33,7 @@ const Login = () => {
         login(userData);
       } else {
         const errorBody = await response.text();
-        let errorMessage = t('login.error.generic') || "Login failed. Please check your credentials.";
-
+        let errorMessage = t('login.error.generic') || "Login failed.";
         try {
           const jsonError = JSON.parse(errorBody);
           errorMessage = jsonError.body || jsonError.message || errorMessage;
@@ -44,36 +43,45 @@ const Login = () => {
         setError(errorMessage);
       }
     } catch (err) {
-      console.error("Network or unexpected error during login:", err);
-      setError(t('login.error.serverOffline') || "Could not connect to the backend server. Please check your connection.");
+      console.error("Error:", err);
+      setError(t('login.error.serverOffline') || "Could not connect to server.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-8 relative overflow-hidden">
-      {/* Animated Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-secondary/10" />
+    <div className="min-h-screen flex items-center justify-center px-4 py-8 relative overflow-hidden bg-background">
       
-      {/* Decorative Elements */}
-      <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-      <div className="absolute top-1/2 left-1/4 w-48 h-48 bg-accent/10 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '2s' }} />
+      {/* 1. Background Pattern */}
+      <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-30" />
+
+      {/* 2. Color Blobs */}
+      <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2" />
+      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-secondary/15 rounded-full blur-[100px] translate-x-1/3 translate-y-1/3"/>
       
-      {/* Floating Icons */}
-      <Leaf className="absolute top-20 right-16 h-8 w-8 text-primary/20 animate-bounce" style={{ animationDuration: '3s' }} />
-      <Sparkles className="absolute bottom-32 left-16 h-6 w-6 text-accent/30 animate-bounce" style={{ animationDuration: '4s', animationDelay: '1s' }} />
-      <Leaf className="absolute top-1/2 right-1/4 h-10 w-10 text-primary/15 animate-bounce" style={{ animationDuration: '5s', animationDelay: '2s' }} />
-      <Leaf className="absolute top-1/4 left-20 h-7 w-7 text-primary/25 animate-bounce" style={{ animationDuration: '4s', animationDelay: '0.5s' }} />
-      <Sparkles className="absolute top-40 right-1/3 h-5 w-5 text-accent/25 animate-bounce" style={{ animationDuration: '3.5s', animationDelay: '1.5s' }} />
-      <Leaf className="absolute bottom-1/4 right-16 h-9 w-9 text-primary/20 animate-bounce" style={{ animationDuration: '4.5s', animationDelay: '0.8s' }} />
-      <Sparkles className="absolute top-16 left-1/3 h-4 w-4 text-accent/20 animate-bounce" style={{ animationDuration: '5s', animationDelay: '2.5s' }} />
-      <Leaf className="absolute bottom-20 right-1/4 h-6 w-6 text-primary/15 animate-bounce" style={{ animationDuration: '3.8s', animationDelay: '1.2s' }} />
-      <Sparkles className="absolute top-1/3 right-10 h-5 w-5 text-accent/25 animate-bounce" style={{ animationDuration: '4.2s', animationDelay: '0.3s' }} />
-      <Leaf className="absolute bottom-40 left-1/4 h-8 w-8 text-primary/20 animate-bounce" style={{ animationDuration: '3.2s', animationDelay: '1.8s' }} />
-      <Sparkles className="absolute bottom-16 right-20 h-4 w-4 text-accent/30 animate-bounce" style={{ animationDuration: '4.8s', animationDelay: '2.2s' }} />
-      <Leaf className="absolute top-28 left-10 h-5 w-5 text-primary/25 animate-bounce" style={{ animationDuration: '5.2s', animationDelay: '0.7s' }} />
+      {/* --- 3. DIVERSE FLOATING ICONS --- */}
+      
+      {/* Top Left */}
+      <Sun className="absolute top-10 left-64 h-14 w-14 text-primary/10"/>
+      <Leaf className="absolute top-32 left-32 h-6 w-6 text-primary/20"/>
+      
+      {/* Top Right */}
+      <Wind className="absolute top-16 right-16 h-10 w-10 text-secondary/20"/>
+      <Sparkles className="absolute top-40 right-1/4 h-5 w-5 text-accent/30"/>
+      
+      {/* Middle */}
+      <Sprout className="absolute top-1/2 left-12 h-10 w-10 text-primary/20"/>
+      <Leaf className="absolute top-1/2 right-12 h-8 w-8 text-primary/15"/>
+      
+      {/* Bottom Left */}
+      <Sparkles className="absolute bottom-24 left-20 h-6 w-6 text-accent/25"/>
+      {/* <div className="absolute bottom-40 left-10 w-2 h-2 bg-primary/40 rounded-full animate-ping" /> IT LOOKS PREATY BUT NO USE HERE*/} 
+      
+      {/* Bottom Right */}
+      <Sprout className="absolute bottom-16 right-16 h-12 w-12 text-primary/15"/>
+      <Leaf className="absolute bottom-1/3 right-32 h-5 w-5 text-secondary/20"/>
+
 
       {/* Card */}
       <Card className="w-full max-w-md relative z-10 backdrop-blur-xl bg-card/80 border-primary/20 shadow-2xl shadow-primary/10">
@@ -84,67 +92,31 @@ const Login = () => {
           <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
             {t('login.title')}
           </CardTitle>
-          <CardDescription className="text-muted-foreground">
-            {t('Log in your Paint IT Green account')}
-          </CardDescription>
+          <CardDescription className="text-muted-foreground">{t('Log in your Paint IT Green account')}</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
-            {/* Error Message Display */}
             {error && (
-              <div className="flex items-center justify-center p-3 rounded-lg bg-destructive/10 text-destructive border border-destructive/20 backdrop-blur-sm">
-                <XCircle className="h-5 w-5 mr-2 flex-shrink-0" />
-                <span className="text-sm font-medium text-center">{error}</span>
+              <div className="flex items-center justify-center p-3 rounded-lg bg-destructive/10 text-destructive border border-destructive/20">
+                <XCircle className="h-5 w-5 mr-2" />
+                <span className="text-sm font-medium">{error}</span>
               </div>
             )}
-
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-foreground/80">{t('login.email')}</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder={t('login.emailPlaceholder')}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                disabled={isLoading}
-                className="bg-background/50 border-primary/20 focus:border-primary/50 transition-colors"
-              />
+              <Label htmlFor="email">{t('login.email')}</Label>
+              <Input id="email" type="email" placeholder={t('login.emailPlaceholder')} value={email} onChange={(e) => setEmail(e.target.value)} required disabled={isLoading} className="bg-background/50 border-primary/20 focus:border-primary/50" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-foreground/80">{t('login.password')}</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder={t('login.passwordPlaceholder')}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                disabled={isLoading}
-                className="bg-background/50 border-primary/20 focus:border-primary/50 transition-colors"
-              />
+              <Label htmlFor="password">{t('login.password')}</Label>
+              <Input id="password" type="password" placeholder={t('login.passwordPlaceholder')} value={password} onChange={(e) => setPassword(e.target.value)} required disabled={isLoading} className="bg-background/50 border-primary/20 focus:border-primary/50" />
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4 pt-2">
-            <Button 
-              type="submit" 
-              className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/25 transition-all duration-300" 
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t('login.loading') || 'Logging in...'}
-                </>
-              ) : (
-                t('login.loginButton')
-              )}
+            <Button type="submit" className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/25" disabled={isLoading}>
+              {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t('login.loading')}</> : t('login.loginButton')}
             </Button>
             <p className="text-sm text-muted-foreground text-center">
-              {t('login.noAccount')}{" "}
-              <Link to="/signup" className="text-primary hover:text-primary/80 hover:underline font-medium transition-colors">
-                {t('login.signupLink')}
-              </Link>
+              {t('login.noAccount')}{" "}<Link to="/signup" className="text-primary hover:underline">{t('login.signupLink')}</Link>
             </p>
           </CardFooter>
         </form>

@@ -16,7 +16,6 @@ const Contact = () => {
   
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
       <section className="relative py-24 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/5" />
         <div className="absolute top-20 right-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-pulse" />
@@ -24,10 +23,6 @@ const Contact = () => {
         
         <div className="container relative">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-sm mb-6">
-              <Sparkles className="h-4 w-4 text-primary animate-pulse" />
-              <span className="text-sm font-medium text-primary">Get in Touch</span>
-            </div>
             <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">{t('contact.title')}</h1>
             <p className="text-xl text-muted-foreground leading-relaxed">
               {t('contact.subtitle')}
