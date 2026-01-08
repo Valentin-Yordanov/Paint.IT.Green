@@ -28,6 +28,14 @@ import {
   Menu,
   X,
   LayoutGrid,
+  Leaf,
+  Sparkles,
+  TreePine,
+  Flower2,
+  Bird,
+  Sun,
+  Cloud,
+  Star,
 } from "lucide-react";
 import studentsImage from "@/assets/students-planting.jpg";
 import { useToast } from "@/hooks/use-toast";
@@ -502,7 +510,51 @@ const Community = () => {
   );
 
   return (
-    <div className="flex w-full min-h-screen bg-background relative">
+    <div className="flex w-full min-h-screen bg-gradient-to-br from-green-50 via-emerald-50/50 to-teal-50 dark:from-background dark:via-green-950/20 dark:to-background relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-emerald-400/10 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-teal-400/10 rounded-full blur-3xl animate-pulse delay-500" />
+      </div>
+
+      {/* Floating Decorative Icons */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <Leaf className="absolute top-[5%] left-[5%] h-6 w-6 text-primary/20 animate-bounce" style={{ animationDelay: '0s', animationDuration: '4s' }} />
+        <Sparkles className="absolute top-[10%] right-[15%] h-5 w-5 text-yellow-500/25 animate-pulse" style={{ animationDelay: '0.5s' }} />
+        <TreePine className="absolute top-[15%] left-[25%] h-7 w-7 text-emerald-600/15 animate-bounce" style={{ animationDelay: '1s', animationDuration: '5s' }} />
+        <Flower2 className="absolute top-[8%] right-[35%] h-5 w-5 text-pink-400/20 animate-pulse" style={{ animationDelay: '1.5s' }} />
+        <Bird className="absolute top-[20%] left-[45%] h-6 w-6 text-sky-500/20 animate-bounce" style={{ animationDelay: '2s', animationDuration: '4.5s' }} />
+        <Sun className="absolute top-[5%] right-[5%] h-8 w-8 text-yellow-400/15 animate-pulse" style={{ animationDelay: '0.3s' }} />
+        <Cloud className="absolute top-[12%] left-[60%] h-7 w-7 text-blue-300/20 animate-bounce" style={{ animationDelay: '2.5s', animationDuration: '6s' }} />
+        <Star className="absolute top-[25%] right-[25%] h-4 w-4 text-amber-400/25 animate-pulse" style={{ animationDelay: '0.8s' }} />
+        
+        <Leaf className="absolute top-[35%] left-[8%] h-5 w-5 text-green-500/20 animate-bounce" style={{ animationDelay: '1.2s', animationDuration: '4.2s' }} />
+        <Sparkles className="absolute top-[40%] right-[8%] h-6 w-6 text-primary/15 animate-pulse" style={{ animationDelay: '1.8s' }} />
+        <TreePine className="absolute top-[45%] left-[3%] h-8 w-8 text-emerald-700/12 animate-bounce" style={{ animationDelay: '0.6s', animationDuration: '5.5s' }} />
+        <Flower2 className="absolute top-[50%] right-[12%] h-6 w-6 text-rose-400/18 animate-pulse" style={{ animationDelay: '2.2s' }} />
+        
+        <Bird className="absolute top-[55%] left-[15%] h-5 w-5 text-indigo-400/20 animate-bounce" style={{ animationDelay: '0.9s', animationDuration: '4.8s' }} />
+        <Sun className="absolute top-[60%] right-[20%] h-6 w-6 text-orange-400/15 animate-pulse" style={{ animationDelay: '1.4s' }} />
+        <Cloud className="absolute top-[65%] left-[20%] h-5 w-5 text-slate-400/20 animate-bounce" style={{ animationDelay: '2.8s', animationDuration: '5.2s' }} />
+        <Star className="absolute top-[70%] right-[30%] h-5 w-5 text-yellow-500/20 animate-pulse" style={{ animationDelay: '0.4s' }} />
+        
+        <Leaf className="absolute top-[75%] left-[35%] h-7 w-7 text-teal-500/18 animate-bounce" style={{ animationDelay: '1.6s', animationDuration: '4.6s' }} />
+        <Sparkles className="absolute top-[80%] right-[40%] h-4 w-4 text-cyan-400/22 animate-pulse" style={{ animationDelay: '2.4s' }} />
+        <TreePine className="absolute top-[85%] left-[50%] h-6 w-6 text-green-600/15 animate-bounce" style={{ animationDelay: '0.7s', animationDuration: '5.8s' }} />
+        <Flower2 className="absolute top-[90%] right-[50%] h-5 w-5 text-purple-400/18 animate-pulse" style={{ animationDelay: '1.9s' }} />
+        
+        <Bird className="absolute bottom-[15%] left-[55%] h-6 w-6 text-teal-400/20 animate-bounce" style={{ animationDelay: '2.6s', animationDuration: '4.4s' }} />
+        <Sun className="absolute bottom-[10%] right-[55%] h-5 w-5 text-amber-500/15 animate-pulse" style={{ animationDelay: '1.1s' }} />
+        <Cloud className="absolute bottom-[5%] left-[65%] h-6 w-6 text-blue-400/18 animate-bounce" style={{ animationDelay: '0.2s', animationDuration: '6.2s' }} />
+        <Star className="absolute bottom-[20%] right-[65%] h-4 w-4 text-primary/20 animate-pulse" style={{ animationDelay: '2.1s' }} />
+        
+        <Leaf className="absolute bottom-[25%] left-[75%] h-5 w-5 text-emerald-500/18 animate-bounce" style={{ animationDelay: '1.3s', animationDuration: '4.9s' }} />
+        <Sparkles className="absolute bottom-[30%] right-[75%] h-6 w-6 text-yellow-400/20 animate-pulse" style={{ animationDelay: '0.5s' }} />
+        <TreePine className="absolute bottom-[35%] left-[85%] h-5 w-5 text-green-700/15 animate-bounce" style={{ animationDelay: '2.3s', animationDuration: '5.4s' }} />
+        <Flower2 className="absolute bottom-[40%] right-[85%] h-4 w-4 text-pink-500/20 animate-pulse" style={{ animationDelay: '1.7s' }} />
+      </div>
+
       {/* --- MOBILE OVERLAY (Darkens background when sidebar is open) --- */}
       {isMobileMenuOpen && (
         <div
@@ -515,7 +567,7 @@ const Community = () => {
       <aside
         className={`
           fixed md:sticky top-0 h-screen w-[280px] z-50 
-          bg-card border-r shadow-lg md:shadow-none
+          bg-white/70 dark:bg-card/80 backdrop-blur-xl border-r border-white/20 dark:border-border/40 shadow-xl
           transform transition-transform duration-300 ease-in-out
           ${
             isMobileMenuOpen
@@ -526,9 +578,9 @@ const Community = () => {
         `}
       >
         {/* FIXED HEADER SECTION - NOW DYNAMIC */}
-        <div className="p-6 shrink-0 border-b border-border/40">
+        <div className="p-6 shrink-0 border-b border-white/30 dark:border-border/40 bg-gradient-to-r from-primary/5 to-emerald-500/5">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground transition-all duration-300">
+            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-300">
               {headerDetails.icon}
             </div>
             <div className="overflow-hidden">
@@ -609,9 +661,9 @@ const Community = () => {
       </aside>
 
       {/* --- MAIN CONTENT AREA --- */}
-      <main className="flex-1 w-full min-w-0 bg-secondary/5 dark:bg-background">
+      <main className="flex-1 w-full min-w-0 relative z-10">
         {/* Mobile Header Bar (Visible only on small screens) */}
-        <div className="md:hidden sticky top-0 z-30 bg-background/80 backdrop-blur-md border-b px-4 h-16 flex items-center justify-between">
+        <div className="md:hidden sticky top-0 z-30 bg-white/70 dark:bg-background/80 backdrop-blur-xl border-b border-white/20 dark:border-border px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2 font-semibold">
             {activeFeed === "public" && (
               <Globe className="w-5 h-5 text-primary" />
@@ -636,10 +688,17 @@ const Community = () => {
         <div className="max-w-3xl mx-auto p-4 md:p-8 space-y-6">
           {/* Page Header (Desktop) */}
           <div className="hidden md:block mb-8 space-y-2">
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">
-              {getFeedTitle()}
-            </h1>
-            <p className="text-muted-foreground text-lg">{getFeedSubtitle()}</p>
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-emerald-500/20 backdrop-blur-sm">
+                <Users className="h-8 w-8 text-primary" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary via-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                  {getFeedTitle()}
+                </h1>
+                <p className="text-muted-foreground text-lg">{getFeedSubtitle()}</p>
+              </div>
+            </div>
           </div>
 
           {/* Action Bar */}
@@ -649,12 +708,12 @@ const Community = () => {
               onOpenChange={handleOpenCreateDialog}
             >
               <DialogTrigger asChild>
-                <Button className="rounded-full shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all">
+                <Button className="rounded-full bg-gradient-to-r from-primary to-emerald-600 hover:from-primary/90 hover:to-emerald-600/90 shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all hover:scale-105">
                   <Plus className="mr-2 h-4 w-4" />
                   {t("community.createPost")}
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[500px]">
+              <DialogContent className="sm:max-w-[500px] bg-white/90 dark:bg-card/95 backdrop-blur-xl border-white/30 dark:border-border">
                 <DialogHeader>
                   <DialogTitle>{t("community.createNewPost")}</DialogTitle>
                 </DialogHeader>
@@ -740,9 +799,9 @@ const Community = () => {
           {/* Posts Feed */}
           <div className="space-y-6">
             {filteredPosts.length === 0 ? (
-              <div className="text-center py-12 bg-card rounded-xl border border-dashed">
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-muted mb-4">
-                  <MessageCircle className="h-6 w-6 text-muted-foreground" />
+              <div className="text-center py-12 bg-white/60 dark:bg-card/60 backdrop-blur-xl rounded-xl border border-white/30 dark:border-border border-dashed shadow-lg">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-emerald-500/20 mb-4">
+                  <MessageCircle className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="text-lg font-medium">{t("community.noPostsYet")}</h3>
                 <p className="text-muted-foreground max-w-sm mx-auto mt-2">
@@ -754,11 +813,11 @@ const Community = () => {
               filteredPosts.map((post) => (
                 <Card
                   key={post.id}
-                  className="overflow-hidden border-border/60 hover:border-border transition-colors"
+                  className="overflow-hidden bg-white/70 dark:bg-card/80 backdrop-blur-xl border-white/30 dark:border-border/60 hover:border-primary/30 dark:hover:border-primary/30 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-primary/10 group/card"
                 >
                   <CardHeader className="flex flex-row items-start gap-4 p-4 md:p-6 pb-2">
-                    <Avatar className="h-10 w-10 border">
-                      <AvatarFallback className="bg-primary/5 text-primary">
+                    <Avatar className="h-10 w-10 border-2 border-primary/20 shadow-md">
+                      <AvatarFallback className="bg-gradient-to-br from-primary/20 to-emerald-500/20 text-primary font-semibold">
                         {post.author.substring(0, 2).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
@@ -859,7 +918,7 @@ const Community = () => {
                     )}
 
                     {post.image && (
-                      <div className="rounded-xl overflow-hidden border bg-muted/30">
+                      <div className="rounded-xl overflow-hidden border border-white/30 dark:border-border/40 shadow-md group-hover/card:shadow-lg transition-shadow">
                         <img
                           src={post.image}
                           alt="Post attachment"
@@ -869,20 +928,20 @@ const Community = () => {
                       </div>
                     )}
 
-                    <div className="flex items-center gap-4 pt-2 border-t mt-4">
+                    <div className="flex items-center gap-4 pt-3 border-t border-white/30 dark:border-border/40 mt-4">
                       <Button
                         variant="ghost"
                         size="sm"
-                        className={`gap-2 ${
+                        className={`gap-2 rounded-full transition-all ${
                           likedPosts.has(post.id)
-                            ? "text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
-                            : "text-muted-foreground"
+                            ? "text-red-500 hover:text-red-600 bg-red-50 dark:bg-red-950/30 hover:bg-red-100 dark:hover:bg-red-950/50"
+                            : "text-muted-foreground hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20"
                         }`}
                         onClick={() => toggleLike(post.id)}
                       >
                         <Heart
-                          className={`h-4 w-4 ${
-                            likedPosts.has(post.id) ? "fill-current" : ""
+                          className={`h-4 w-4 transition-transform ${
+                            likedPosts.has(post.id) ? "fill-current scale-110" : ""
                           }`}
                         />
                         <span>{post.likes}</span>
@@ -890,7 +949,7 @@ const Community = () => {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="gap-2 text-muted-foreground hover:text-primary"
+                        className="gap-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full transition-all"
                         onClick={() => toggleComments(post.id)}
                       >
                         <MessageCircle className="h-4 w-4" />
@@ -899,7 +958,7 @@ const Community = () => {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="ml-auto gap-2 text-muted-foreground"
+                        className="ml-auto gap-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full transition-all"
                       >
                         <Share2 className="h-4 w-4" />
                       </Button>
@@ -915,7 +974,7 @@ const Community = () => {
                                   {comment.author.substring(0, 2).toUpperCase()}
                                 </AvatarFallback>
                               </Avatar>
-                              <div className="flex-1 bg-muted/40 p-3 rounded-lg rounded-tl-none">
+                              <div className="flex-1 bg-white/50 dark:bg-muted/40 backdrop-blur-sm p-3 rounded-lg rounded-tl-none border border-white/30 dark:border-border/30">
                                 <div className="flex items-center justify-between mb-1">
                                   <div className="flex items-center gap-2">
                                     <span className="text-sm font-semibold">
