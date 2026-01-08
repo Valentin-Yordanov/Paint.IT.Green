@@ -36,6 +36,9 @@ import {
   Sun,
   Cloud,
   Star,
+  FileText,
+  Paperclip,
+  File,
 } from "lucide-react";
 import studentsImage from "@/assets/students-planting.jpg";
 import { useToast } from "@/hooks/use-toast";
@@ -69,6 +72,13 @@ type Comment = {
   time: string;
 };
 
+type Attachment = {
+  type: 'image' | 'file';
+  url: string;
+  name: string;
+  size?: string;
+};
+
 type Post = {
   id: number;
   school: string;
@@ -77,6 +87,7 @@ type Post = {
   time: string;
   content: string;
   image?: string;
+  attachments?: Attachment[];
   likes: number;
   comments: Comment[];
   visibility: "public" | "school" | "class";
@@ -107,6 +118,7 @@ const Community = () => {
   const [newPostImage, setNewPostImage] = useState<string | undefined>(
     undefined
   );
+  const [newPostAttachments, setNewPostAttachments] = useState<Attachment[]>([]);
   const [activeFeed, setActiveFeed] = useState<string>("public");
 
   // Mobile Sidebar State
@@ -274,6 +286,7 @@ const Community = () => {
       time: "Just now",
       content: newPostContent,
       image: newPostImage,
+      attachments: newPostAttachments.length > 0 ? newPostAttachments : undefined,
       likes: 0,
       comments: [],
       visibility: newPostVisibility,
@@ -283,6 +296,7 @@ const Community = () => {
     setPosts([newPost, ...posts]);
     setNewPostContent("");
     setNewPostImage(undefined);
+    setNewPostAttachments([]);
     setIsCreateDialogOpen(false);
     toast({
       title: t('community.postCreated'),
@@ -299,6 +313,37 @@ const Community = () => {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const attachment: Attachment = {
+            type: file.type.startsWith('image/') ? 'image' : 'file',
+            url: reader.result as string,
+            name: file.name,
+            size: formatFileSize(file.size),
+          };
+          setNewPostAttachments(prev => [...prev, attachment]);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  };
+
+  const formatFileSize = (bytes: number): string => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  const removeAttachment = (index: number) => {
+    setNewPostAttachments(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleDeletePost = (postId: number) => {
@@ -488,21 +533,21 @@ const Community = () => {
   }) => (
     <Button
       variant={active ? "secondary" : "ghost"}
-      className={`w-full justify-start gap-3 h-12 px-4 mb-1 relative transition-all duration-200 ${
+      className={`w-full justify-start gap-3 h-11 px-3 relative transition-all duration-200 rounded-xl ${
         active
-          ? "bg-primary/10 text-primary font-semibold"
-          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+          ? "bg-gradient-to-r from-primary/15 to-emerald-500/10 text-primary font-semibold shadow-sm border border-primary/20"
+          : "text-muted-foreground hover:bg-primary/5 hover:text-foreground border border-transparent"
       }`}
       onClick={() => {
         onClick();
-        setIsMobileMenuOpen(false); // Close sidebar on mobile when clicked
+        setIsMobileMenuOpen(false);
       }}
     >
       {/* Active Indicator Line */}
       {active && (
-        <div className="absolute left-0 top-1/4 bottom-1/4 w-1 bg-primary rounded-r-full" />
+        <div className="absolute left-0 top-1/4 bottom-1/4 w-1 bg-gradient-to-b from-primary to-emerald-600 rounded-r-full" />
       )}
-      <span className={active ? "text-primary" : "text-muted-foreground"}>
+      <span className={`transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}>
         {icon}
       </span>
       <span className="truncate">{label}</span>
@@ -567,7 +612,7 @@ const Community = () => {
       <aside
         className={`
           fixed md:sticky top-0 h-screen w-[280px] z-50 
-          bg-white/70 dark:bg-card/80 backdrop-blur-xl border-r border-white/20 dark:border-border/40 shadow-xl
+          bg-white/90 dark:bg-card/95 backdrop-blur-xl border-r border-primary/20 dark:border-border/40 shadow-xl
           transform transition-transform duration-300 ease-in-out
           ${
             isMobileMenuOpen
@@ -577,14 +622,14 @@ const Community = () => {
           flex flex-col
         `}
       >
-        {/* FIXED HEADER SECTION - NOW DYNAMIC */}
-        <div className="p-6 shrink-0 border-b border-white/30 dark:border-border/40 bg-gradient-to-r from-primary/5 to-emerald-500/5">
+        {/* FIXED HEADER SECTION */}
+        <div className="p-5 shrink-0 border-b border-primary/15 dark:border-border/40 bg-gradient-to-r from-primary/10 via-emerald-500/5 to-teal-500/10">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-300">
+            <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center text-primary-foreground shadow-lg shadow-primary/30 transition-all duration-300">
               {headerDetails.icon}
             </div>
             <div className="overflow-hidden">
-              <h2 className="font-bold text-lg leading-tight tracking-tight truncate">
+              <h2 className="font-bold text-lg leading-tight tracking-tight truncate bg-gradient-to-r from-primary to-emerald-600 bg-clip-text text-transparent">
                 {headerDetails.title}
               </h2>
               <p className="text-xs text-muted-foreground truncate">
@@ -595,10 +640,11 @@ const Community = () => {
         </div>
 
         {/* SCROLLABLE NAVIGATION SECTION */}
-        <nav className="flex-1 overflow-y-auto p-6">
+        <nav className="flex-1 overflow-y-auto p-4 space-y-2">
           {/* Main Feeds */}
-          <div>
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 pl-4">
+          <div className="space-y-1">
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-3 flex items-center gap-2">
+              <Globe size={12} />
               {t("community.feeds")}
             </h3>
             <SidebarButton
@@ -611,8 +657,9 @@ const Community = () => {
 
           {/* Groups */}
           {MOCK_USER.role === "student" && (
-            <div>
-              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 pl-4 mt-6">
+            <div className="space-y-1 pt-4 border-t border-primary/10 dark:border-border/30">
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-3 flex items-center gap-2">
+                <Users size={12} />
                 {t("community.myGroups")}
               </h3>
               <SidebarButton
@@ -632,8 +679,8 @@ const Community = () => {
 
           {/* Moderator Tools */}
           {MOCK_USER.role === "moderator" && (
-            <div>
-              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 pl-4 mt-6 flex items-center gap-2">
+            <div className="space-y-1 pt-4 border-t border-primary/10 dark:border-border/30">
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-3 flex items-center gap-2">
                 <Shield size={12} /> {t("community.moderation")}
               </h3>
               {ALL_SCHOOLS.map((school) => (
@@ -645,7 +692,7 @@ const Community = () => {
                   onClick={() => setActiveFeed(school)}
                 />
               ))}
-              <div className="my-2 border-t border-border/50" />
+              <div className="my-2 border-t border-primary/10 dark:border-border/30" />
               {ALL_CLASSES.map((cls) => (
                 <SidebarButton
                   key={cls}
@@ -661,9 +708,9 @@ const Community = () => {
       </aside>
 
       {/* --- MAIN CONTENT AREA --- */}
-      <main className="flex-1 w-full min-w-0 relative z-10">
+      <main className="flex-1 w-full min-w-0 relative z-10 flex flex-col h-screen overflow-hidden">
         {/* Mobile Header Bar (Visible only on small screens) */}
-        <div className="md:hidden sticky top-0 z-30 bg-white/70 dark:bg-background/80 backdrop-blur-xl border-b border-white/20 dark:border-border px-4 h-16 flex items-center justify-between">
+        <div className="md:hidden sticky top-0 z-30 bg-white/80 dark:bg-background/90 backdrop-blur-xl border-b border-primary/10 dark:border-border px-4 h-16 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2 font-semibold">
             {activeFeed === "public" && (
               <Globe className="w-5 h-5 text-primary" />
@@ -685,119 +732,182 @@ const Community = () => {
           </Button>
         </div>
 
-        <div className="max-w-3xl mx-auto p-4 md:p-8 space-y-6">
-          {/* Page Header (Desktop) */}
-          <div className="hidden md:block mb-8 space-y-2">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-emerald-500/20 backdrop-blur-sm">
-                <Users className="h-8 w-8 text-primary" />
+        {/* Fixed Header for Desktop */}
+        <div className="hidden md:block shrink-0 p-4 md:px-8 md:pt-8 md:pb-4">
+          <div className="max-w-3xl mx-auto">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-emerald-500/20 backdrop-blur-sm">
+                  <Users className="h-8 w-8 text-primary" />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary via-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                    {getFeedTitle()}
+                  </h1>
+                  <p className="text-muted-foreground text-lg">{getFeedSubtitle()}</p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary via-emerald-600 to-teal-600 bg-clip-text text-transparent">
-                  {getFeedTitle()}
-                </h1>
-                <p className="text-muted-foreground text-lg">{getFeedSubtitle()}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Action Bar */}
-          <div className="flex items-center justify-between mb-6">
-            <Dialog
-              open={isCreateDialogOpen}
-              onOpenChange={handleOpenCreateDialog}
-            >
-              <DialogTrigger asChild>
-                <Button className="rounded-full bg-gradient-to-r from-primary to-emerald-600 hover:from-primary/90 hover:to-emerald-600/90 shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all hover:scale-105">
-                  <Plus className="mr-2 h-4 w-4" />
-                  {t("community.createPost")}
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[500px] bg-white/90 dark:bg-card/95 backdrop-blur-xl border-white/30 dark:border-border">
-                <DialogHeader>
-                  <DialogTitle>{t("community.createNewPost")}</DialogTitle>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="flex items-start gap-4">
-                    <Avatar>
-                      <AvatarFallback>
-                        {MOCK_USER.name.substring(0, 2).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="grid gap-2 flex-1">
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm font-medium">{MOCK_USER.name}</p>
-                        <Badge variant="outline" className="capitalize">
-                          {newPostVisibility}
-                        </Badge>
-                      </div>
-                      <Textarea
-                        placeholder={`${t("community.sharePlaceholder")} ${
-                          newPostVisibility === "public"
-                            ? t("community.everyone")
-                            : t("community.yourGroup")
-                        }...`}
-                        value={newPostContent}
-                        onChange={(e) => setNewPostContent(e.target.value)}
-                        className="min-h-[100px] resize-none border-none focus-visible:ring-0 px-0 shadow-none"
-                      />
-                      {newPostImage && (
-                        <div className="relative mt-2 rounded-lg overflow-hidden border">
-                          <img
-                            src={newPostImage}
-                            alt="Preview"
-                            className="w-full h-auto max-h-[300px] object-cover"
-                          />
-                          <Button
-                            size="icon"
-                            variant="destructive"
-                            className="absolute top-2 right-2 h-8 w-8 rounded-full"
-                            onClick={() => setNewPostImage(undefined)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+              
+              {/* Create Post Button */}
+              <Dialog
+                open={isCreateDialogOpen}
+                onOpenChange={handleOpenCreateDialog}
+              >
+                <DialogTrigger asChild>
+                  <Button className="rounded-full bg-gradient-to-r from-primary to-emerald-600 hover:from-primary/90 hover:to-emerald-600/90 shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all hover:scale-105">
+                    <Plus className="mr-2 h-4 w-4" />
+                    {t("community.createPost")}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[500px] bg-white/95 dark:bg-card/95 backdrop-blur-xl border-primary/20 dark:border-border">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2">
+                      <Plus className="h-5 w-5 text-primary" />
+                      {t("community.createNewPost")}
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="flex items-start gap-4">
+                      <Avatar className="border-2 border-primary/20">
+                        <AvatarFallback className="bg-gradient-to-br from-primary/20 to-emerald-500/20 text-primary">
+                          {MOCK_USER.name.substring(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="grid gap-2 flex-1">
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm font-medium">{MOCK_USER.name}</p>
+                          <Badge variant="outline" className="capitalize bg-primary/5 border-primary/20">
+                            {newPostVisibility}
+                          </Badge>
                         </div>
-                      )}
+                        <Textarea
+                          placeholder={`${t("community.sharePlaceholder")} ${
+                            newPostVisibility === "public"
+                              ? t("community.everyone")
+                              : t("community.yourGroup")
+                          }...`}
+                          value={newPostContent}
+                          onChange={(e) => setNewPostContent(e.target.value)}
+                          className="min-h-[100px] resize-none border-none focus-visible:ring-0 px-0 shadow-none"
+                        />
+                        {/* Image Preview */}
+                        {newPostImage && (
+                          <div className="relative mt-2 rounded-lg overflow-hidden border border-primary/20">
+                            <img
+                              src={newPostImage}
+                              alt="Preview"
+                              className="w-full h-auto max-h-[200px] object-cover"
+                            />
+                            <Button
+                              size="icon"
+                              variant="destructive"
+                              className="absolute top-2 right-2 h-7 w-7 rounded-full"
+                              onClick={() => setNewPostImage(undefined)}
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        )}
+                        {/* File Attachments Preview */}
+                        {newPostAttachments.length > 0 && (
+                          <div className="mt-2 space-y-2">
+                            {newPostAttachments.map((attachment, index) => (
+                              <div key={index} className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 border border-primary/10">
+                                {attachment.type === 'image' ? (
+                                  <ImageIcon className="h-4 w-4 text-primary" />
+                                ) : (
+                                  <FileText className="h-4 w-4 text-primary" />
+                                )}
+                                <span className="text-sm flex-1 truncate">{attachment.name}</span>
+                                <span className="text-xs text-muted-foreground">{attachment.size}</span>
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  className="h-6 w-6 text-muted-foreground hover:text-destructive"
+                                  onClick={() => removeAttachment(index)}
+                                >
+                                  <X className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center justify-between border-t pt-4">
-                    <div className="flex gap-2">
-                      <label htmlFor="image-upload" className="cursor-pointer">
+                    <div className="flex items-center justify-between border-t border-primary/10 pt-4">
+                      <div className="flex gap-1">
+                        {/* Photo Upload */}
                         <Button
                           type="button"
                           variant="ghost"
                           size="sm"
-                          className="text-muted-foreground hover:text-primary"
-                          onClick={() =>
-                            document.getElementById("image-upload")?.click()
-                          }
+                          className="text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full"
+                          onClick={() => document.getElementById("image-upload")?.click()}
                         >
-                          <ImageIcon className="h-4 w-4 mr-2" />
+                          <ImageIcon className="h-4 w-4 mr-1" />
                           {t("community.photo")}
                         </Button>
-                      </label>
-                      <Input
-                        id="image-upload"
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={handleImageUpload}
-                      />
+                        <Input
+                          id="image-upload"
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={handleImageUpload}
+                        />
+                        
+                        {/* File Upload */}
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full"
+                          onClick={() => document.getElementById("file-upload")?.click()}
+                        >
+                          <Paperclip className="h-4 w-4 mr-1" />
+                          {t("community.file") || "File"}
+                        </Button>
+                        <Input
+                          id="file-upload"
+                          type="file"
+                          accept=".pdf,.doc,.docx,.txt,.xls,.xlsx,.ppt,.pptx,.zip,.rar"
+                          multiple
+                          className="hidden"
+                          onChange={handleFileUpload}
+                        />
+                      </div>
+                      <Button
+                        onClick={handleCreatePost}
+                        disabled={!newPostContent.trim()}
+                        className="rounded-full bg-gradient-to-r from-primary to-emerald-600"
+                      >
+                        {t("community.post")}
+                      </Button>
                     </div>
-                    <Button
-                      onClick={handleCreatePost}
-                      disabled={!newPostContent.trim()}
-                    >
-                      {t("community.post")}
-                    </Button>
                   </div>
-                </div>
-              </DialogContent>
-            </Dialog>
+                </DialogContent>
+              </Dialog>
+            </div>
           </div>
+        </div>
 
-          {/* Posts Feed */}
-          <div className="space-y-6">
+        {/* Mobile Create Button */}
+        <div className="md:hidden shrink-0 px-4 py-3">
+          <Dialog
+            open={isCreateDialogOpen}
+            onOpenChange={handleOpenCreateDialog}
+          >
+            <DialogTrigger asChild>
+              <Button className="w-full rounded-full bg-gradient-to-r from-primary to-emerald-600 shadow-lg shadow-primary/25">
+                <Plus className="mr-2 h-4 w-4" />
+                {t("community.createPost")}
+              </Button>
+            </DialogTrigger>
+          </Dialog>
+        </div>
+
+        {/* Scrollable Posts Feed */}
+        <div className="flex-1 overflow-y-auto px-4 md:px-8 pb-8">
+          <div className="max-w-3xl mx-auto space-y-6">
             {filteredPosts.length === 0 ? (
               <div className="text-center py-12 bg-white/60 dark:bg-card/60 backdrop-blur-xl rounded-xl border border-white/30 dark:border-border border-dashed shadow-lg">
                 <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-emerald-500/20 mb-4">
@@ -925,6 +1035,35 @@ const Community = () => {
                           className="w-full h-auto max-h-[500px] object-cover"
                           loading="lazy"
                         />
+                      </div>
+                    )}
+
+                    {/* Display file attachments */}
+                    {post.attachments && post.attachments.length > 0 && (
+                      <div className="space-y-2">
+                        {post.attachments.map((attachment, idx) => (
+                          <a 
+                            key={idx}
+                            href={attachment.url}
+                            download={attachment.name}
+                            className="flex items-center gap-3 p-3 rounded-lg bg-white/50 dark:bg-muted/30 border border-primary/10 dark:border-border/40 hover:bg-primary/5 dark:hover:bg-primary/10 transition-colors group/file"
+                          >
+                            <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-emerald-500/20">
+                              {attachment.type === 'image' ? (
+                                <ImageIcon className="h-5 w-5 text-primary" />
+                              ) : (
+                                <File className="h-5 w-5 text-primary" />
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium truncate group-hover/file:text-primary transition-colors">{attachment.name}</p>
+                              {attachment.size && (
+                                <p className="text-xs text-muted-foreground">{attachment.size}</p>
+                              )}
+                            </div>
+                            <Paperclip className="h-4 w-4 text-muted-foreground group-hover/file:text-primary transition-colors" />
+                          </a>
+                        ))}
                       </div>
                     )}
 
