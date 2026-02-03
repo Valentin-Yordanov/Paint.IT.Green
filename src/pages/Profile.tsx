@@ -59,48 +59,37 @@ const Profile = () => {
 
   // --- MOCK DATA FETCH ON LOAD ---
   useEffect(() => {
-    const fetchProfile = async () => {
-      // Simulate a loading delay
-      setIsLoading(true);
-      
-      // We are ignoring the database for now and setting mock data directly
-      // setTimeout simulates the network wait time
-      setTimeout(() => {
-        const mockData = {
-          name: "Test Student",
-          role: "Eco Warrior",
-          schoolId: "Green Valley High", 
-          email: user?.email || "student@example.com", // Uses your auth email if logged in
-          points: 1250,
-          rank: "Gold",
-          treesPlanted: 15,
-          challengesCompleted: 8,
-          lessonsFinished: 12,
-        };
-
-        setUserStats({
-          name: mockData.name,
-          role: mockData.role,
-          school: mockData.schoolId, 
-          email: mockData.email,
-          points: mockData.points,
-          rank: mockData.rank,
-          treesPlanted: mockData.treesPlanted,
-          challengesCompleted: mockData.challengesCompleted,
-          lessonsFinished: mockData.lessonsFinished,
-        });
-        
-        // Initialize edit form with mock data
-        setEditedName(mockData.name);
-        setEditedSchool(mockData.schoolId);
-        setEditedEmail(mockData.email);
-        setEditedRole(mockData.role);
-        
-        setIsLoading(false);
-      }, 800); // 800ms delay to make it feel realistic
+    // Set mock data immediately - no artificial delay needed
+    const mockData = {
+      name: "Test Student",
+      role: "Eco Warrior",
+      schoolId: "Green Valley High", 
+      email: user?.email || "student@example.com",
+      points: 1250,
+      rank: "Gold",
+      treesPlanted: 15,
+      challengesCompleted: 8,
+      lessonsFinished: 12,
     };
 
-    fetchProfile();
+    setUserStats({
+      name: mockData.name,
+      role: mockData.role,
+      school: mockData.schoolId, 
+      email: mockData.email,
+      points: mockData.points,
+      rank: mockData.rank,
+      treesPlanted: mockData.treesPlanted,
+      challengesCompleted: mockData.challengesCompleted,
+      lessonsFinished: mockData.lessonsFinished,
+    });
+    
+    setEditedName(mockData.name);
+    setEditedSchool(mockData.schoolId);
+    setEditedEmail(mockData.email);
+    setEditedRole(mockData.role);
+    
+    setIsLoading(false);
   }, [user]);
 
   // --- HANDLE MOCK UPDATE PROFILE ---
