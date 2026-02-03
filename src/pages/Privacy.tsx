@@ -17,11 +17,11 @@ const Privacy = () => {
 
       {/* Content Section */}
       <section className="container py-16 max-w-4xl prose prose-slate dark:prose-invert">
-        <h2>{t('privacy.introTitle')}</h2>
+        <h2>{t('privacy.intro')}</h2>
         <p>{t('privacy.introText')}</p>
 
-        <h2>{t('privacy.collectTitle')}</h2>
-        <p>{t('privacy.collectIntro')}</p>
+        <h2>{t('privacy.collect')}</h2>
+        <p>{t('privacy.collectText')}</p>
         <ul>
           <li>{t('privacy.collectItem1')}</li>
           <li>{t('privacy.collectItem2')}</li>
@@ -29,8 +29,8 @@ const Privacy = () => {
           <li>{t('privacy.collectItem4')}</li>
         </ul>
 
-        <h2>{t('privacy.useTitle')}</h2>
-        <p>{t('privacy.useIntro')}</p>
+        <h2>{t('privacy.use')}</h2>
+        <p>{t('privacy.useText')}</p>
         <ul>
           <li>{t('privacy.useItem1')}</li>
           <li>{t('privacy.useItem2')}</li>
@@ -38,13 +38,13 @@ const Privacy = () => {
           <li>{t('privacy.useItem4')}</li>
         </ul>
 
-        <h2>{t('privacy.sharingTitle')}</h2>
+        <h2>{t('privacy.sharing')}</h2>
         <p>{t('privacy.sharingText')}</p>
 
-        <h2>{t('privacy.childrenTitle')}</h2>
+        <h2>{t('privacy.children')}</h2>
         <p>{t('privacy.childrenText')}</p>
 
-        <h2>{t('privacy.contactTitle')}</h2>
+        <h2>{t('privacy.contact')}</h2>
         <p>{t('privacy.contactText')}</p>
       </section>
     </div>

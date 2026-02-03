@@ -55,34 +55,7 @@ const Login = () => {
       
       {/* 1. Background Pattern */}
       <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-30" />
-
-      {/* 2. Color Blobs */}
-      <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2" />
-      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-secondary/15 rounded-full blur-[100px] translate-x-1/3 translate-y-1/3"/>
-      
-      {/* --- 3. DIVERSE FLOATING ICONS --- */}
-      
-      {/* Top Left */}
-      <Sun className="absolute top-10 left-64 h-14 w-14 text-primary/10"/>
-      <Leaf className="absolute top-32 left-32 h-6 w-6 text-primary/20"/>
-      
-      {/* Top Right */}
-      <Wind className="absolute top-16 right-16 h-10 w-10 text-secondary/20"/>
-      <Sparkles className="absolute top-40 right-1/4 h-5 w-5 text-accent/30"/>
-      
-      {/* Middle */}
-      <Sprout className="absolute top-1/2 left-12 h-10 w-10 text-primary/20"/>
-      <Leaf className="absolute top-1/2 right-12 h-8 w-8 text-primary/15"/>
-      
-      {/* Bottom Left */}
-      <Sparkles className="absolute bottom-24 left-20 h-6 w-6 text-accent/25"/>
-      {/* <div className="absolute bottom-40 left-10 w-2 h-2 bg-primary/40 rounded-full animate-ping" /> IT LOOKS PREATY BUT NO USE HERE*/} 
-      
-      {/* Bottom Right */}
-      <Sprout className="absolute bottom-16 right-16 h-12 w-12 text-primary/15"/>
-      <Leaf className="absolute bottom-1/3 right-32 h-5 w-5 text-secondary/20"/>
-
-
+          
       {/* Card */}
       <Card className="w-full max-w-md relative z-10 backdrop-blur-xl bg-card/80 border-primary/20 shadow-2xl shadow-primary/10">
         <CardHeader className="space-y-1 flex flex-col items-center pb-2">

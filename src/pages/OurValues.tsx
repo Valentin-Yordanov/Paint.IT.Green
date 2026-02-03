@@ -100,12 +100,12 @@ const OurValues = () => {
           </div>
 
           <div className="bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20 rounded-lg p-8">
-            <h3 className="text-2xl font-bold mb-4">{t('ourValues.livingOurValues')}</h3>
+            <h3 className="text-2xl font-bold mb-4">{t('ourValues.livingValues')}</h3>
             <p className="text-muted-foreground mb-4">
-              {t('ourValues.livingOurValuesText1')}
+              {t('ourValues.livingValuesText')}
             </p>
             <p className="text-muted-foreground">
-              {t('ourValues.livingOurValuesText2')}
+              {t('ourValues.livingValuesText2')}
             </p>
           </div>
 

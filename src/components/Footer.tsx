@@ -30,8 +30,9 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-secondary/30 border-t border-border">
-      <div className="container py-12">
+      <footer className="bg-background border-t border-border">
+        <div className="container py-12">
+        
         <div className="grid grid-cols-1 md:grid-cols-6 gap-8 md:gap-0">
           
           {/* Group 1: Brand Section */}

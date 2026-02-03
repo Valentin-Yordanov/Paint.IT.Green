@@ -23,9 +23,9 @@ const OurGoal = () => {
       <section className="container py-16">
         <div className="max-w-4xl mx-auto space-y-12">
           <div>
-            <h2 className="text-3xl font-bold mb-4">{t('ourGoal.breakingBarriers')}</h2>
+            <h2 className="text-3xl font-bold mb-4">{t('ourGoal.breaking')}</h2>
             <p className="text-muted-foreground text-lg mb-4">
-              {t('ourGoal.breakingBarriersText')}
+              {t('ourGoal.breakingText')}
             </p>
           </div>
 
@@ -34,21 +34,21 @@ const OurGoal = () => {
               <BookOpen className="h-10 w-10 text-primary mb-4" />
               <h3 className="font-semibold text-xl mb-2">{t('ourGoal.freeResources')}</h3>
               <p className="text-sm text-muted-foreground">
-                {t('ourGoal.freeResourcesText')}
+                {t('ourGoal.freeResourcesDesc')}
               </p>
             </div>
             <div className="bg-card border rounded-lg p-6">
               <Globe className="h-10 w-10 text-primary mb-4" />
               <h3 className="font-semibold text-xl mb-2">{t('ourGoal.globalReach')}</h3>
               <p className="text-sm text-muted-foreground">
-                {t('ourGoal.globalReachText')}
+                {t('ourGoal.globalReachDesc')}
               </p>
             </div>
             <div className="bg-card border rounded-lg p-6">
               <Users className="h-10 w-10 text-primary mb-4" />
               <h3 className="font-semibold text-xl mb-2">{t('ourGoal.inclusiveLearning')}</h3>
               <p className="text-sm text-muted-foreground">
-                {t('ourGoal.inclusiveLearningText')}
+                {t('ourGoal.inclusiveLearningDesc')}
               </p>
             </div>
           </div>

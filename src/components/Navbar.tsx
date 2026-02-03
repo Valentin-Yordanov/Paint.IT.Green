@@ -20,6 +20,9 @@ const Navbar = () => {
     { path: "/profile", label: t("nav.profile"), icon: User },
   ];
 
+  
+  const hoverClasses = "hover:bg-[hsl(var(--hover))] hover:text-[hsl(var(--hover-foreground))] hover:border-[hsl(var(--hover))] transition-colors";
+
   const NavLinks = ({ isMobile = false }: { isMobile?: boolean }) => (
     <>
       {navLinks.map(({ path, label, icon: Icon }) => (
@@ -30,7 +33,7 @@ const Navbar = () => {
         >
           <Button
             variant={isActive(path) ? "default" : "outline"}
-            className={`gap-2 min-w-[120px] justify-center ${isMobile ? "w-full" : ""}`}
+            className={`gap-2 min-w-[120px] justify-center ${isMobile ? "w-full" : ""} ${isActive(path) ? "" : hoverClasses}`}
           >
             <Icon className="h-4 w-4" />
             {label}
@@ -48,12 +51,12 @@ const Navbar = () => {
     return (
       <>
         <Link to="/login" className={isMobile ? "w-full" : ""}>
-          <Button variant="outline" className={isMobile ? "w-full" : ""}>
+          <Button variant="outline" className={`${isMobile ? "w-full" : ""} ${hoverClasses}`}>
             {t("nav.login")}
           </Button>
         </Link>
         <Link to="/signup" className={isMobile ? "w-full" : ""}>
-          <Button className={isMobile ? "w-full" : ""}>
+          <Button className={`${isMobile ? "w-full" : ""} ${hoverClasses}`}>
             {t("nav.signup")}
           </Button>
         </Link>
@@ -62,8 +65,8 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
+    <nav className="sticky top-0 z-50 w-full border-b border-border bg-background backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-16 items-center justify-between ">
         <Link to="/" className="flex items-center gap-2">
           <img
             src="/pig-logo.png"
@@ -84,13 +87,12 @@ const Navbar = () => {
         {/* Mobile Navigation */}
         <Sheet>
           <SheetTrigger asChild className="md:hidden">
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className={hoverClasses}>
               <Menu className="h-6 w-6" />
             </Button>
           </SheetTrigger>
           <SheetContent>
             <div className="flex flex-col gap-4 mt-8">
-              {/* Pass isMobile={true} here */}
               <NavLinks isMobile={true} />
               
               <div className="mt-4 border-t pt-4 flex flex-col gap-4">

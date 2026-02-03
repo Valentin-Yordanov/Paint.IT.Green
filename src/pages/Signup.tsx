@@ -85,35 +85,6 @@ const Signup: React.FC = () => {
       {/*Background Pattern*/}
       <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-30" />
 
-      {/*Large Color Blobs*/}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/4"/>
-      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-secondary/15 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/4"/>
-
-      {/*DIVERSE FLOATING ICONS*/}
-      
-      {/* Top Left Zone */}
-      <Cloud className="absolute top-10 left-10 h-16 w-16 text-primary/10"/>
-      <Leaf className="absolute top-28 left-24 h-6 w-6 text-primary/30" />
-      <Sparkles className="absolute top-12 left-1/3 h-4 w-4 text-accent/40 " />
-
-      {/* Top Right Zone */}
-      <Sprout className="absolute top-12 right-12 h-12 w-12 text-secondary/20"/>
-      <Droplets className="absolute top-32 right-32 h-6 w-6 text-primary/20"/>
-      
-      {/* Middle Sides */}
-      <Flower2 className="absolute top-1/2 left-6 h-10 w-10 text-accent/20"/>
-      <Leaf className="absolute top-1/3 right-0 h-8 w-8 text-primary/25"/>
-      
-      {/* Bottom Left Zone */}
-      <Sprout className="absolute bottom-16 left-16 h-12 w-12 text-primary/20"/>
-      <Sparkles className="absolute bottom-1/3 left-12 h-5 w-5 text-accent/30" />
-
-      {/* Bottom Right Zone */}
-      <Flower2 className="absolute bottom-12 right-12 h-14 w-14 text-primary/10"/>
-      <Cloud className="absolute bottom-24 right-32 h-10 w-10 text-secondary/10"/>
-      <Leaf className="absolute bottom-40 right-10 h-6 w-6 text-primary/30"/>
-
-
       {/* Card */}
       <Card className="w-full max-w-md relative z-10 backdrop-blur-xl bg-card/80 border-primary/20 shadow-2xl shadow-primary/10">
         <CardHeader className="space-y-1 flex flex-col items-center pb-2">

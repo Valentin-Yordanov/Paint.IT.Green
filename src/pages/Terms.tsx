@@ -17,11 +17,11 @@ const Terms = () => {
 
       {/* Content Section */}
       <section className="container py-16 max-w-4xl prose prose-slate dark:prose-invert">
-        <h2>{t('terms.acceptanceTitle')}</h2>
+        <h2>{t('terms.acceptance')}</h2>
         <p>{t('terms.acceptanceText')}</p>
 
-        <h2>{t('terms.useTitle')}</h2>
-        <p>{t('terms.useIntro')}</p>
+        <h2>{t('terms.use')}</h2>
+        <p>{t('terms.useText')}</p>
         <ul>
           <li>{t('terms.useItem1')}</li>
           <li>{t('terms.useItem2')}</li>
@@ -29,17 +29,17 @@ const Terms = () => {
           <li>{t('terms.useItem4')}</li>
         </ul>
 
-        <h2>{t('terms.accountsTitle')}</h2>
+        <h2>{t('terms.accounts')}</h2>
         <p>{t('terms.accountsText')}</p>
 
-        <h2>{t('terms.competitionTitle')}</h2>
+        <h2>{t('terms.competition')}</h2>
         <p>{t('terms.competitionText')}</p>
 
-        <h2>{t('terms.contentTitle')}</h2>
+        <h2>{t('terms.content')}</h2>
         <p>{t('terms.contentText')}</p>
 
-        <h2>{t('terms.prohibitedTitle')}</h2>
-        <p>{t('terms.prohibitedIntro')}</p>
+        <h2>{t('terms.prohibited')}</h2>
+        <p>{t('terms.prohibitedText')}</p>
         <ul>
           <li>{t('terms.prohibitedItem1')}</li>
           <li>{t('terms.prohibitedItem2')}</li>
@@ -47,13 +47,13 @@ const Terms = () => {
           <li>{t('terms.prohibitedItem4')}</li>
         </ul>
 
-        <h2>{t('terms.terminationTitle')}</h2>
+        <h2>{t('terms.termination')}</h2>
         <p>{t('terms.terminationText')}</p>
 
-        <h2>{t('terms.changesTitle')}</h2>
+        <h2>{t('terms.changes')}</h2>
         <p>{t('terms.changesText')}</p>
 
-        <h2>{t('terms.contactTitle')}</h2>
+        <h2>{t('terms.contact')}</h2>
         <p>{t('terms.contactText')}</p>
       </section>
     </div>

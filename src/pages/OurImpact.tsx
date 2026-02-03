@@ -23,9 +23,9 @@ const OurImpact = () => {
       <section className="container py-16">
         <div className="max-w-4xl mx-auto space-y-12">
           <div>
-            <h2 className="text-3xl font-bold mb-4">{t('ourImpact.measurableChange')}</h2>
+            <h2 className="text-3xl font-bold mb-4">{t('ourImpact.measurable')}</h2>
             <p className="text-muted-foreground text-lg mb-4">
-              {t('ourImpact.measurableChangeText')}
+              {t('ourImpact.measurableText')}
             </p>
           </div>
 
@@ -33,9 +33,9 @@ const OurImpact = () => {
             <div className="bg-card border rounded-lg p-8">
               <TreeDeciduous className="h-12 w-12 text-primary mb-4" />
               <div className="text-4xl font-bold text-primary mb-2">52,000+</div>
-              <h3 className="font-semibold text-xl mb-2">{t('ourImpact.treesPlanted')}</h3>
+              <h3 className="font-semibold text-xl mb-2">{t('ourImpact.treesPlantedTitle')}</h3>
               <p className="text-sm text-muted-foreground">
-                {t('ourImpact.treesPlantedText')}
+                {t('ourImpact.treesPlantedDesc')}
               </p>
             </div>
             <div className="bg-card border rounded-lg p-8">
@@ -43,7 +43,7 @@ const OurImpact = () => {
               <div className="text-4xl font-bold text-primary mb-2">2M+</div>
               <h3 className="font-semibold text-xl mb-2">{t('ourImpact.plasticRemoved')}</h3>
               <p className="text-sm text-muted-foreground">
-                {t('ourImpact.plasticRemovedText')}
+                {t('ourImpact.plasticRemovedDesc')}
               </p>
             </div>
             <div className="bg-card border rounded-lg p-8">
@@ -51,7 +51,7 @@ const OurImpact = () => {
               <div className="text-4xl font-bold text-primary mb-2">85%</div>
               <h3 className="font-semibold text-xl mb-2">{t('ourImpact.behaviorChange')}</h3>
               <p className="text-sm text-muted-foreground">
-                {t('ourImpact.behaviorChangeText')}
+                {t('ourImpact.behaviorChangeDesc')}
               </p>
             </div>
             <div className="bg-card border rounded-lg p-8">
@@ -59,7 +59,7 @@ const OurImpact = () => {
               <div className="text-4xl font-bold text-primary mb-2">150+</div>
               <h3 className="font-semibold text-xl mb-2">{t('ourImpact.schoolGardens')}</h3>
               <p className="text-sm text-muted-foreground">
-                {t('ourImpact.schoolGardensText')}
+                {t('ourImpact.schoolGardensDesc')}
               </p>
             </div>
           </div>
@@ -75,12 +75,12 @@ const OurImpact = () => {
             <h3 className="text-2xl font-bold mb-4">{t('ourImpact.studentStories')}</h3>
             <div className="space-y-4">
               <blockquote className="border-l-4 border-primary pl-4 italic text-muted-foreground">
-                {t('ourImpact.story1')}
-                <footer className="mt-2 not-italic font-semibold">{t('ourImpact.story1Author')}</footer>
+                {t('ourImpact.studentStory1')}
+                <footer className="mt-2 not-italic font-semibold">{t('ourImpact.studentStory1Author')}</footer>
               </blockquote>
               <blockquote className="border-l-4 border-primary pl-4 italic text-muted-foreground">
-                {t('ourImpact.story2')}
-                <footer className="mt-2 not-italic font-semibold">{t('ourImpact.story2Author')}</footer>
+                {t('ourImpact.studentStory2')}
+                <footer className="mt-2 not-italic font-semibold">{t('ourImpact.studentStory2Author')}</footer>
               </blockquote>
             </div>
           </div>
@@ -88,7 +88,7 @@ const OurImpact = () => {
           <div className="bg-primary/5 border border-primary/20 rounded-lg p-8">
             <h3 className="text-2xl font-bold mb-4">{t('ourImpact.bePartOfImpact')}</h3>
             <p className="text-muted-foreground mb-6">
-              {t('ourImpact.bePartOfImpactText')}
+              {t('ourImpact.bePartText')}
             </p>
             <Link to="/compete">
               <Button size="lg">{t('ourImpact.startMakingImpact')}</Button>

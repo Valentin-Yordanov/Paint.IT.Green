@@ -501,7 +501,7 @@ const Profile = () => {
                 
                 {/* Preferences Section */}
                 <div className="space-y-4 pt-4">
-                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">{t('profile.preferences') || 'Preferences'}</h3>
+                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">{t('page preferences') || 'Preferences'}</h3>
                   
                   {/* Dark Theme Toggle */}
                   <div className="p-5 rounded-2xl bg-gradient-to-r from-secondary/50 to-secondary/20 hover:from-secondary/70 hover:to-secondary/40 transition-all duration-300">

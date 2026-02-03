@@ -96,6 +96,7 @@ const enTranslations: Record<string, string> = {
   'home.stats.trees': 'Trees Planted',
   'home.stats.schools': 'Schools Participating',
   'home.stats.students': 'Students Engaged',
+  'home.see.more': 'Explore',
 
   // Profile Page
   'profile.title': 'My Profile',
@@ -159,7 +160,7 @@ const enTranslations: Record<string, string> = {
   'footer.tagline': 'Empowering students worldwide to protect our planet through education and action.',
   'footer.platform': 'Platform',
   'footer.resources': 'Resources',
-  'footer.legal': 'Legal',
+  'footer.legal': 'Privacy Notice',
   'footer.aboutUs': 'About Us',
   'footer.contact': 'Contact',
   'footer.faq': 'FAQ',
@@ -169,7 +170,7 @@ const enTranslations: Record<string, string> = {
   'footer.madeWith': 'Made with 💚 for a greener planet',
 
   // About
-  'about.title': 'About PIG',
+  'about.title': 'Paint IT Green',
   'about.subtitle': 'Empowering the next generation to protect our planet through education, competition, and community action.',
   'about.mission': 'Our Mission',
   'about.missionText1': 'PIG is dedicated to creating a global community of environmentally conscious students who understand the importance of protecting our planet.',
@@ -190,7 +191,7 @@ const enTranslations: Record<string, string> = {
   // Compete
   'compete.title': 'Competitions & Leaderboards',
   'compete.subtitle': 'See how cities, schools, and students are competing to make the biggest environmental impact',
-  'compete.challenges': 'Challenges Timeline',
+  'compete.challenges': 'Timeline of challenges',
   'compete.leaderboards': 'Leaderboards',
   'compete.viewEvents': 'View Local Events',
   'compete.eventCalendar': 'Event Calendar',
@@ -292,7 +293,7 @@ const enTranslations: Record<string, string> = {
   'ourCommunity.schoolPartnerships': 'School Partnerships',
   'ourCommunity.schoolPartnershipsDesc': 'Connect your entire school with others worldwide for collaborative environmental initiatives.',
   'ourCommunity.impact': 'Community Impact',
-  'ourCommunity.impactText': "Our community has planted over 50,000 trees, organized 1,000+ local cleanup events, and reached 500,000 students across 85 countries. Together, we're proving that collective action creates real change.",
+  'ourCommunity.impactDesc': "Our community has planted over 50,000 trees, organized 1,000+ local cleanup events, and reached 500,000 students across 85 countries. Together, we're proving that collective action creates real change.",
   'ourCommunity.countries': 'Countries',
   'ourCommunity.studentsCount': 'Students',
   'ourCommunity.treesPlanted': 'Trees Planted',
@@ -581,6 +582,7 @@ const bgTranslations: Record<string, string> = {
   'home.stats.trees': 'Засадени дървета',
   'home.stats.schools': 'Участващи училища',
   'home.stats.students': 'Ангажирани ученици',
+  'home.see.more': 'Вижте повече',
 
   // Profile Page
   'profile.title': 'Моят профил',
@@ -644,7 +646,7 @@ const bgTranslations: Record<string, string> = {
   'footer.tagline': 'Овластяваме учениците по целия свят да защитят нашата планета чрез образование и действие.',
   'footer.platform': 'Платформа',
   'footer.resources': 'Ресурси',
-  'footer.legal': 'Правна информация',
+  'footer.legal': 'Поверителност',
   'footer.aboutUs': 'За нас',
   'footer.contact': 'Контакти',
   'footer.faq': 'Въпроси',
@@ -654,7 +656,7 @@ const bgTranslations: Record<string, string> = {
   'footer.madeWith': 'Направено с 💚 за по-зелена планета',
 
   // About
-  'about.title': 'За PIG',
+  'about.title': 'Нарисувай го в Зелено',
   'about.subtitle': 'Овластяваме следващото поколение да защитава нашата планета чрез образование, състезания и действия на общността.',
   'about.mission': 'Нашата мисия',
   'about.missionText1': 'PIG е посветен на създаването на глобална общност от екологично съзнателни ученици, които разбират важността на защитата на нашата планета.',
@@ -675,7 +677,7 @@ const bgTranslations: Record<string, string> = {
   // Compete
   'compete.title': 'Състезания и класации',
   'compete.subtitle': 'Вижте как градове, училища и ученици се състезават за най-голямо екологично въздействие',
-  'compete.challenges': 'Хронология на предизвикателствата',
+  'compete.challenges': 'Хронология на предизвикателства',
   'compete.leaderboards': 'Класации',
   'compete.viewEvents': 'Виж местните събития',
   'compete.eventCalendar': 'Календар със събития',
@@ -777,7 +779,7 @@ const bgTranslations: Record<string, string> = {
   'ourCommunity.schoolPartnerships': 'Училищни партньорства',
   'ourCommunity.schoolPartnershipsDesc': 'Свържете цялото си училище с други по света за съвместни екологични инициативи.',
   'ourCommunity.impact': 'Въздействие на общността',
-  'ourCommunity.impactText': 'Нашата общност е засадила над 50 000 дървета, организирала 1000+ местни събития за почистване и достигнала до 500 000 ученици в 85 страни. Заедно доказваме, че колективните действия създават реална промяна.',
+  'ourCommunity.impactDesc': 'Нашата общност е засадила над 50 000 дървета, организирала 1000+ местни събития за почистване и достигнала до 500 000 ученици в 85 страни. Заедно доказваме, че колективните действия създават реална промяна.',
   'ourCommunity.countries': 'Страни',
   'ourCommunity.studentsCount': 'Ученици',
   'ourCommunity.treesPlanted': 'Засадени дървета',

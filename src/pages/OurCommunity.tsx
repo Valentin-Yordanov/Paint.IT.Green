@@ -34,36 +34,36 @@ const OurCommunity = () => {
               <MessageSquare className="h-10 w-10 text-primary mb-4" />
               <h3 className="font-semibold text-xl mb-2">{t('ourCommunity.shareConnect')}</h3>
               <p className="text-sm text-muted-foreground">
-                {t('ourCommunity.shareConnectText')}
+                {t('ourCommunity.shareConnectDesc')}
               </p>
             </div>
             <div className="bg-card border rounded-lg p-6">
               <Award className="h-10 w-10 text-primary mb-4" />
               <h3 className="font-semibold text-xl mb-2">{t('ourCommunity.celebrateTogether')}</h3>
               <p className="text-sm text-muted-foreground">
-                {t('ourCommunity.celebrateTogetherText')}
+                {t('ourCommunity.celebrateTogetherDesc')}
               </p>
             </div>
             <div className="bg-card border rounded-lg p-6">
               <HandHeart className="h-10 w-10 text-primary mb-4" />
               <h3 className="font-semibold text-xl mb-2">{t('ourCommunity.supportNetwork')}</h3>
               <p className="text-sm text-muted-foreground">
-                {t('ourCommunity.supportNetworkText')}
+                {t('ourCommunity.supportNetworkDesc')}
               </p>
             </div>
             <div className="bg-card border rounded-lg p-6">
               <Users className="h-10 w-10 text-primary mb-4" />
               <h3 className="font-semibold text-xl mb-2">{t('ourCommunity.schoolPartnerships')}</h3>
               <p className="text-sm text-muted-foreground">
-                {t('ourCommunity.schoolPartnershipsText')}
+                {t('ourCommunity.schoolPartnershipsDesc')}
               </p>
             </div>
           </div>
 
           <div>
-            <h2 className="text-3xl font-bold mb-4">{t('ourCommunity.communityImpact')}</h2>
+            <h2 className="text-3xl font-bold mb-4">{t('ourCommunity.impact')}</h2>
             <p className="text-muted-foreground text-lg mb-6">
-              {t('ourCommunity.communityImpactText')}
+              {t('ourCommunity.impactDesc')}
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div className="text-center">
@@ -72,7 +72,7 @@ const OurCommunity = () => {
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-primary mb-2">500K+</div>
-                <div className="text-sm text-muted-foreground">{t('ourCommunity.students')}</div>
+                <div className="text-sm text-muted-foreground">{t('ourCommunity.studentsCount')}</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-primary mb-2">50K+</div>
