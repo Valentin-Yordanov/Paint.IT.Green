@@ -445,13 +445,13 @@ const Community = () => {
             )}
 
             <div className="mt-auto pt-6 flex items-center gap-4">
-              <Button variant="ghost" size="sm" onClick={() => toggleLike(post.id)} className={`rounded-full transition-colors ${likedPosts.has(post.id) ? "text-red-500 bg-red-50 dark:bg-red-950/30" : "text-muted-foreground hover:text-primary"}`}>
+              <Button variant="ghost" size="sm" onClick={() => toggleLike(post.id)} className={`rounded-full transition-colors ${likedPosts.has(post.id) ? "text-red-500 bg-red-50 dark:bg-red-950/30" : "text-muted-foreground hover:text-hover-foreground hover:bg-hover"}`}>
                 <Heart className={`mr-1.5 h-4 w-4 ${likedPosts.has(post.id) ? "fill-current scale-110" : ""}`} /> {post.likes}
               </Button>
-              <Button variant="ghost" size="sm" onClick={() => toggleComments(post.id)} className="rounded-full text-muted-foreground hover:text-primary">
+              <Button variant="ghost" size="sm" onClick={() => toggleComments(post.id)} className="rounded-full text-muted-foreground hover:text-hover-foreground hover:bg-hover">
                 <MessageCircle className="mr-1.5 h-4 w-4" /> {post.comments.length}
               </Button>
-              <Button variant="ghost" size="sm" className="ml-auto rounded-full text-muted-foreground hover:text-primary">
+              <Button variant="ghost" size="sm" className="ml-auto rounded-full text-muted-foreground hover:text-hover-foreground hover:bg-hover">
                 <Share2 className="h-4 w-4" />
               </Button>
             </div>
@@ -568,7 +568,7 @@ const Community = () => {
 
       {/* MAIN FEED */}
       {/* Тук премахнах всички класове за скриване. Скролбарът ще се вижда, защото това е основният скрол на чата. */}
-      <main className={`flex-1 h-full overflow-y-auto w-full min-w-0 px-4 md:px-10 pb-32 ${isMobile ? 'pt-24' : ''}`}>
+      <main className={`flex-1 h-full overflow-y-auto no-scrollbar w-full min-w-0 px-4 md:px-10 pb-32 ${isMobile ? 'pt-24' : ''}`}>
         <div className="max-w-6xl mx-auto py-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-emerald-600 to-teal-600 bg-clip-text text-transparent">
