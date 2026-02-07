@@ -568,8 +568,8 @@ const Community = () => {
 
       {/* MAIN FEED */}
       {/* Тук премахнах всички класове за скриване. Скролбарът ще се вижда, защото това е основният скрол на чата. */}
-      <main className={`flex-1 h-full overflow-y-auto w-full min-w-0 px-4 md:px-10 pb-32 ${isMobile ? 'pt-24' : 'pt-4'}`}>
-        <div className="max-w-6xl mx-auto pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <main className={`flex-1 h-full overflow-y-auto w-full min-w-0 px-4 md:px-10 pb-32 ${isMobile ? 'pt-24' : 'pt-0'}`}>
+        <div className="max-w-6xl mx-auto pb-4 pt-0 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-emerald-600 to-teal-600 bg-clip-text text-transparent">
               {getFeedTitle()}
