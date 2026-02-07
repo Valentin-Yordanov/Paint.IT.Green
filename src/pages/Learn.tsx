@@ -15,21 +15,45 @@ const Learn = () => {
   const panelRef = useRef<HTMLDivElement>(null);
 
   const topics = [
-    { id: "wildlife", title: t('learn.topic.wildlife.title'), icon: Heart, gradient: "from-rose-500 to-pink-600", content: [
-      { subtitle: t('learn.topic.wildlife.subtitle1'), text: t('learn.topic.wildlife.text1') },
-      { subtitle: t('learn.topic.wildlife.subtitle2'), text: t('learn.topic.wildlife.text2') },
+    { 
+      id: "wildlife", 
+      title: t('learn.topic.wildlife.title'), 
+      videoUrl: "https://youtu.be/K6NZfFrZqFI",
+      icon: Heart, 
+      gradient: "from-rose-500 to-pink-600", 
+      content: [
+        { subtitle: t('learn.topic.wildlife.subtitle1'), text: t('learn.topic.wildlife.text1') },
+        { subtitle: t('learn.topic.wildlife.subtitle2'), text: t('learn.topic.wildlife.text2') },
     ]},
-    { id: "pollution", title: t('learn.topic.pollution.title'), icon: Wind, gradient: "from-slate-500 to-gray-600", content: [
-      { subtitle: t('learn.topic.pollution.subtitle1'), text: t('learn.topic.pollution.text1') },
-      { subtitle: t('learn.topic.pollution.subtitle2'), text: t('learn.topic.pollution.text2') },
+    { 
+      id: "pollution", 
+      title: t('learn.topic.pollution.title'), 
+      videoUrl: "https://youtu.be/Jle_IxxnDfE", 
+      icon: Wind, 
+      gradient: "from-slate-500 to-gray-600", 
+      content: [
+        { subtitle: t('learn.topic.pollution.subtitle1'), text: t('learn.topic.pollution.text1') },
+        { subtitle: t('learn.topic.pollution.subtitle2'), text: t('learn.topic.pollution.text2') },
     ]},
-    { id: "recycling", title: t('learn.topic.recycling.title'), icon: Recycle, gradient: "from-emerald-500 to-teal-600", content: [
-      { subtitle: t('learn.topic.recycling.subtitle1'), text: t('learn.topic.recycling.text1') },
-      { subtitle: t('learn.topic.recycling.subtitle2'), text: t('learn.topic.recycling.text2') },
+    { 
+      id: "recycling", 
+      title: t('learn.topic.recycling.title'), 
+      videoUrl: "https://youtu.be/tELRizk6G7E", 
+      icon: Recycle, 
+      gradient: "from-emerald-500 to-teal-600", 
+      content: [
+        { subtitle: t('learn.topic.recycling.subtitle1'), text: t('learn.topic.recycling.text1') },
+        { subtitle: t('learn.topic.recycling.subtitle2'), text: t('learn.topic.recycling.text2') },
     ]},
-    { id: "forests", title: t('learn.topic.forests.title'), icon: TreePine, gradient: "from-green-600 to-emerald-700", content: [
-      { subtitle: t('learn.topic.forests.subtitle1'), text: t('learn.topic.forests.text1') },
-      { subtitle: t('learn.topic.forests.subtitle2'), text: t('learn.topic.forests.text2') },
+    { 
+      id: "forests", 
+      title: t('learn.topic.forests.title'), 
+      videoUrl: "https://youtu.be/6577tb-n6yQ", 
+      icon: TreePine, 
+      gradient: "from-green-600 to-emerald-700", 
+      content: [
+        { subtitle: t('learn.topic.forests.subtitle1'), text: t('learn.topic.forests.text1') },
+        { subtitle: t('learn.topic.forests.subtitle2'), text: t('learn.topic.forests.text2') },
     ]},
     { id: "water", title: t('learn.topic.water.title'), icon: Droplets, gradient: "from-sky-500 to-blue-600", content: [
       { subtitle: t('learn.topic.water.subtitle1'), text: t('learn.topic.water.text1') },
@@ -60,7 +84,6 @@ const Learn = () => {
   // Effect to handle auto-scrolling
   useEffect(() => {
     if (selectedTopic && panelRef.current) {
-      // Small delay to allow the DOM to render the panel before scrolling
       setTimeout(() => {
         panelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 100);
@@ -263,7 +286,11 @@ const Learn = () => {
                         className="gap-2 rounded-xl bg-red-600 hover:bg-red-700 text-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
                         size="lg"
                     >
-                        <a href="//youtu.be/tELRizk6G7E" target="_blank" rel="noopener noreferrer">
+                        <a 
+                            href={selectedTopicData.videoUrl || "#"} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                        >
                             <Youtube className="h-5 w-5" />
                             {t('learn.watchVideo') || 'Watch Video'}
                         </a>
