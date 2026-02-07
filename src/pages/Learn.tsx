@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { TreePine, Droplets, Wind, Heart, Recycle, Users, Leaf, Sun, Mountain, Fish, Bird, Flower2, Globe, Lightbulb, BookOpen, Sprout, Search, X, GraduationCap, ArrowRight, ArrowUp } from "lucide-react";
+import { TreePine, Droplets, Wind, Heart, Recycle, Users, Leaf, Sun, Mountain, Fish, Bird, Flower2, Globe, Lightbulb, BookOpen, Sprout, Search, X, GraduationCap, ArrowRight, ArrowUp, Youtube } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useState, useRef, MouseEvent, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -256,8 +256,18 @@ const Learn = () => {
                   </div>
                 ))}
 
-                {/* Go Up */}
-                <div className="pt-8 flex justify-center border-t border-border/50 mt-8">
+                {/* Actions */}
+                <div className="pt-8 flex flex-col sm:flex-row justify-center gap-4 border-t border-border/50 mt-8">
+                    <Button 
+                        asChild
+                        className="gap-2 rounded-xl bg-red-600 hover:bg-red-700 text-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
+                        size="lg"
+                    >
+                        <a href="#" target="_blank" rel="noopener noreferrer">
+                            <Youtube className="h-5 w-5" />
+                            {t('learn.watchVideo') || 'Watch Video'}
+                        </a>
+                    </Button>
                     <Button 
                         onClick={handleClosePanel}
                         className={`gap-2 rounded-xl bg-gradient-to-r ${selectedTopicData.gradient} text-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all`}
