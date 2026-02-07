@@ -412,6 +412,7 @@ const enTranslations: Record<string, string> = {
   'learn.topic.agriculture.title': 'Sustainable Farming',
   'learn.topic.comingSoon': 'Coming Soon',
   'learn.topic.comingSoonText': 'Content will be added here.',
+  'learn.watchVideo': 'Watch video on the topic',
 
   // FAQ Questions and Answers
   'faq.q1': 'What is P.I.G?',
@@ -673,6 +674,7 @@ const bgTranslations: Record<string, string> = {
   'learn.communityAction': 'Действия на общността',
   'learn.remember': 'Запомнете',
   'learn.rememberText': 'Всяко малко действие има значение. Дали е вдигане на боклук, засаждане на дърво или обучаване на някой друг за опазване - вие правите промяна. Заедно можем да защитим нашата красива планета за бъдещите поколения!',
+  'learn.watchVideo': 'Гледайте видео по темата',
 
   // Compete
   'compete.title': 'Състезания и класации',

@@ -263,7 +263,7 @@ const Learn = () => {
                         className="gap-2 rounded-xl bg-red-600 hover:bg-red-700 text-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
                         size="lg"
                     >
-                        <a href="#" target="_blank" rel="noopener noreferrer">
+                        <a href="//youtu.be/tELRizk6G7E" target="_blank" rel="noopener noreferrer">
                             <Youtube className="h-5 w-5" />
                             {t('learn.watchVideo') || 'Watch Video'}
                         </a>
