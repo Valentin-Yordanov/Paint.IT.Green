@@ -522,7 +522,7 @@ const Community = () => {
 
   return (
     // ФИКС: 'h-screen' и 'overflow-hidden' тук ГАРАНТИРАТ, че скролбарът на "цялата страница" е забранен.
-    <div className="h-screen bg-gradient-to-br from-green-50 via-emerald-50/50 to-teal-50 dark:from-background dark:via-green-950/20 dark:to-background pt-16 flex flex-col md:flex-row overflow-hidden no-scrollbar">
+    <div className="h-screen bg-gradient-to-br from-green-50 via-emerald-50/50 to-teal-50 dark:from-background dark:via-green-950/20 dark:to-background pt-0 flex flex-col md:flex-row overflow-hidden no-scrollbar">
       
       {/* MOBILE NAV */}
       {isMobile && (
