@@ -4,9 +4,9 @@
 
 @layer base {
   :root {
-    /* Light Mode - Fresh & Vibrant Nature Theme */
-    --background: 140 25% 98%;
-    --foreground: 142 40% 12%;
+    /* Light Mode - Fresh & Clean Nature Theme */
+    --background: 120 10% 96%;
+    --foreground: 142 30% 18%;
 
     --card: 0 0% 100%;
     --card-foreground: 142 40% 12%;
