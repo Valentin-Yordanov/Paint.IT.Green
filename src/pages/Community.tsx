@@ -1,15 +1,28 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Heart, MessageCircle, School, Users, Send, Plus, Trash2, Image as ImageIcon, Globe, X, Paperclip, File, Edit, Share2 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { 
+  Heart, MessageCircle, School, Users, Send, Plus, Trash2, 
+  Image as ImageIcon, Globe, X, Paperclip, File, Edit, Share2,
+  Shield, Activity, AlertTriangle, UserCog, Ban, CheckCircle, 
+  Search, MoreVertical, LogOut, FileText, BarChart3
+} from "lucide-react";
 import studentsImage from "@/assets/students-planting.jpg";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 // --- TYPES ---
 type Comment = { author: string; role: string; content: string; time: string; };
@@ -17,15 +30,20 @@ type Attachment = { type: 'image' | 'file'; url: string; name: string; size?: st
 type Post = {
   id: number; school: string; author: string; role: string; time: string; content: string;
   image?: string; attachments?: Attachment[]; likes: number; comments: Comment[];
-  visibility: "public" | "school" | "class"; targetGroup?: string;
+  visibility: "public" | "school" | "class"; targetGroup?: string; status?: "active" | "flagged" | "deleted";
 };
 
-// --- MOCK DATA ---
+type User = { id: string; name: string; email: string; role: "student" | "teacher" | "admin" | "moderator"; status: "active" | "banned"; school: string; };
+type Report = { id: string; postId: number; reporter: string; reason: string; timestamp: string; status: "pending" | "resolved"; };
+type Log = { id: string; admin: string; action: string; target: string; time: string; };
+
+// --- MOCK DATA (Restored to Original) ---
 const MOCK_USER = {
-  role: "student",
+  role: "student", 
   school: "Lincoln Elementary",
   class: "Ms. Smith - 5th Grade",
   name: "Current User",
+  email: "student@lincoln.edu"
 };
 
 const ALL_SCHOOLS = [
@@ -39,6 +57,24 @@ const ALL_CLASSES = [
   "Ms. Smith - 5th Grade",
   "Mr. Chen - 6th Grade",
   "Ms. Anderson - 10th Grade",
+];
+
+// --- MOCK ADMIN DATA ---
+const INITIAL_USERS: User[] = [
+  { id: "u1", name: "John Doe", email: "john@lincoln.edu", role: "student", status: "active", school: "Lincoln Elementary" },
+  { id: "u2", name: "Sarah Connor", email: "sarah@roosevelt.edu", role: "teacher", status: "active", school: "Roosevelt High" },
+  { id: "u3", name: "Bad Actor", email: "troll@school.edu", role: "student", status: "banned", school: "Jefferson Academy" },
+  { id: "u4", name: "Principal Skinner", email: "prince@lincoln.edu", role: "admin", status: "active", school: "Lincoln Elementary" },
+];
+
+const INITIAL_REPORTS: Report[] = [
+  { id: "r1", postId: 1, reporter: "Karen M.", reason: "Inappropriate language", timestamp: "10 mins ago", status: "pending" },
+  { id: "r2", postId: 0, reporter: "System Bot", reason: "Spam detection", timestamp: "1 hour ago", status: "pending" },
+];
+
+const INITIAL_LOGS: Log[] = [
+  { id: "l1", admin: "System", action: "Server Restart", target: "Main Cluster", time: "02:00 AM" },
+  { id: "l2", admin: "Principal Skinner", action: "Banned User", target: "Bad Actor", time: "Yesterday" },
 ];
 
 // --- UTILS ---
@@ -65,20 +101,12 @@ const formatFileSize = (bytes: number): string => {
 
 // --- SUB-COMPONENTS ---
 const NavIcon = ({ 
-  active, 
-  icon, 
-  label, 
-  onClick, 
-  mobileMode = false 
+  active, icon, label, onClick, mobileMode = false, alert = false, className = ""
 }: { 
-  active: boolean; 
-  icon: React.ReactNode; 
-  label: string; 
-  onClick: () => void; 
-  mobileMode?: boolean; 
+  active: boolean; icon: React.ReactNode; label: string; onClick: () => void; mobileMode?: boolean; alert?: boolean; className?: string;
 }) => (
   <div 
-    className={`group relative flex flex-col items-center justify-center cursor-pointer ${mobileMode ? "min-w-[70px] mx-1" : "w-full mb-6"}`} 
+    className={`group relative flex flex-col items-center justify-center cursor-pointer ${mobileMode ? "min-w-[70px] mx-1" : "w-full mb-6"} ${className}`} 
     onClick={onClick}
     role="button"
     tabIndex={0}
@@ -102,6 +130,7 @@ const NavIcon = ({
     `}>
       {icon}
       {active && mobileMode && <div className="absolute inset-0 rounded-full border-2 border-primary animate-pulse" />}
+      {alert && <span className="absolute top-0 right-0 h-3 w-3 bg-red-500 border-2 border-white rounded-full animate-pulse"></span>}
     </div>
     {mobileMode && <span className={`text-[10px] mt-1 font-medium truncate max-w-[80px] ${active ? "text-primary" : "text-muted-foreground"}`}>{label}</span>}
   </div>
@@ -128,6 +157,7 @@ const Community = () => {
         { author: "Ms. Smith", role: "Teacher", content: "Amazing work!", time: "1 hour ago" }
       ],
       visibility: "public",
+      status: "active"
     },
     {
       id: 1,
@@ -139,20 +169,20 @@ const Community = () => {
       likes: 89,
       comments: [],
       visibility: "public",
+      status: "active"
     },
-    {
-      id: 2,
-      school: "Jefferson Academy",
-      author: "Mr. Lee",
-      role: "Teacher",
-      time: "1 day ago",
-      content: "Just a reminder that the recycling bins have been moved to the cafeteria entrance. Please separate plastic and paper! ♻️",
-      likes: 45,
-      comments: [],
-      visibility: "school",
-    }
   ]);
   const [activeFeed, setActiveFeed] = useState<string>("public");
+  
+  // --- ADMIN STATE ---
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
+  const [activeAdminTab, setActiveAdminTab] = useState<"overview" | "users" | "moderation">("overview");
+  const [adminUsers, setAdminUsers] = useState<User[]>(INITIAL_USERS);
+  const [adminReports, setAdminReports] = useState<Report[]>(INITIAL_REPORTS);
+  const [adminLogs, setAdminLogs] = useState<Log[]>(INITIAL_LOGS);
+  const [userSearch, setUserSearch] = useState("");
+
+  // --- NORMAL STATE (Restored) ---
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
   const [showComments, setShowComments] = useState<Set<number>>(new Set());
   
@@ -168,7 +198,7 @@ const Community = () => {
   const [newPostVisibility, setNewPostVisibility] = useState<"public" | "school" | "class">("public");
   const [newPostImage, setNewPostImage] = useState<string | undefined>(undefined);
   const [newPostAttachments, setNewPostAttachments] = useState<Attachment[]>([]);
-
+  
   const [showMobileNav, setShowMobileNav] = useState(true);
   const lastScrollY = useRef(0);
 
@@ -176,25 +206,58 @@ const Community = () => {
   useEffect(() => {
     if (!isMobile) return;
     const controlNavbar = () => {
-      if (typeof window !== 'undefined') {
-        const currentScrollY = window.scrollY;
-        if (currentScrollY > lastScrollY.current && currentScrollY > 50) {
-          setShowMobileNav(false);
-        } else {
-          setShowMobileNav(true);
+        if (typeof window !== 'undefined') {
+            const currentScrollY = window.scrollY;
+            if (currentScrollY > lastScrollY.current && currentScrollY > 50) {
+            setShowMobileNav(false);
+            } else {
+            setShowMobileNav(true);
+            }
+            lastScrollY.current = currentScrollY;
         }
-        lastScrollY.current = currentScrollY;
-      }
     };
     window.addEventListener('scroll', controlNavbar);
     return () => window.removeEventListener('scroll', controlNavbar);
   }, [isMobile]);
 
-  // --- HANDLERS ---
+  // --- ADMIN ACTIONS ---
+  const handleBanUser = (userId: string) => {
+    setAdminUsers(users => users.map(u => u.id === userId ? { ...u, status: u.status === "active" ? "banned" : "active" } : u));
+    const user = adminUsers.find(u => u.id === userId);
+    addLog("Current Admin", user?.status === "active" ? "Banned User" : "Unbanned User", user?.name || "Unknown");
+    toast({ title: user?.status === "active" ? "User Banned" : "User Unbanned", variant: user?.status === "active" ? "destructive" : "default" });
+  };
+
+  const handleResolveReport = (reportId: string, action: "delete_post" | "dismiss") => {
+    const report = adminReports.find(r => r.id === reportId);
+    if (!report) return;
+
+    if (action === "delete_post") {
+        setPosts(currentPosts => currentPosts.filter(p => p.id !== report.postId));
+        addLog("Current Admin", "Deleted Post (Reported)", `Post #${report.postId}`);
+        toast({ title: "Content Removed", description: "The post has been deleted permanently." });
+    } else {
+        addLog("Current Admin", "Dismissed Report", `Report #${reportId}`);
+        toast({ title: "Report Dismissed" });
+    }
+    setAdminReports(reports => reports.filter(r => r.id !== reportId));
+  };
+
+  const addLog = (admin: string, action: string, target: string) => {
+    const newLog: Log = {
+        id: Date.now().toString(),
+        admin,
+        action,
+        target,
+        time: new Date().toLocaleTimeString()
+    };
+    setAdminLogs(prev => [newLog, ...prev]);
+  };
+
+  // --- NORMAL ACTIONS (Restored) ---
   const toggleLike = (postId: number) => {
     const newLiked = new Set(likedPosts);
-    if (newLiked.has(postId)) newLiked.delete(postId);
-    else newLiked.add(postId);
+    if (newLiked.has(postId)) newLiked.delete(postId); else newLiked.add(postId);
     setLikedPosts(newLiked);
     setPosts(posts.map(p => p.id === postId ? { ...p, likes: newLiked.has(postId) ? p.likes + 1 : p.likes - 1 } : p));
   };
@@ -228,6 +291,7 @@ const Community = () => {
       likes: 0,
       comments: [],
       visibility: newPostVisibility,
+      status: "active"
     };
     setPosts([newPost, ...posts]);
     setNewPostContent("");
@@ -305,8 +369,6 @@ const Community = () => {
     if (activeFeed === "public") return post.visibility === "public";
     if (activeFeed === "mySchool") return post.school === MOCK_USER.school && (post.visibility === "school" || post.visibility === "public");
     if (activeFeed === "myClass") return post.school === MOCK_USER.school && post.visibility === "class";
-    if (MOCK_USER.role === "moderator" && ALL_SCHOOLS.includes(activeFeed)) return post.school === activeFeed;
-    if (MOCK_USER.role === "moderator" && ALL_CLASSES.includes(activeFeed)) return post.targetGroup === activeFeed;
     return false;
   });
 
@@ -317,6 +379,7 @@ const Community = () => {
     return activeFeed;
   };
 
+  // --- RENDER HELPERS (Restored Original) ---
   const renderCreateDialog = () => (
     <Dialog open={isCreateDialogOpen} onOpenChange={handleOpenCreateDialog}>
       <DialogContent className="sm:max-w-[500px] bg-white/95 dark:bg-card/95 backdrop-blur-xl border-primary/20">
@@ -520,94 +583,323 @@ const Community = () => {
     </Card>
   );
 
+  // --- RENDER ADMIN VIEWS ---
+  const renderAdminContent = () => {
+    switch(activeAdminTab) {
+        case "overview":
+            return (
+                <div className="space-y-6 animate-in fade-in duration-500">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border-blue-100 dark:border-blue-900">
+                            <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-blue-600 dark:text-blue-400">Total Users</CardTitle></CardHeader>
+                            <CardContent>
+                                <div className="text-3xl font-bold">{adminUsers.length}</div>
+                                <p className="text-xs text-muted-foreground mt-1">+2% from last week</p>
+                            </CardContent>
+                        </Card>
+                        <Card className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border-amber-100 dark:border-amber-900">
+                            <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-amber-600 dark:text-amber-400">Pending Reports</CardTitle></CardHeader>
+                            <CardContent>
+                                <div className="text-3xl font-bold">{adminReports.length}</div>
+                                <p className="text-xs text-muted-foreground mt-1">{adminReports.length > 0 ? "Action required immediately" : "All clear"}</p>
+                            </CardContent>
+                        </Card>
+                        <Card className="bg-gradient-to-br from-emerald-50 to-green-50 dark:from-emerald-950/30 dark:to-green-950/30 border-emerald-100 dark:border-emerald-900">
+                            <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-emerald-600 dark:text-emerald-400">System Status</CardTitle></CardHeader>
+                            <CardContent>
+                                <div className="text-3xl font-bold flex items-center gap-2">99.9% <Activity className="h-5 w-5 animate-pulse text-emerald-600" /></div>
+                                <p className="text-xs text-muted-foreground mt-1">Servers operational</p>
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Recent Activity Log</CardTitle>
+                            <CardDescription>Audit trail of administrative actions.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-4">
+                                {adminLogs.slice(0, 5).map(log => (
+                                    <div key={log.id} className="flex items-center justify-between border-b border-border pb-2 last:border-0 last:pb-0">
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                                                <Shield className="h-4 w-4 text-primary" />
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-medium">{log.action}</p>
+                                                <p className="text-xs text-muted-foreground">by {log.admin} • Target: {log.target}</p>
+                                            </div>
+                                        </div>
+                                        <span className="text-xs text-muted-foreground">{log.time}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            );
+
+        case "users": {
+            const filteredUsers = adminUsers.filter(u => u.name.toLowerCase().includes(userSearch.toLowerCase()) || u.email.toLowerCase().includes(userSearch.toLowerCase()));
+            return (
+                <div className="space-y-4 animate-in fade-in duration-500">
+                    <div className="flex items-center gap-4">
+                        <div className="relative flex-1">
+                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <Input 
+                                placeholder="Search users by name or email..." 
+                                className="pl-9" 
+                                value={userSearch}
+                                onChange={(e) => setUserSearch(e.target.value)}
+                            />
+                        </div>
+                        <Button variant="outline"><FileText className="mr-2 h-4 w-4" /> Export CSV</Button>
+                    </div>
+
+                    <div className="rounded-md border bg-card">
+                        <div className="grid grid-cols-12 gap-2 p-4 border-b bg-muted/50 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                            <div className="col-span-4">User</div>
+                            <div className="col-span-3">Role</div>
+                            <div className="col-span-3">Status</div>
+                            <div className="col-span-2 text-right">Actions</div>
+                        </div>
+                        <div className="max-h-[600px] overflow-y-auto">
+                            {filteredUsers.map(user => (
+                                <div key={user.id} className="grid grid-cols-12 gap-2 p-4 items-center border-b last:border-0 hover:bg-muted/30 transition-colors">
+                                    <div className="col-span-4 flex items-center gap-3">
+                                        <Avatar className="h-8 w-8"><AvatarFallback>{user.name.substring(0,2).toUpperCase()}</AvatarFallback></Avatar>
+                                        <div className="min-w-0">
+                                            <p className="text-sm font-medium truncate">{user.name}</p>
+                                            <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                                        </div>
+                                    </div>
+                                    <div className="col-span-3">
+                                        <Badge variant="outline" className="capitalize">{user.role}</Badge>
+                                    </div>
+                                    <div className="col-span-3">
+                                        <Badge className={`${user.status === "active" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"} border-0`}>
+                                            {user.status}
+                                        </Badge>
+                                    </div>
+                                    <div className="col-span-2 flex justify-end gap-1">
+                                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleBanUser(user.id)} title={user.status === "active" ? "Ban User" : "Unban User"}>
+                                            {user.status === "active" ? <Ban className="h-4 w-4 text-destructive" /> : <CheckCircle className="h-4 w-4 text-green-600" />}
+                                        </Button>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8"><MoreVertical className="h-4 w-4" /></Button></DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end">
+                                                <DropdownMenuLabel>Manage {user.name}</DropdownMenuLabel>
+                                                <DropdownMenuItem>View Profile</DropdownMenuItem>
+                                                <DropdownMenuItem>Reset Password</DropdownMenuItem>
+                                                <DropdownMenuSeparator />
+                                                <DropdownMenuItem className="text-destructive">Delete Account</DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        case "moderation":
+            return (
+                <div className="space-y-4 animate-in fade-in duration-500">
+                    {adminReports.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center h-64 border rounded-xl bg-muted/10 border-dashed">
+                            <CheckCircle className="h-12 w-12 text-emerald-500 mb-4" />
+                            <h3 className="text-lg font-medium">All Caught Up!</h3>
+                            <p className="text-muted-foreground">No pending reports to review.</p>
+                        </div>
+                    ) : (
+                        <div className="grid gap-4">
+                            {adminReports.map(report => {
+                                const post = posts.find(p => p.id === report.postId);
+                                return (
+                                    <Card key={report.id} className="border-l-4 border-l-orange-500">
+                                        <CardHeader className="pb-2">
+                                            <div className="flex justify-between items-start">
+                                                <div className="flex items-center gap-2">
+                                                    <Badge variant="destructive" className="uppercase text-[10px]">Reported</Badge>
+                                                    <span className="text-sm text-muted-foreground">Reported by <b>{report.reporter}</b> • {report.timestamp}</span>
+                                                </div>
+                                                <Badge variant="outline">{report.reason}</Badge>
+                                            </div>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <div className="bg-muted/40 p-3 rounded-md mb-4 border border-border">
+                                                <p className="text-sm font-medium text-muted-foreground mb-1">Post Content:</p>
+                                                {post ? (
+                                                    <p className="text-sm">{post.content}</p>
+                                                ) : (
+                                                    <p className="text-sm italic text-muted-foreground">Content unavailable (Deleted or Error)</p>
+                                                )}
+                                            </div>
+                                            <div className="flex gap-2 justify-end">
+                                                <Button variant="outline" size="sm" onClick={() => handleResolveReport(report.id, "dismiss")}>Dismiss Report</Button>
+                                                <Button variant="destructive" size="sm" onClick={() => handleResolveReport(report.id, "delete_post")}><Trash2 className="mr-2 h-4 w-4" /> Delete Post</Button>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                )
+                            })}
+                        </div>
+                    )}
+                </div>
+            );
+        default: return null;
+    }
+  };
+
   return (
-    // ФИКС: 'h-screen' и 'overflow-hidden' тук ГАРАНТИРАТ, че скролбарът на "цялата страница" е забранен.
     <div className="h-screen bg-gradient-to-br from-green-50 via-emerald-50/50 to-teal-50 dark:from-background dark:via-green-950/20 dark:to-background pt-0 flex flex-col md:flex-row overflow-hidden no-scrollbar">
       
       {/* MOBILE NAV */}
       {isMobile && (
         <div className={`fixed top-16 left-0 right-0 z-40 w-full bg-white/90 dark:bg-card/90 backdrop-blur-md border-b border-primary/10 dark:border-border transition-all duration-500 ease-in-out ${showMobileNav ? "translate-y-0 opacity-100" : "-translate-y-[200%] opacity-0 pointer-events-none"}`}>
           <div className="flex items-center px-4 py-2 overflow-x-auto no-scrollbar gap-2 snap-x">
-            <NavIcon mobileMode active={activeFeed === "public"} icon={<Globe size={20} />} label="Global" onClick={() => setActiveFeed("public")} />
+            <NavIcon mobileMode active={activeFeed === "public" && !showAdminPanel} icon={<Globe size={20} />} label="Global" onClick={() => { setShowAdminPanel(false); setActiveFeed("public"); }} />
             <div className="h-8 w-[1px] bg-primary/10 shrink-0 mx-1" />
             {MOCK_USER.role === "student" && (
               <>
-                <NavIcon mobileMode active={activeFeed === "mySchool"} icon={<School size={20} />} label="School" onClick={() => setActiveFeed("mySchool")} />
-                <NavIcon mobileMode active={activeFeed === "myClass"} icon={<Users size={20} />} label="Class" onClick={() => setActiveFeed("myClass")} />
+                <NavIcon mobileMode active={activeFeed === "mySchool" && !showAdminPanel} icon={<School size={20} />} label="School" onClick={() => { setShowAdminPanel(false); setActiveFeed("mySchool"); }} />
+                <NavIcon mobileMode active={activeFeed === "myClass" && !showAdminPanel} icon={<Users size={20} />} label="Class" onClick={() => { setShowAdminPanel(false); setActiveFeed("myClass"); }} />
               </>
             )}
-            {MOCK_USER.role === "moderator" && ALL_SCHOOLS.map(school => (
-               <NavIcon key={school} mobileMode active={activeFeed === school} icon={<School size={20} />} label={school.split(" ")[0]} onClick={() => setActiveFeed(school)} />
-            ))}
+            
+            {/* --- SECURITY COMMENT: WRAP THIS IN PERMISSION CHECK (e.g. if(user.isAdmin)) --- */}
+            <div className="h-8 w-[1px] bg-primary/10 shrink-0 mx-1" />
+            <NavIcon mobileMode active={showAdminPanel} icon={<Shield size={20} />} label="Admin" onClick={() => setShowAdminPanel(true)} />
+            
+            {/* NEW CREATE GROUP BUTTON (Mobile) */}
+            <NavIcon 
+              mobileMode 
+              active={false} 
+              icon={<Plus size={20} />} 
+              label="New Group" 
+              onClick={() => console.log("Create Group Clicked")} 
+            />
+            {/* --- END SECURITY COMMENT --- */}
           </div>
         </div>
       )}
 
-      {/* DESKTOP NAV */}
+      {/* DESKTOP SIDEBAR */}
       {!isMobile && (
-        <aside className="h-full flex flex-col justify-center w-[80px] ml-6 z-30">
-          <div className="flex flex-col items-center py-6 bg-white/40 dark:bg-card/40 backdrop-blur-xl border border-white/40 dark:border-border/40 rounded-3xl shadow-xl">
-            <NavIcon active={activeFeed === "public"} icon={<Globe size={24} />} label="Global Feed" onClick={() => setActiveFeed("public")} />
+        <aside className="h-full flex flex-col justify-center w-[80px] ml-6 z-30 flex-shrink-0">
+          <div className="flex flex-col items-center py-6 bg-white/40 dark:bg-card/40 backdrop-blur-xl border border-white/40 dark:border-border/40 rounded-3xl shadow-xl h-fit max-h-[90vh]">
+            <NavIcon active={activeFeed === "public" && !showAdminPanel} icon={<Globe size={24} />} label="Global Feed" onClick={() => { setShowAdminPanel(false); setActiveFeed("public"); }} />
+            
             <div className="w-10 h-[2px] bg-primary/10 rounded-full my-4" />
+            
             {MOCK_USER.role === "student" && (
               <>
-                <NavIcon active={activeFeed === "mySchool"} icon={<School size={24} />} label={MOCK_USER.school} onClick={() => setActiveFeed("mySchool")} />
-                <NavIcon active={activeFeed === "myClass"} icon={<Users size={24} />} label={MOCK_USER.class} onClick={() => setActiveFeed("myClass")} />
+                <NavIcon active={activeFeed === "mySchool" && !showAdminPanel} icon={<School size={24} />} label={MOCK_USER.school} onClick={() => { setShowAdminPanel(false); setActiveFeed("mySchool"); }} />
+                <NavIcon active={activeFeed === "myClass" && !showAdminPanel} icon={<Users size={24} />} label={MOCK_USER.class} onClick={() => { setShowAdminPanel(false); setActiveFeed("myClass"); }} />
               </>
             )}
-            {MOCK_USER.role === "moderator" && (
-               <div className="flex flex-col w-full items-center overflow-y-auto no-scrollbar max-h-[300px]">
-                 {ALL_SCHOOLS.map(school => (
-                   <NavIcon key={school} active={activeFeed === school} icon={<School size={24} />} label={school} onClick={() => setActiveFeed(school)} />
-                 ))}
-               </div>
-            )}
+
+            {/* --- SECURITY COMMENT: WRAP THIS IN PERMISSION CHECK (e.g. if(user.isAdmin)) --- */}
+            <div className="w-10 h-[2px] bg-primary/10 rounded-full my-4" />
+            <NavIcon 
+              active={showAdminPanel} 
+              icon={<Shield size={24} />} 
+              label="Admin Console" 
+              alert={adminReports.length > 0}
+              onClick={() => setShowAdminPanel(true)} 
+            />
+            
+            {/* NEW CREATE GROUP BUTTON (Desktop) */}
+            <NavIcon 
+              active={false} 
+              icon={<Plus size={24} />} 
+              label="Create Group" 
+              onClick={() => console.log("Create Group Clicked")} 
+            />
+            {/* --- END SECURITY COMMENT --- */}
           </div>
         </aside>
       )}
+      {/* ADMIN SUB-MENU (SLIDES OUT) */}
+      {!isMobile && (
+        <div 
+          className={`
+            h-full flex flex-col justify-center z-20 transition-all duration-300 ease-in-out
+            ${showAdminPanel ? "w-[240px] ml-4 opacity-100 translate-x-0" : "w-0 ml-0 opacity-0 -translate-x-10 overflow-hidden"}
+          `}
+        >
+          <div className="h-[90vh] bg-white/60 dark:bg-card/60 backdrop-blur-xl border border-white/40 dark:border-border/40 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+            <div className="p-6 border-b border-primary/10 bg-white/30 dark:bg-black/10">
+              <h3 className="font-bold text-lg flex items-center gap-2 text-primary">
+                <Shield className="h-5 w-5 fill-primary/20" /> 
+                Admin
+              </h3>
+              <p className="text-xs text-muted-foreground mt-1">Management Console</p>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-4 space-y-1 custom-scrollbar">
+              <Button variant={activeAdminTab === "overview" ? "secondary" : "ghost"} className="w-full justify-start" onClick={() => setActiveAdminTab("overview")}>
+                <Activity className="mr-3 h-4 w-4" /> Overview
+              </Button>
+              <Button variant={activeAdminTab === "users" ? "secondary" : "ghost"} className="w-full justify-start" onClick={() => setActiveAdminTab("users")}>
+                <Users className="mr-3 h-4 w-4" /> Users
+              </Button>
+              <Button variant={activeAdminTab === "moderation" ? "secondary" : "ghost"} className="w-full justify-start" onClick={() => setActiveAdminTab("moderation")}>
+                <AlertTriangle className="mr-3 h-4 w-4" /> Reports
+                {adminReports.length > 0 && <Badge className="ml-auto h-5 px-1.5 bg-red-500 text-white">{adminReports.length}</Badge>}
+              </Button>
+              <div className="my-2 border-t border-primary/10" />
+            </div>
+          </div>
+        </div>
+      )}
 
-      {/* MAIN FEED */}
-      {/* Тук премахнах всички класове за скриване. Скролбарът ще се вижда, защото това е основният скрол на чата. */}
-      <main className={`flex-1 h-full overflow-y-auto w-full min-w-0 px-4 md:px-10 pb-32 ${isMobile ? 'pt-24' : 'pt-6'}`}>
+      {/* MAIN CONTENT AREA */}
+      <main className={`flex-1 h-full overflow-y-auto min-w-0 px-4 md:px-10 pb-32 transition-all duration-300 ${isMobile ? 'pt-24' : 'pt-6'}`}>
         <div className="max-w-6xl mx-auto pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-emerald-600 to-teal-600 bg-clip-text text-transparent">
-              {getFeedTitle()}
+              {showAdminPanel ? (
+                  activeAdminTab === "overview" ? "System Overview" : 
+                  activeAdminTab === "users" ? "User Management" : 
+                  "Content Moderation"
+              ) : getFeedTitle()}
             </h1>
             <p className="text-muted-foreground">
-               {activeFeed === "public" ? "Latest updates from around the world" : "Updates from your community"}
+               {showAdminPanel ? "Manage, monitor, and maintain community standards." : "Latest updates from your community."}
             </p>
           </div>
           
-          <div className="hidden md:block">
-            <Button onClick={() => handleOpenCreateDialog(true)} className="rounded-full bg-gradient-to-r from-primary to-emerald-600 hover:from-primary/90 hover:to-emerald-600/90 shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all hover:scale-105">
-              <Plus className="mr-2 h-4 w-4" /> {t("community.createPost")}
-            </Button>
-          </div>
+          {!showAdminPanel && (
+            <div className="hidden md:block">
+                <Button onClick={() => handleOpenCreateDialog(true)} className="rounded-full bg-gradient-to-r from-primary to-emerald-600 hover:from-primary/90 hover:to-emerald-600/90 shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all hover:scale-105">
+                <Plus className="mr-2 h-4 w-4" /> {t("community.createPost")}
+                </Button>
+            </div>
+          )}
         </div>
 
         {renderCreateDialog()}
 
-        {/* POSTS LIST */}
+        {/* DYNAMIC CONTENT */}
         <div className="max-w-6xl mx-auto space-y-6">
-          {filteredPosts.length === 0 ? (
-              <div className="text-center py-12 bg-white/60 dark:bg-card/60 backdrop-blur-xl rounded-xl border border-white/30 dark:border-border border-dashed shadow-lg">
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-emerald-500/20 mb-4">
-                  <MessageCircle className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="text-lg font-medium">{t("community.noPostsYet")}</h3>
-                <p className="text-muted-foreground max-w-sm mx-auto mt-2">
-                  {t("community.beTheFirst")} {getFeedTitle()} {t("community.communityWord")}
-                </p>
-              </div>
-          ) : (
-            filteredPosts.map(renderPost)
-          )}
+            {showAdminPanel ? renderAdminContent() : (
+               filteredPosts.length === 0 ? (
+                  <div className="text-center py-12">
+                     <p className="text-muted-foreground">{t("community.noPostsYet")}</p>
+                  </div>
+               ) : (
+                 filteredPosts.map(renderPost)
+               )
+            )}
         </div>
       </main>
-
+      
       {/* MOBILE FAB */}
-      {isMobile && (
+      {isMobile && !showAdminPanel && (
         <Button onClick={() => handleOpenCreateDialog(true)} className="fixed bottom-6 right-6 h-14 w-14 rounded-full bg-gradient-to-r from-primary to-emerald-600 text-white shadow-2xl shadow-emerald-600/40 z-50 flex items-center justify-center md:hidden transition-transform duration-300 active:scale-95">
           <Plus size={28} />
         </Button>
