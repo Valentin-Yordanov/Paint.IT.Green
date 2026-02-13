@@ -1,16 +1,20 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { TreePine, Droplets, Wind, Heart, Recycle, Users, Leaf, Sun, Mountain, Fish, Bird, Flower2, Globe, Lightbulb, BookOpen, Sprout, Search, X, GraduationCap, ArrowRight, ArrowUp, Youtube } from "lucide-react";
+import { TreePine, Droplets, Wind, Heart, Recycle, Users, Leaf, Sun, Mountain, Fish, Bird, Flower2, Globe, Lightbulb, BookOpen, Sprout, Search, X, GraduationCap, ArrowRight, ArrowUp, Youtube, Gamepad2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useState, useRef, MouseEvent, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import RecyclingGame from "@/components/RecyclingGame";
+import ForestGame from "@/components/ForestGame";
 
 const Learn = () => {
   const { t } = useLanguage();
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   
-  // Refs for scrolling
+  // Game state: supports 'recycling', 'forests', or null (no game)
+  const [activeGame, setActiveGame] = useState<'recycling' | 'forests' | null>(null);
+  
   const gridRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -81,7 +85,6 @@ const Learn = () => {
 
   const selectedTopicData = topics.find((t) => t.id === selectedTopic);
 
-  // Effect to handle auto-scrolling
   useEffect(() => {
     if (selectedTopic && panelRef.current) {
       setTimeout(() => {
@@ -92,6 +95,7 @@ const Learn = () => {
 
   const handleClosePanel = () => {
     setSelectedTopic(null);
+    setActiveGame(null); // Reset game state
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -131,7 +135,6 @@ const Learn = () => {
               {t('learn.subtitle')}
             </p>
 
-            {/* Enhanced Search bar */}
             <div className="relative max-w-xl mx-auto pt-4">
               <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 rounded-2xl blur-xl" />
               <div className="relative">
@@ -166,7 +169,6 @@ const Learn = () => {
                 className="spotlight-card-wrapper relative rounded-2xl aspect-square focus:outline-none group"
                 style={{ animationDelay: `${index * 50}ms` }}
               >
-                {/* Spotlight glow effect */}
                 <div 
                   className="absolute -inset-px rounded-2xl opacity-0 group-hover/grid:opacity-100 transition duration-500"
                   style={{
@@ -174,14 +176,12 @@ const Learn = () => {
                   }}
                 />
                 
-                {/* Card background with gradient border */}
                 <div className={`absolute inset-0 rounded-2xl transition-all duration-300 ${
                   isSelected 
                     ? `bg-gradient-to-br ${topic.gradient} shadow-2xl scale-95 ring-4 ring-primary/20` 
                     : "bg-gradient-to-br from-border/50 to-border/20"
                 }`} />
                 
-                {/* Card content */}
                 <div 
                   className={`
                     relative h-full w-full rounded-[15px] m-[1px] 
@@ -193,7 +193,6 @@ const Learn = () => {
                     }
                   `}
                 >
-                  {/* Inner glow on hover */}
                   {!isSelected && (
                     <div 
                       className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500"
@@ -203,15 +202,12 @@ const Learn = () => {
                     />
                   )}
 
-                  {/* Icon container */}
                   <div className={`relative h-16 w-16 rounded-2xl flex items-center justify-center transition-all duration-300 ${
                     isSelected 
                       ? "bg-white/20 backdrop-blur-sm scale-110" 
                       : `bg-gradient-to-br ${topic.gradient} shadow-lg group-hover:scale-110 group-hover:shadow-xl`
                   }`}>
                     <topic.icon className="h-8 w-8 text-white" />
-                    
-                    {/* Shine effect */}
                     <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-white/0 via-white/20 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </div>
                   
@@ -221,7 +217,6 @@ const Learn = () => {
                     {topic.title}
                   </span>
 
-                  {/* Selection indicator */}
                   {isSelected && (
                     <div className="absolute bottom-3 right-3">
                       <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
@@ -237,7 +232,6 @@ const Learn = () => {
         {selectedTopicData && (
           <div ref={panelRef} className="scroll-mt-24">
             <Card className="border-0 shadow-2xl bg-card/90 backdrop-blur-md animate-in fade-in-50 slide-in-from-bottom-4 duration-500 overflow-hidden">
-              {/* Gradient header bar */}
               <div className={`h-1.5 bg-gradient-to-r ${selectedTopicData.gradient}`} />
               
               <CardHeader className="pb-6 pt-8">
@@ -264,52 +258,86 @@ const Learn = () => {
               </CardHeader>
               
               <CardContent className="space-y-8 pb-10">
-                {selectedTopicData.content.map((section, index) => (
-                  <div 
-                    key={index} 
-                    className="relative pl-6 border-l-2 border-primary/30 hover:border-primary/60 transition-colors duration-300"
-                  >
-                    <div className="absolute left-0 top-0 w-2 h-2 -translate-x-[5px] rounded-full bg-primary/50" />
-                    <h3 className="text-xl font-bold text-foreground mb-3">
-                      {section.subtitle}
-                    </h3>
-                    <p className="text-muted-foreground text-lg leading-relaxed">
-                      {section.text}
-                    </p>
-                  </div>
-                ))}
+                {/* GAME RENDERING LOGIC */}
+                {activeGame === 'recycling' ? (
+                  <RecyclingGame onClose={() => setActiveGame(null)} />
+                ) : activeGame === 'forests' ? (
+                  <ForestGame onClose={() => setActiveGame(null)} />
+                ) : (
+                  <>
+                    {/* Standard Text Content */}
+                    {selectedTopicData.content.map((section, index) => (
+                      <div 
+                        key={index} 
+                        className="relative pl-6 border-l-2 border-primary/30 hover:border-primary/60 transition-colors duration-300"
+                      >
+                        <div className="absolute left-0 top-0 w-2 h-2 -translate-x-[5px] rounded-full bg-primary/50" />
+                        <h3 className="text-xl font-bold text-foreground mb-3">
+                          {section.subtitle}
+                        </h3>
+                        <p className="text-muted-foreground text-lg leading-relaxed">
+                          {section.text}
+                        </p>
+                      </div>
+                    ))}
 
-                {/* Actions */}
-                <div className="pt-8 flex flex-col sm:flex-row justify-center gap-4 border-t border-border/50 mt-8">
-                    <Button 
-                        asChild
-                        className="gap-2 rounded-xl bg-red-600 hover:bg-red-700 text-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
-                        size="lg"
-                    >
-                        <a 
-                            href={selectedTopicData.videoUrl || "#"} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
+                    {/* Actions */}
+                    <div className="pt-8 flex flex-col sm:flex-row justify-center gap-4 border-t border-border/50 mt-8">
+                        <Button 
+                            asChild
+                            className="gap-2 rounded-xl bg-red-600 hover:bg-red-700 text-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
+                            size="lg"
                         >
-                            <Youtube className="h-5 w-5" />
-                            {t('learn.watchVideo') || 'Watch Video'}
-                        </a>
-                    </Button>
-                    <Button 
-                        onClick={handleClosePanel}
-                        className={`gap-2 rounded-xl bg-gradient-to-r ${selectedTopicData.gradient} text-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all`}
-                        size="lg"
-                    >
-                        <ArrowUp className="h-4 w-4" />
-                        {t('Back to Topics')}
-                    </Button>
-                </div>
+                            <a 
+                                href={selectedTopicData.videoUrl || "#"} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                            >
+                                <Youtube className="h-5 w-5" />
+                                {t('learn.watchVideo') || 'Watch Video'}
+                            </a>
+                        </Button>
+
+                        {/* GAME 1: RECYCLING BUTTON */}
+                        {selectedTopic === 'recycling' && (
+                            <Button 
+                                onClick={() => setActiveGame('recycling')}
+                                className="gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all "
+                                size="lg"
+                            >
+                                <Gamepad2 className="h-5 w-5" />
+                                Play & Learn
+                            </Button>
+                        )}
+
+                        {/* GAME 2: FOREST BUTTON */}
+                        {selectedTopic === 'forests' && (
+                            <Button 
+                                onClick={() => setActiveGame('forests')}
+                                className="gap-2 rounded-xl bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all "
+                                size="lg"
+                            >
+                                <Gamepad2 className="h-5 w-5" />
+                                Protect Forest
+                            </Button>
+                        )}
+
+                        <Button 
+                            onClick={handleClosePanel}
+                            className={`gap-2 rounded-xl bg-gradient-to-r ${selectedTopicData.gradient} text-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all`}
+                            size="lg"
+                        >
+                            <ArrowUp className="h-4 w-4" />
+                            {t('Back to Topics')}
+                        </Button>
+                    </div>
+                  </>
+                )}
               </CardContent>
             </Card>
           </div>
         )}
 
-        {/* Call to Action Card */}
         {!selectedTopic && (
             <Card className="mt-16 border-0 shadow-2xl overflow-hidden group">
             <div className="relative bg-gradient-to-r from-primary via-primary/90 to-accent p-12 text-center overflow-hidden">

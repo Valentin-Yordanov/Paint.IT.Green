@@ -230,6 +230,27 @@ const enTranslations: Record<string, string> = {
   'compete.schoolRankings': 'School Rankings - Monthly',
   'compete.studentRankings': 'Student Rankings - Monthly',
 
+
+  // 'compete.fakeChallange1NAME': 'Community Cleanup',
+  // 'compete.fakeChallange1DATE': '',
+  // 'compete.fakeChallange1INFO': '',
+
+  // 'compete.fakeChallange2NAME': 'Water Savers',
+  // 'compete.fakeChallange2DATE': '',
+  // 'compete.fakeChallange2INFO': '',
+
+  // 'compete.fakeChallange3NAME': 'Month of Recycling',  
+  // 'compete.fakeChallange3DATE': '',
+  // 'compete.fakeChallange3INFO': '',
+
+  // 'compete.fakeChallange4NAME': 'Plant a Tree Week',
+  // 'compete.fakeChallange4DATE': '',
+  // 'compete.fakeChallange4INFO': '',
+
+  // 'compete.fakeChallange5NAME': '',
+  // 'compete.fakeChallange5DATE': '',
+  // 'compete.fakeChallange5INFO': '',
+
   // Contact
   'contact.title': 'Contact Us',
   'contact.subtitle': 'Have questions? We\'d love to hear from you. Send us a message and we\'ll respond as soon as possible.',

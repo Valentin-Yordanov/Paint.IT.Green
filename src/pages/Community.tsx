@@ -5,12 +5,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Switch } from "@/components/ui/switch"; 
 import { 
   Heart, MessageCircle, School, Users, Send, Plus, Trash2, 
   Image as ImageIcon, Globe, X, Paperclip, File, Edit, Share2,
   Shield, Activity, AlertTriangle, UserCog, Ban, CheckCircle, 
-  Search, MoreVertical, LogOut, FileText, BarChart3
+  Search, MoreVertical, LogOut, FileText, BarChart3,
+  Layers, Megaphone, Lock, Settings, Unlock, Camera, KeyRound,
+  // EXTENDED ICON SET FOR PRESETS
+  Book, GraduationCap, Music, Palette, Dna, Calculator, Trophy, Star,
+  Smile, Zap, Anchor, Coffee, Sun, Moon, Cloud, Umbrella, 
+  Briefcase, Code, Terminal, Cpu, Database, Server, Wifi
 } from "lucide-react";
 import studentsImage from "@/assets/students-planting.jpg";
 import { useToast } from "@/hooks/use-toast";
@@ -23,6 +29,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Label } from "@/components/ui/label"; 
 
 // --- TYPES ---
 type Comment = { author: string; role: string; content: string; time: string; };
@@ -36,8 +43,21 @@ type Post = {
 type User = { id: string; name: string; email: string; role: "student" | "teacher" | "admin" | "moderator"; status: "active" | "banned"; school: string; };
 type Report = { id: string; postId: number; reporter: string; reason: string; timestamp: string; status: "pending" | "resolved"; };
 type Log = { id: string; admin: string; action: string; target: string; time: string; };
+type Group = { 
+    id: string; 
+    name: string; 
+    description?: string;
+    icon?: string;
+    iconType?: "image" | "preset";
+    members: number; 
+    type: "public" | "private"; 
+    password?: string;
+    school?: string;
+    status: "active" | "frozen"; 
+    lastActive: string; 
+};
 
-// --- MOCK DATA (Restored to Original) ---
+// --- MOCK DATA ---
 const MOCK_USER = {
   role: "student", 
   school: "Lincoln Elementary",
@@ -59,12 +79,38 @@ const ALL_CLASSES = [
   "Ms. Anderson - 10th Grade",
 ];
 
+// --- PRESET ICONS MAPPING (EXPANDED) ---
+const PRESET_ICONS = [
+  { id: 'book', icon: <Book className="h-6 w-6" />, label: 'Study' },
+  { id: 'grad', icon: <GraduationCap className="h-6 w-6" />, label: 'Academic' },
+  { id: 'music', icon: <Music className="h-6 w-6" />, label: 'Arts' },
+  { id: 'art', icon: <Palette className="h-6 w-6" />, label: 'Creative' },
+  { id: 'science', icon: <Dna className="h-6 w-6" />, label: 'Science' },
+  { id: 'math', icon: <Calculator className="h-6 w-6" />, label: 'Math' },
+  { id: 'sport', icon: <Trophy className="h-6 w-6" />, label: 'Sports' },
+  { id: 'star', icon: <Star className="h-6 w-6" />, label: 'General' },
+  { id: 'smile', icon: <Smile className="h-6 w-6" />, label: 'Social' },
+  { id: 'zap', icon: <Zap className="h-6 w-6" />, label: 'Energy' },
+  { id: 'anchor', icon: <Anchor className="h-6 w-6" />, label: 'Navy' },
+  { id: 'coffee', icon: <Coffee className="h-6 w-6" />, label: 'Break' },
+  { id: 'sun', icon: <Sun className="h-6 w-6" />, label: 'Day' },
+  { id: 'moon', icon: <Moon className="h-6 w-6" />, label: 'Night' },
+  { id: 'cloud', icon: <Cloud className="h-6 w-6" />, label: 'Weather' },
+  { id: 'code', icon: <Code className="h-6 w-6" />, label: 'Tech' },
+];
+
 // --- MOCK ADMIN DATA ---
 const INITIAL_USERS: User[] = [
   { id: "u1", name: "John Doe", email: "john@lincoln.edu", role: "student", status: "active", school: "Lincoln Elementary" },
   { id: "u2", name: "Sarah Connor", email: "sarah@roosevelt.edu", role: "teacher", status: "active", school: "Roosevelt High" },
   { id: "u3", name: "Bad Actor", email: "troll@school.edu", role: "student", status: "banned", school: "Jefferson Academy" },
   { id: "u4", name: "Principal Skinner", email: "prince@lincoln.edu", role: "admin", status: "active", school: "Lincoln Elementary" },
+];
+
+const INITIAL_GROUPS: Group[] = [
+  { id: "g1", name: "Ms. Smith - 5th Grade", description: "Official class group", members: 24, type: "private", status: "active", lastActive: "2 mins ago", icon: "book", iconType: "preset" },
+  { id: "g2", name: "Chess Club", description: "Strategic thinking for everyone", members: 12, type: "public", status: "active", lastActive: "1 day ago", icon: "star", iconType: "preset" },
+  { id: "g3", name: "Gaming Lounge", description: "After school gaming", members: 156, type: "public", status: "frozen", lastActive: "3 days ago", icon: undefined, iconType: undefined },
 ];
 
 const INITIAL_REPORTS: Report[] = [
@@ -176,13 +222,34 @@ const Community = () => {
   
   // --- ADMIN STATE ---
   const [showAdminPanel, setShowAdminPanel] = useState(false);
-  const [activeAdminTab, setActiveAdminTab] = useState<"overview" | "users" | "moderation">("overview");
+  const [activeAdminTab, setActiveAdminTab] = useState<"overview" | "users" | "groups" | "moderation" | "settings">("overview");
   const [adminUsers, setAdminUsers] = useState<User[]>(INITIAL_USERS);
+  const [adminGroups, setAdminGroups] = useState<Group[]>(INITIAL_GROUPS);
   const [adminReports, setAdminReports] = useState<Report[]>(INITIAL_REPORTS);
   const [adminLogs, setAdminLogs] = useState<Log[]>(INITIAL_LOGS);
   const [userSearch, setUserSearch] = useState("");
+  const [announcementText, setAnnouncementText] = useState("");
+  
+  const [adminSettings, setAdminSettings] = useState({
+      profanityFilter: true,
+      imageUploads: true,
+      linkPreviews: true
+  });
 
-  // --- NORMAL STATE (Restored) ---
+  // Create Group State (Expanded)
+  const [isCreateGroupDialogOpen, setIsCreateGroupDialogOpen] = useState(false);
+  const [newGroupName, setNewGroupName] = useState("");
+  const [newGroupDescription, setNewGroupDescription] = useState("");
+  const [newGroupType, setNewGroupType] = useState<"public" | "private">("public");
+  const [newGroupPassword, setNewGroupPassword] = useState("");
+  const [newGroupSchool, setNewGroupSchool] = useState(MOCK_USER.school);
+  const [newGroupIcon, setNewGroupIcon] = useState<string | null>(null);
+  const [newGroupIconType, setNewGroupIconType] = useState<"image" | "preset">("image");
+  
+  // Icon Picker State
+  const [showIconPicker, setShowIconPicker] = useState(false);
+
+  // --- NORMAL STATE ---
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
   const [showComments, setShowComments] = useState<Set<number>>(new Set());
   
@@ -228,6 +295,64 @@ const Community = () => {
     toast({ title: user?.status === "active" ? "User Banned" : "User Unbanned", variant: user?.status === "active" ? "destructive" : "default" });
   };
 
+  const handleGroupAction = (groupId: string, action: "freeze" | "delete") => {
+      if (action === "freeze") {
+          setAdminGroups(groups => groups.map(g => g.id === groupId ? { ...g, status: g.status === "active" ? "frozen" : "active" } : g));
+          toast({ title: "Group Status Updated" });
+      } else {
+          setAdminGroups(groups => groups.filter(g => g.id !== groupId));
+          toast({ title: "Group Deleted" });
+      }
+  };
+
+  const handleGroupIconUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => { 
+          setNewGroupIcon(reader.result as string); 
+          setNewGroupIconType("image");
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleCreateGroup = () => {
+      if (!newGroupName.trim()) return;
+      const newGroup: Group = {
+          id: `g${Date.now()}`,
+          name: newGroupName,
+          description: newGroupDescription,
+          icon: newGroupIcon || undefined,
+          iconType: newGroupIcon ? newGroupIconType : undefined,
+          members: 1, 
+          type: newGroupType,
+          password: newGroupType === "private" ? newGroupPassword : undefined,
+          school: newGroupSchool,
+          status: "active",
+          lastActive: "Just now"
+      };
+      setAdminGroups([newGroup, ...adminGroups]);
+      addLog("Current Admin", "Created Group", newGroupName);
+      setIsCreateGroupDialogOpen(false);
+      
+      // Reset form
+      setNewGroupName("");
+      setNewGroupDescription("");
+      setNewGroupType("public");
+      setNewGroupPassword("");
+      setNewGroupIcon(null);
+      setNewGroupIconType("image");
+      
+      toast({ title: "Group Created", description: `${newGroupName} is now active.` });
+  };
+
+  const handleSendAnnouncement = () => {
+      if (!announcementText) return;
+      toast({ title: "Announcement Sent", description: "All users have been notified." });
+      setAnnouncementText("");
+  };
+
   const handleResolveReport = (reportId: string, action: "delete_post" | "dismiss") => {
     const report = adminReports.find(r => r.id === reportId);
     if (!report) return;
@@ -252,6 +377,18 @@ const Community = () => {
         time: new Date().toLocaleTimeString()
     };
     setAdminLogs(prev => [newLog, ...prev]);
+  };
+
+  // --- RENDER HELPERS ---
+  const getGroupIcon = (group: Group) => {
+      if (group.iconType === "image" && group.icon) {
+          return <img src={group.icon} alt={group.name} className="h-10 w-10 rounded-full object-cover" />;
+      }
+      if (group.iconType === "preset" && group.icon) {
+          const preset = PRESET_ICONS.find(p => p.id === group.icon);
+          if (preset) return <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">{preset.icon}</div>;
+      }
+      return <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center"><Layers className="h-5 w-5 text-primary" /></div>;
   };
 
   // --- NORMAL ACTIONS (Restored) ---
@@ -416,7 +553,7 @@ const Community = () => {
                     <div key={index} className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 border border-primary/10">
                       {attachment.type === 'image' ? <ImageIcon className="h-4 w-4 text-primary" /> : <File className="h-4 w-4 text-primary" />}
                       <span className="text-sm flex-1 truncate">{attachment.name}</span>
-                      <Button size="icon" variant="ghost" className="h-6 w-6 hover:text-destructive" onClick={() => removeAttachment(index)}>
+                      <Button size="icon" variant="ghost" className="h-6 w-6 hover:text-destructive hover:bg-hover" onClick={() => removeAttachment(index)}>
                         <X className="h-3 w-3" />
                       </Button>
                     </div>
@@ -427,11 +564,11 @@ const Community = () => {
           </div>
           <div className="flex items-center justify-between border-t border-primary/10 pt-4">
             <div className="flex gap-1">
-              <Button type="button" variant="ghost" size="sm" className="text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full" onClick={() => document.getElementById("image-upload")?.click()}>
+              <Button type="button" variant="ghost" size="sm" className="text-muted-foreground hover:text-primary hover:bg-hover rounded-full" onClick={() => document.getElementById("image-upload")?.click()}>
                 <ImageIcon className="h-4 w-4 mr-1" /> {t("community.photo")}
               </Button>
               <Input id="image-upload" type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
-              <Button type="button" variant="ghost" size="sm" className="text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full" onClick={() => document.getElementById("file-upload")?.click()}>
+              <Button type="button" variant="ghost" size="sm" className="text-muted-foreground hover:text-primary hover:bg-hover rounded-full" onClick={() => document.getElementById("file-upload")?.click()}>
                 <Paperclip className="h-4 w-4 mr-1" /> {t("File")}
               </Button>
               <Input id="file-upload" type="file" multiple className="hidden" onChange={handleFileUpload} />
@@ -461,13 +598,13 @@ const Community = () => {
               <div className="flex gap-1">
                 {editingPost === post.id ? (
                   <>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-green-600" onClick={() => handleEditPost(post.id)} aria-label="Save Post"><Send className="h-4 w-4" /></Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditingPost(null)} aria-label="Cancel Edit"><X className="h-4 w-4" /></Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-green-600 hover:bg-hover hover:text-hover-foreground" onClick={() => handleEditPost(post.id)} aria-label="Save Post"><Send className="h-4 w-4" /></Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-hover hover:text-hover-foreground" onClick={() => setEditingPost(null)} aria-label="Cancel Edit"><X className="h-4 w-4" /></Button>
                   </>
                 ) : (
                   <>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary" onClick={() => { setEditingPost(post.id); setEditPostText(post.content); }} aria-label="Edit Post"><Edit className="h-4 w-4" /></Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => handleDeletePost(post.id)} aria-label="Delete Post"><Trash2 className="h-4 w-4" /></Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-hover" onClick={() => { setEditingPost(post.id); setEditPostText(post.content); }} aria-label="Edit Post"><Edit className="h-4 w-4" /></Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-hover" onClick={() => handleDeletePost(post.id)} aria-label="Delete Post"><Trash2 className="h-4 w-4" /></Button>
                   </>
                 )}
               </div>
@@ -495,7 +632,7 @@ const Community = () => {
             {post.attachments && post.attachments.length > 0 && (
               <div className="mt-4 space-y-2">
                 {post.attachments.map((attachment, idx) => (
-                  <a key={idx} href={attachment.url} download={attachment.name} className="flex items-center gap-3 p-3 rounded-lg bg-white/50 dark:bg-muted/30 border border-primary/10 dark:border-border/40 hover:bg-primary/5 transition-colors group/file">
+                  <a key={idx} href={attachment.url} download={attachment.name} className="flex items-center gap-3 p-3 rounded-lg bg-white/50 dark:bg-muted/30 border border-primary/10 dark:border-border/40 hover:bg-hover hover:text-hover-foreground transition-colors group/file">
                     <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-emerald-500/20">
                       {attachment.type === 'image' ? <ImageIcon className="h-5 w-5 text-primary" /> : <File className="h-5 w-5 text-primary" />}
                     </div>
@@ -508,7 +645,7 @@ const Community = () => {
             )}
 
             <div className="mt-auto pt-6 flex items-center gap-4">
-              <Button variant="ghost" size="sm" onClick={() => toggleLike(post.id)} className={`rounded-full transition-colors ${likedPosts.has(post.id) ? "text-red-500 bg-red-50 dark:bg-red-950/30" : "text-muted-foreground hover:text-hover-foreground hover:bg-hover"}`}>
+              <Button variant="ghost" size="sm" onClick={() => toggleLike(post.id)} className={`rounded-full transition-colors ${likedPosts.has(post.id) ? "text-red-500 bg-red-50 dark:bg-red-950/30 hover:bg-hover" : "text-muted-foreground hover:text-hover-foreground hover:bg-hover"}`}>
                 <Heart className={`mr-1.5 h-4 w-4 ${likedPosts.has(post.id) ? "fill-current scale-110" : ""}`} /> {post.likes}
               </Button>
               <Button variant="ghost" size="sm" onClick={() => toggleComments(post.id)} className="rounded-full text-muted-foreground hover:text-hover-foreground hover:bg-hover">
@@ -543,8 +680,8 @@ const Community = () => {
                       </div>
                       {comment.author === MOCK_USER.name && (
                         <div className="opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
-                          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => { setEditingComment({ postId: post.id, commentIdx: idx }); setEditCommentText(comment.content); }}><Edit className="h-3 w-3" /></Button>
-                          <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={() => handleDeleteComment(post.id, idx)}><Trash2 className="h-3 w-3" /></Button>
+                          <Button variant="ghost" size="icon" className="h-6 w-6 hover:bg-hover" onClick={() => { setEditingComment({ postId: post.id, commentIdx: idx }); setEditCommentText(comment.content); }}><Edit className="h-3 w-3" /></Button>
+                          <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive hover:bg-hover" onClick={() => handleDeleteComment(post.id, idx)}><Trash2 className="h-3 w-3" /></Button>
                         </div>
                       )}
                     </div>
@@ -572,7 +709,7 @@ const Community = () => {
                   onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleAddComment(post.id); } }} 
                   className="pr-10" 
                 />
-                <Button size="icon" variant="ghost" className="absolute right-0 top-0 h-full text-muted-foreground hover:text-primary" onClick={() => handleAddComment(post.id)} disabled={!newComment[post.id]?.trim()}>
+                <Button size="icon" variant="ghost" className="absolute right-0 top-0 h-full text-muted-foreground hover:text-primary hover:bg-hover" onClick={() => handleAddComment(post.id)} disabled={!newComment[post.id]?.trim()}>
                   <Send className="h-4 w-4" />
                 </Button>
               </div>
@@ -589,29 +726,52 @@ const Community = () => {
         case "overview":
             return (
                 <div className="space-y-6 animate-in fade-in duration-500">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border-blue-100 dark:border-blue-900">
-                            <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-blue-600 dark:text-blue-400">Total Users</CardTitle></CardHeader>
+                            <CardHeader className="pb-2"><CardTitle className="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase">Total Users</CardTitle></CardHeader>
                             <CardContent>
                                 <div className="text-3xl font-bold">{adminUsers.length}</div>
                                 <p className="text-xs text-muted-foreground mt-1">+2% from last week</p>
                             </CardContent>
                         </Card>
+                         <Card className="bg-primary/5 border-primary/20">
+                            <CardHeader className="pb-2"><CardTitle className="text-xs font-medium text-muted-foreground uppercase">Active Groups</CardTitle></CardHeader>
+                            <CardContent><div className="text-3xl font-bold">{adminGroups.length}</div></CardContent>
+                        </Card>
                         <Card className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border-amber-100 dark:border-amber-900">
-                            <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-amber-600 dark:text-amber-400">Pending Reports</CardTitle></CardHeader>
+                            <CardHeader className="pb-2"><CardTitle className="text-xs font-medium text-amber-600 dark:text-amber-400 uppercase">Pending Reports</CardTitle></CardHeader>
                             <CardContent>
                                 <div className="text-3xl font-bold">{adminReports.length}</div>
-                                <p className="text-xs text-muted-foreground mt-1">{adminReports.length > 0 ? "Action required immediately" : "All clear"}</p>
+                                <p className="text-xs text-muted-foreground mt-1">{adminReports.length > 0 ? "Action required" : "All clear"}</p>
                             </CardContent>
                         </Card>
                         <Card className="bg-gradient-to-br from-emerald-50 to-green-50 dark:from-emerald-950/30 dark:to-green-950/30 border-emerald-100 dark:border-emerald-900">
-                            <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-emerald-600 dark:text-emerald-400">System Status</CardTitle></CardHeader>
+                            <CardHeader className="pb-2"><CardTitle className="text-xs font-medium text-emerald-600 dark:text-emerald-400 uppercase">System Status</CardTitle></CardHeader>
                             <CardContent>
                                 <div className="text-3xl font-bold flex items-center gap-2">99.9% <Activity className="h-5 w-5 animate-pulse text-emerald-600" /></div>
                                 <p className="text-xs text-muted-foreground mt-1">Servers operational</p>
                             </CardContent>
                         </Card>
                     </div>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2"><Megaphone className="h-5 w-5 text-primary" /> Global Announcement</CardTitle>
+                            <CardDescription>Send a system-wide broadcast to all active chat rooms.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <Textarea 
+                                placeholder="Type your message here (e.g., 'Server maintenance in 10 minutes')..." 
+                                value={announcementText}
+                                onChange={(e) => setAnnouncementText(e.target.value)}
+                            />
+                            <div className="flex justify-end">
+                                <Button onClick={handleSendAnnouncement} disabled={!announcementText} className="bg-gradient-to-r from-primary to-emerald-600 text-white">
+                                    <Send className="mr-2 h-4 w-4" /> Broadcast
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
 
                     <Card>
                         <CardHeader>
@@ -654,7 +814,7 @@ const Community = () => {
                                 onChange={(e) => setUserSearch(e.target.value)}
                             />
                         </div>
-                        <Button variant="outline"><FileText className="mr-2 h-4 w-4" /> Export CSV</Button>
+                        <Button variant="outline" className="hover:bg-hover hover:text-hover-foreground"><FileText className="mr-2 h-4 w-4" /> Export CSV</Button>
                     </div>
 
                     <div className="rounded-md border bg-card">
@@ -683,11 +843,11 @@ const Community = () => {
                                         </Badge>
                                     </div>
                                     <div className="col-span-2 flex justify-end gap-1">
-                                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleBanUser(user.id)} title={user.status === "active" ? "Ban User" : "Unban User"}>
+                                        <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-hover hover:text-hover-foreground" onClick={() => handleBanUser(user.id)} title={user.status === "active" ? "Ban User" : "Unban User"}>
                                             {user.status === "active" ? <Ban className="h-4 w-4 text-destructive" /> : <CheckCircle className="h-4 w-4 text-green-600" />}
                                         </Button>
                                         <DropdownMenu>
-                                            <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8"><MoreVertical className="h-4 w-4" /></Button></DropdownMenuTrigger>
+                                            <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-hover hover:text-hover-foreground"><MoreVertical className="h-4 w-4" /></Button></DropdownMenuTrigger>
                                             <DropdownMenuContent align="end">
                                                 <DropdownMenuLabel>Manage {user.name}</DropdownMenuLabel>
                                                 <DropdownMenuItem>View Profile</DropdownMenuItem>
@@ -704,6 +864,42 @@ const Community = () => {
                 </div>
             );
         }
+
+        case "groups":
+            return (
+                <div className="space-y-4 animate-in fade-in duration-500">
+                    <div className="flex justify-between items-center">
+                        <h3 className="text-lg font-medium">Chat Groups</h3>
+                    </div>
+                    <div className="grid gap-4">
+                        {adminGroups.map(group => (
+                            <div key={group.id} className="flex items-center justify-between p-4 bg-card border rounded-xl shadow-sm">
+                                <div className="flex items-center gap-4">
+                                    {getGroupIcon(group)}
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <p className="font-semibold">{group.name}</p>
+                                            {group.type === "private" && <Lock className="h-3 w-3 text-muted-foreground" />}
+                                            {group.status === 'frozen' && <Ban className="h-3 w-3 text-red-500" />}
+                                        </div>
+                                        <p className="text-xs text-muted-foreground">
+                                            {group.members} members • {group.description || "No description"}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Button variant="outline" size="sm" className="hover:bg-hover hover:text-hover-foreground" onClick={() => handleGroupAction(group.id, "freeze")}>
+                                        {group.status === "active" ? "Freeze" : "Unfreeze"}
+                                    </Button>
+                                    <Button variant="ghost" size="icon" className="text-destructive hover:bg-hover hover:text-hover-foreground" onClick={() => handleGroupAction(group.id, "delete")}>
+                                        <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
 
         case "moderation":
             return (
@@ -739,7 +935,7 @@ const Community = () => {
                                                 )}
                                             </div>
                                             <div className="flex gap-2 justify-end">
-                                                <Button variant="outline" size="sm" onClick={() => handleResolveReport(report.id, "dismiss")}>Dismiss Report</Button>
+                                                <Button variant="outline" size="sm" className="hover:bg-hover hover:text-hover-foreground" onClick={() => handleResolveReport(report.id, "dismiss")}>Dismiss Report</Button>
                                                 <Button variant="destructive" size="sm" onClick={() => handleResolveReport(report.id, "delete_post")}><Trash2 className="mr-2 h-4 w-4" /> Delete Post</Button>
                                             </div>
                                         </CardContent>
@@ -748,6 +944,60 @@ const Community = () => {
                             })}
                         </div>
                     )}
+                </div>
+            );
+
+        case "settings":
+            return (
+                <div className="space-y-6 animate-in fade-in duration-500">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Safety & Filters</CardTitle>
+                            <CardDescription>Global settings for all chat rooms.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="flex items-center justify-between">
+                                <div className="space-y-0.5">
+                                    <p className="text-sm font-medium">Profanity Filter</p>
+                                    <p className="text-xs text-muted-foreground">Automatically hide offensive words.</p>
+                                </div>
+                                <Switch 
+                                    checked={adminSettings.profanityFilter} 
+                                    onCheckedChange={(val) => setAdminSettings({...adminSettings, profanityFilter: val})} 
+                                />
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <div className="space-y-0.5">
+                                    <p className="text-sm font-medium">Image Uploads</p>
+                                    <p className="text-xs text-muted-foreground">Allow users to send images in chats.</p>
+                                </div>
+                                <Switch 
+                                    checked={adminSettings.imageUploads} 
+                                    onCheckedChange={(val) => setAdminSettings({...adminSettings, imageUploads: val})} 
+                                />
+                            </div>
+                             <div className="flex items-center justify-between">
+                                <div className="space-y-0.5">
+                                    <p className="text-sm font-medium">Link Preview</p>
+                                    <p className="text-xs text-muted-foreground">Generate previews for shared URLs.</p>
+                                </div>
+                                <Switch 
+                                    checked={adminSettings.linkPreviews} 
+                                    onCheckedChange={(val) => setAdminSettings({...adminSettings, linkPreviews: val})} 
+                                />
+                            </div>
+                        </CardContent>
+                    </Card>
+                    
+                    <Card className="border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/10">
+                        <CardHeader>
+                            <CardTitle className="text-red-600">Danger Zone</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <Button variant="destructive" className="w-full">Enable Maintenance Mode</Button>
+                            <p className="text-xs text-red-600/60 mt-2 text-center">This will lock all chat rooms for everyone except admins.</p>
+                        </CardContent>
+                    </Card>
                 </div>
             );
         default: return null;
@@ -770,19 +1020,15 @@ const Community = () => {
               </>
             )}
             
-            {/* --- SECURITY COMMENT: WRAP THIS IN PERMISSION CHECK (e.g. if(user.isAdmin)) --- */}
-            <div className="h-8 w-[1px] bg-primary/10 shrink-0 mx-1" />
-            <NavIcon mobileMode active={showAdminPanel} icon={<Shield size={20} />} label="Admin" onClick={() => setShowAdminPanel(true)} />
-            
             {/* NEW CREATE GROUP BUTTON (Mobile) */}
+            <div className="h-8 w-[1px] bg-primary/10 shrink-0 mx-1" />
             <NavIcon 
               mobileMode 
               active={false} 
               icon={<Plus size={20} />} 
               label="New Group" 
-              onClick={() => console.log("Create Group Clicked")} 
+              onClick={() => setIsCreateGroupDialogOpen(true)} 
             />
-            {/* --- END SECURITY COMMENT --- */}
           </div>
         </div>
       )}
@@ -817,12 +1063,13 @@ const Community = () => {
               active={false} 
               icon={<Plus size={24} />} 
               label="Create Group" 
-              onClick={() => console.log("Create Group Clicked")} 
+              onClick={() => setIsCreateGroupDialogOpen(true)} 
             />
             {/* --- END SECURITY COMMENT --- */}
           </div>
         </aside>
       )}
+
       {/* ADMIN SUB-MENU (SLIDES OUT) */}
       {!isMobile && (
         <div 
@@ -841,17 +1088,46 @@ const Community = () => {
             </div>
             
             <div className="flex-1 overflow-y-auto p-4 space-y-1 custom-scrollbar">
-              <Button variant={activeAdminTab === "overview" ? "secondary" : "ghost"} className="w-full justify-start" onClick={() => setActiveAdminTab("overview")}>
+              <Button 
+                variant="ghost"
+                className={`w-full justify-start ${activeAdminTab === "overview" ? "bg-gradient-to-r from-primary to-emerald-600 text-white shadow-md hover:from-primary/90 hover:to-emerald-600/90" : "hover:bg-hover hover:text-hover-foreground"}`}
+                onClick={() => setActiveAdminTab("overview")}
+              >
                 <Activity className="mr-3 h-4 w-4" /> Overview
               </Button>
-              <Button variant={activeAdminTab === "users" ? "secondary" : "ghost"} className="w-full justify-start" onClick={() => setActiveAdminTab("users")}>
+              <Button 
+                variant="ghost"
+                className={`w-full justify-start ${activeAdminTab === "groups" ? "bg-gradient-to-r from-primary to-emerald-600 text-white shadow-md hover:from-primary/90 hover:to-emerald-600/90" : "hover:bg-hover hover:text-hover-foreground"}`}
+                onClick={() => setActiveAdminTab("groups")}
+              >
+                <Layers className="mr-3 h-4 w-4" /> Groups
+              </Button>
+              <Button 
+                variant="ghost"
+                className={`w-full justify-start ${activeAdminTab === "users" ? "bg-gradient-to-r from-primary to-emerald-600 text-white shadow-md hover:from-primary/90 hover:to-emerald-600/90" : "hover:bg-hover hover:text-hover-foreground"}`}
+                onClick={() => setActiveAdminTab("users")}
+              >
                 <Users className="mr-3 h-4 w-4" /> Users
               </Button>
-              <Button variant={activeAdminTab === "moderation" ? "secondary" : "ghost"} className="w-full justify-start" onClick={() => setActiveAdminTab("moderation")}>
+              <Button 
+                variant="ghost"
+                className={`w-full justify-start ${activeAdminTab === "moderation" ? "bg-gradient-to-r from-primary to-emerald-600 text-white shadow-md hover:from-primary/90 hover:to-emerald-600/90" : "hover:bg-hover hover:text-hover-foreground"}`}
+                onClick={() => setActiveAdminTab("moderation")}
+              >
                 <AlertTriangle className="mr-3 h-4 w-4" /> Reports
                 {adminReports.length > 0 && <Badge className="ml-auto h-5 px-1.5 bg-red-500 text-white">{adminReports.length}</Badge>}
               </Button>
+              <Button 
+                variant="ghost"
+                className={`w-full justify-start ${activeAdminTab === "settings" ? "bg-gradient-to-r from-primary to-emerald-600 text-white shadow-md hover:from-primary/90 hover:to-emerald-600/90" : "hover:bg-hover hover:text-hover-foreground"}`}
+                onClick={() => setActiveAdminTab("settings")}
+              >
+                <Settings className="mr-3 h-4 w-4" /> Settings
+              </Button>
               <div className="my-2 border-t border-primary/10" />
+              <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-hover " onClick={() => setShowAdminPanel(false)}>
+                <LogOut className="mr-3 h-4 w-4" /> Exit Mode
+              </Button>
             </div>
           </div>
         </div>
@@ -864,7 +1140,9 @@ const Community = () => {
             <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-emerald-600 to-teal-600 bg-clip-text text-transparent">
               {showAdminPanel ? (
                   activeAdminTab === "overview" ? "System Overview" : 
+                  activeAdminTab === "groups" ? "Group Management" :
                   activeAdminTab === "users" ? "User Management" : 
+                  activeAdminTab === "settings" ? "Global Settings" :
                   "Content Moderation"
               ) : getFeedTitle()}
             </h1>
@@ -883,6 +1161,157 @@ const Community = () => {
         </div>
 
         {renderCreateDialog()}
+
+        {/* CREATE GROUP DIALOG (Updated) */}
+        <Dialog open={isCreateGroupDialogOpen} onOpenChange={setIsCreateGroupDialogOpen}>
+            <DialogContent className="sm:max-w-[425px] bg-white/95 dark:bg-card/95 backdrop-blur-xl border-primary/20">
+                <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2"><Layers className="h-5 w-5 text-primary" />Create New Group</DialogTitle>
+                    <DialogDescription>Create a space for students and teachers to collaborate.</DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                    {/* ICON UPLOAD */}
+                    <div className="flex justify-center mb-2">
+                        <div className="relative group cursor-pointer" onClick={() => document.getElementById("group-icon-upload")?.click()}>
+                            <Avatar className="h-20 w-20 border-2 border-dashed border-primary/50 group-hover:border-primary transition-colors">
+                                <AvatarImage src={newGroupIconType === "image" && newGroupIcon ? newGroupIcon : undefined} className="object-cover" />
+                                <AvatarFallback className="bg-transparent text-muted-foreground group-hover:text-primary transition-colors">
+                                    {newGroupIconType === "preset" && newGroupIcon ? (
+                                        PRESET_ICONS.find(p => p.id === newGroupIcon)?.icon
+                                    ) : (
+                                        <Camera className="h-8 w-8" />
+                                    )}
+                                </AvatarFallback>
+                            </Avatar>
+                            <div className="absolute bottom-0 right-0 bg-primary text-white p-1 rounded-full shadow-lg">
+                                <Plus className="h-3 w-3" />
+                            </div>
+                            <input id="group-icon-upload" type="file" accept="image/*" className="hidden" onChange={handleGroupIconUpload} />
+                        </div>
+                    </div>
+
+                    {/* --- REPLACED SECTION START --- */}
+                    <div className="flex flex-col items-center gap-2 mb-4 relative">
+                        <span className="text-xs text-muted-foreground">Or select a preset:</span>
+                        
+                        <Button 
+                            type="button"
+                            variant="outline" 
+                            className={`w-full border-dashed border-2 flex items-center justify-center gap-2 transition-all ${newGroupIcon && newGroupIconType === "preset" ? "bg-gradient-to-r from-primary to-emerald-600 text-white border-transparent" : "text-muted-foreground hover:bg-hover hover:text-hover-foreground"}`}
+                            onClick={() => setShowIconPicker(!showIconPicker)}
+                        >
+                            {newGroupIcon && newGroupIconType === "preset" ? (
+                                <>
+                                    {PRESET_ICONS.find(p => p.id === newGroupIcon)?.icon} 
+                                    <span className="ml-2">Icon Selected</span>
+                                </>
+                            ) : (
+                                <>
+                                    <Layers className="h-4 w-4" /> Browse Icons
+                                </>
+                            )}
+                        </Button>
+
+                        {/* ICON PANEL POPUP */}
+                        {showIconPicker && (
+                            <div className="absolute top-full left-0 right-0 mt-2 p-4 bg-popover border rounded-xl shadow-xl z-50 animate-in fade-in zoom-in-95 duration-200">
+                                <div className="grid grid-cols-4 gap-2 max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
+                                    {PRESET_ICONS.map(icon => (
+                                        <button 
+                                            key={icon.id}
+                                            type="button"
+                                            className={`p-2 rounded-lg border flex flex-col items-center justify-center gap-1 transition-all ${newGroupIcon === icon.id && newGroupIconType === "preset" ? "border-transparent bg-gradient-to-r from-primary to-emerald-600 text-white ring-2 ring-primary/20" : "border-transparent hover:bg-hover hover:text-hover-foreground text-muted-foreground"}`}
+                                            onClick={() => { 
+                                                setNewGroupIcon(icon.id); 
+                                                setNewGroupIconType("preset"); 
+                                                setShowIconPicker(false); 
+                                            }}
+                                            title={icon.label}
+                                        >
+                                            {icon.icon}
+                                            <span className="text-[10px] truncate w-full text-center">{icon.label}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    {/* --- REPLACED SECTION END --- */}
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="group-name">Group Name</Label>
+                        <Input 
+                            id="group-name" 
+                            value={newGroupName} 
+                            onChange={(e) => setNewGroupName(e.target.value)} 
+                            placeholder="e.g. Science Fair 2024" 
+                        />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="group-desc">Description</Label>
+                        <Textarea 
+                            id="group-desc" 
+                            value={newGroupDescription} 
+                            onChange={(e) => setNewGroupDescription(e.target.value)} 
+                            placeholder="What is this group about?" 
+                            className="resize-none"
+                        />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="group-school">Organization</Label>
+                        <select 
+                            id="group-school"
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                            value={newGroupSchool}
+                            onChange={(e) => setNewGroupSchool(e.target.value)}
+                        >
+                            {ALL_SCHOOLS.map(s => <option key={s} value={s}>{s}</option>)}
+                        </select>
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label>Privacy Type</Label>
+                        <div className="flex gap-4">
+                            <Button 
+                                type="button" 
+                                variant={newGroupType === "public" ? "default" : "outline"} 
+                                onClick={() => setNewGroupType("public")}
+                                className={`w-full ${newGroupType === "public" ? "bg-gradient-to-r from-primary to-emerald-600 text-white" : "hover:bg-hover hover:text-hover-foreground"}`}
+                            >
+                                <Globe className="mr-2 h-4 w-4" /> Public
+                            </Button>
+                            <Button 
+                                type="button" 
+                                variant={newGroupType === "private" ? "default" : "outline"} 
+                                onClick={() => setNewGroupType("private")}
+                                className={`w-full ${newGroupType === "private" ? "bg-gradient-to-r from-primary to-emerald-600 text-white" : "hover:bg-hover hover:text-hover-foreground"}`}
+                            >
+                                <Lock className="mr-2 h-4 w-4" /> Private
+                            </Button>
+                        </div>
+                    </div>
+
+                    {newGroupType === "private" && (
+                        <div className="grid gap-2 animate-in fade-in slide-in-from-top-2">
+                            <Label htmlFor="group-pass" className="flex items-center gap-2"><KeyRound className="h-4 w-4" /> Access Code (Optional)</Label>
+                            <Input 
+                                id="group-pass" 
+                                type="password"
+                                value={newGroupPassword} 
+                                onChange={(e) => setNewGroupPassword(e.target.value)} 
+                                placeholder="Set a password for joining..." 
+                            />
+                        </div>
+                    )}
+                </div>
+                <DialogFooter>
+                    <Button variant="ghost" onClick={() => setIsCreateGroupDialogOpen(false)} className="hover:bg-hover hover:text-hover-foreground">Cancel</Button>
+                    <Button onClick={handleCreateGroup} disabled={!newGroupName.trim()} className="bg-gradient-to-r from-primary to-emerald-600 text-white">Create Group</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
 
         {/* DYNAMIC CONTENT */}
         <div className="max-w-6xl mx-auto space-y-6">
