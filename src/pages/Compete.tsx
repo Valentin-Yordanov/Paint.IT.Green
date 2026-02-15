@@ -158,142 +158,213 @@ const EventCalendar = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [newEvent, setNewEvent] = useState({ title: "", time: "", location: "" });
+  
+  // Consolidated form state
+  const [formData, setFormData] = useState({ title: "", time: "", location: "" });
 
-  // Center Map on Bulgaria
+  // Map settings
   const mapCenter: LatLngExpression = useMemo(() => [42.7339, 25.4858], []);
   const defaultZoom = 7;
+  const eventDates = useMemo(() => events.map((e) => new Date(e.dateString)), [events]);
 
+  // Reset form when closed
   useEffect(() => {
     if (!isFormOpen) {
-      setNewEvent({ title: "", time: "", location: "" });
+      setFormData({ title: "", time: "", location: "" });
       setEditingId(null);
     }
   }, [isFormOpen]);
 
+  const selectedEvents = useMemo(() => {
+    return events.filter((e) => 
+      selectedDate && new Date(e.dateString).toDateString() === selectedDate.toDateString()
+    );
+  }, [events, selectedDate]);
+
+  const getEventPosition = (location: string): LatLngExpression | null => {
+    const parts = location.split(",").map((p) => parseFloat(p.trim()));
+    return (parts.length === 2 && !isNaN(parts[0])) ? [parts[0], parts[1]] as LatLngExpression : null;
+  };
+
   const handleSaveEvent = async () => {
-    if (!selectedDate || !newEvent.title) return;
+    if (!selectedDate || !formData.title) return;
     setIsLoading(true);
 
-    // Save locally for demo
     const eventToSave: CalendarEvent = {
       id: editingId || Date.now().toString(),
       dateString: selectedDate.toISOString(),
-      title: newEvent.title,
-      time: newEvent.time,
-      location: newEvent.location,
+      title: formData.title,
+      time: formData.time,
+      location: formData.location,
       createdBy: CURRENT_USER_ID,
     };
 
-    setEvents((prev) => {
-      if (editingId) return prev.map(e => e.id === editingId ? eventToSave : e);
-      return [...prev, eventToSave];
-    });
+    setEvents((prev) => 
+      editingId ? prev.map(e => e.id === editingId ? eventToSave : e) : [...prev, eventToSave]
+    );
 
     setIsLoading(false);
     setIsFormOpen(false);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
     if (!confirm(t("compete.confirmDelete"))) return;
     setEvents(prev => prev.filter(e => e.id !== id));
   };
 
-  const handleEditClick = (event: CalendarEvent) => {
-    setNewEvent({ title: event.title, time: event.time, location: event.location });
+  const handleEditClick = (event: CalendarEvent, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setFormData({ title: event.title, time: event.time, location: event.location });
     setEditingId(event.id);
     setIsFormOpen(true);
   };
 
-  const handleCancel = () => setIsFormOpen(false);
+  const handleCreateClick = () => {
+    setEditingId(null);
+    setFormData({ title: "", time: "", location: "" });
+    setIsFormOpen(true);
+  };
 
-  const selectedEvents = events.filter(
-    (e) => selectedDate && new Date(e.dateString).toDateString() === selectedDate.toDateString(),
-  );
+  // Helper to fix Leaflet rendering issues when modal opens
+  const ResizeMap = () => {
+    const map = useMap();
+    useEffect(() => {
+      setTimeout(() => { map.invalidateSize(); }, 200);
+    }, [map]);
+    return null;
+  };
 
   return (
-    <div className="flex flex-col gap-6 max-h-[85vh] overflow-y-auto pr-2">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-[500px] lg:h-[400px]">
+    // MAIN CONTAINER
+    // Mobile: h-auto (lets it grow long so you can scroll the modal)
+    // Desktop: h-full (fits inside the fixed modal height)
+    <div className="flex flex-col gap-4 h-auto lg:h-full">
+      
+      {/* --- TOP SECTION: MAP & CALENDAR --- */}
+      {/* Mobile: Stacked (flex-col) | Desktop: Side-by-side (grid) with fixed height */}
+      <div className="flex flex-col lg:grid lg:grid-cols-2 gap-4 lg:h-[320px] shrink-0">
+        
         {/* MAP */}
-        <div className="rounded-2xl border border-primary/20 overflow-hidden h-full z-0 relative shadow-xl bg-card">
-          <div className="absolute top-3 left-12 z-[400] px-3 py-1.5 bg-background/90 backdrop-blur-sm rounded-lg border border-primary/20 shadow-lg pointer-events-none">
-            <span className="text-xs font-medium text-primary flex items-center gap-1.5">
+        {/* Added 'shrink-0' and 'min-h' to prevent squash */}
+        <div className="relative h-[250px] min-h-[250px] lg:h-full w-full rounded-xl border border-border/40 shadow-sm overflow-hidden bg-muted/20 shrink-0 order-2 lg:order-1">
+          <div className="absolute top-3 left-3 z-[400] px-2.5 py-1 bg-background/95 backdrop-blur rounded-md border shadow-sm pointer-events-none">
+            <span className="text-[10px] font-semibold text-primary flex items-center gap-1.5">
               <MapPin className="w-3 h-3" />
               {t("Click map to add event")}
             </span>
           </div>
-          <MapContainer center={mapCenter} zoom={defaultZoom} style={{ height: "100%", width: "100%" }}>
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; OpenStreetMap contributors' />
+          <MapContainer center={mapCenter} zoom={defaultZoom} className="h-full w-full z-0">
+            <ResizeMap />
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; OpenStreetMap' />
             <MapClickHandler onLocationSelect={(lat, lng) => {
-              setNewEvent(prev => ({ ...prev, location: `${lat.toFixed(5)}, ${lng.toFixed(5)}` }));
+              setFormData(prev => ({ ...prev, location: `${lat.toFixed(5)}, ${lng.toFixed(5)}` }));
               setIsFormOpen(true);
             }} />
             <LocationMarker />
             {events.map((event) => {
-              const parts = event.location.split(",").map((p) => parseFloat(p.trim()));
-              if (parts.length === 2 && !isNaN(parts[0])) {
-                return (
-                  <Marker key={event.id} position={[parts[0], parts[1]] as LatLngExpression} icon={EventIcon}>
-                    <Popup>
-                      <div className="text-sm">
-                        <p className="font-bold text-primary mb-1">{event.title}</p>
-                        <p className="flex items-center gap-1 text-muted-foreground"><Clock className="w-3 h-3" /> {event.time}</p>
+              const position = getEventPosition(event.location);
+              if (!position) return null;
+              return (
+                <Marker key={event.id} position={position} icon={EventIcon}>
+                  <Popup>
+                    <div className="p-0.5 min-w-[100px]">
+                      <p className="font-bold text-xs text-primary mb-0.5">{event.title}</p>
+                      <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                         <Clock className="w-2.5 h-2.5" /> {event.time}
                       </div>
-                    </Popup>
-                  </Marker>
-                );
-              }
-              return null;
+                    </div>
+                  </Popup>
+                </Marker>
+              );
             })}
           </MapContainer>
         </div>
 
         {/* CALENDAR */}
-        <div className="flex justify-center border border-primary/20 rounded-2xl bg-gradient-to-br from-card/80 via-card to-primary/5 backdrop-blur-sm p-4 h-full shadow-xl relative overflow-hidden group">
+        <div className="h-[340px] lg:h-full w-full flex justify-center items-center border border-border/40 rounded-xl bg-card/50 backdrop-blur-sm shadow-sm overflow-hidden shrink-0 order-1 lg:order-2">
           <Calendar
             mode="single"
             selected={selectedDate}
             onSelect={setSelectedDate}
-            className="w-full h-full flex justify-center items-center"
-            modifiers={{ event: events.map((e) => new Date(e.dateString)) }}
-            modifiersStyles={{ event: { fontWeight: "bold", backgroundColor: "hsl(var(--primary) / 0.2)", color: "hsl(var(--primary))", border: "1px solid hsl(var(--primary))" } }}
+            className="w-full h-full flex items-center justify-center p-3" 
+            classNames={{
+              months: "w-full h-full flex flex-col",
+              month: "w-full h-full flex flex-col justify-between",
+              table: "w-full h-full flex-1",
+              head_row: "flex w-full justify-between mb-2",
+              head_cell: "text-muted-foreground w-full font-normal text-[0.8rem]",
+              row: "flex w-full mt-2 justify-between",
+              cell: "w-full text-center relative p-0 focus-within:relative focus-within:z-20",
+              day: "h-9 w-9 p-0 font-normal aria-selected:opacity-100 mx-auto hover:bg-primary/10 rounded-md transition-colors",
+              nav_button: "border hover:bg-muted hover:text-foreground opacity-50 hover:opacity-100 h-8 w-8",
+              caption: "relative flex justify-center items-center pt-1 pb-4 relative",
+            }}
+            modifiers={{ event: eventDates }}
+            modifiersStyles={{ 
+              event: { 
+                fontWeight: "700", 
+                color: "hsl(var(--primary))",
+                textDecoration: "underline decoration-wavy decoration-primary/40"
+              } 
+            }}
           />
         </div>
       </div>
 
-      {/* Events List & Form */}
-      <div className="flex-1 space-y-4">
-        <div className="flex items-center justify-between border-b border-primary/10 pb-2">
-          <h3 className="font-semibold text-lg flex items-center gap-2">
+      {/* --- BOTTOM SECTION HEADER --- */}
+      <div className="flex items-center justify-between pt-2 border-t border-border/10 shrink-0">
+        <div className="flex items-center gap-3">
+          <h3 className="font-semibold text-lg flex items-center gap-2 text-foreground/90">
             <CalendarDays className="w-5 h-5 text-primary" />
-            {selectedDate ? selectedDate.toDateString() : t("compete.selectDate")}
+            {selectedDate ? selectedDate.toLocaleDateString(undefined, { dateStyle: 'medium' }) : t("compete.selectDate")}
           </h3>
-          <Badge variant="outline" className="text-xs font-normal opacity-70">
+          <Badge variant="secondary" className="px-2 py-0.5 text-xs">
             {selectedEvents.length} {t("Events")}
           </Badge>
         </div>
 
-        <div className="grid grid-cols-1 gap-3">
+        {/* Create Button */}
+        {!isFormOpen && (
+          <Button 
+            size="sm" 
+            onClick={handleCreateClick} 
+            className="bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20 shadow-none h-8"
+          >
+            <Plus className="h-4 w-4 mr-1.5" /> {t("compete.createEvent")}
+          </Button>
+        )}
+      </div>
+
+      {/* --- SPLIT VIEW: LIST & FORM --- */}
+      <div className="flex-1 flex flex-col lg:flex-row gap-4 min-h-0">
+        
+        {/* LEFT: EVENT LIST */}
+        {/* LOGIC: Hidden on mobile if Form is open (`hidden lg:block`) */}
+        <div className={`flex-1 overflow-y-auto pr-1 space-y-2 ${isFormOpen ? 'hidden lg:block' : 'block'}`}>
           {selectedEvents.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground border-2 border-dashed border-primary/10 rounded-xl">
-                <p>{t("compete.noEvents")}</p>
-                <p className="text-xs opacity-60 mt-1">Click the map or "+ Create Event" to add one.</p>
+            <div className="h-full flex flex-col items-center justify-center text-muted-foreground border-2 border-dashed border-muted/50 rounded-xl min-h-[150px]">
+               <p className="text-sm">{t("compete.noEvents")}</p>
             </div>
           ) : (
             selectedEvents.map((event) => (
-              <Card key={event.id} className="border-l-4 border-l-primary shadow-sm bg-card/50 hover:bg-card transition-colors group">
-                <CardContent className="p-4 flex justify-between items-center">
+              <Card key={event.id} className="group overflow-hidden border-l-4 border-l-primary hover:shadow-sm transition-all bg-card/60">
+                <CardContent className="p-3 flex justify-between items-center">
                   <div>
-                    <h4 className="font-bold text-foreground">{event.title}</h4>
-                    <div className="flex gap-3 mt-1 text-xs text-muted-foreground">
+                    <h4 className="font-bold text-sm">{event.title}</h4>
+                    <div className="flex gap-3 mt-1 text-[11px] text-muted-foreground">
                       <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {event.time}</span>
-                      <span className="flex items-center gap-1"><Pin className="w-3 h-3" /> {event.location}</span>
+                      <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {event.location}</span>
                     </div>
                   </div>
-                  {(event.createdBy === CURRENT_USER_ID || event.createdBy !== 'other') && (
-                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500" onClick={() => handleEditClick(event)}><Edit className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500" onClick={() => handleDelete(event.id)}><Trash2 className="h-4 w-4" /></Button>
+                  {(event.createdBy === CURRENT_USER_ID) && (
+                    <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button variant="ghost" size="icon" className="h-7 w-7 hover:text-blue-500" onClick={(e) => handleEditClick(event, e)}>
+                        <Edit className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-7 w-7 hover:text-red-500" onClick={(e) => handleDelete(event.id, e)}>
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
                     </div>
                   )}
                 </CardContent>
@@ -302,45 +373,57 @@ const EventCalendar = () => {
           )}
         </div>
 
-        {/* Add Event Form */}
-        {(isFormOpen) && (
-          <Card className="border-primary/30 bg-primary/5 animate-in slide-in-from-bottom-4">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base flex items-center gap-2">
-                {editingId ? <Edit className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-                {editingId ? t("compete.editEvent") : t("compete.createEvent")}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                    <Label>{t("compete.eventTitle")}</Label>
-                    <Input value={newEvent.title} onChange={(e) => setNewEvent(p => ({...p, title: e.target.value}))} placeholder="e.g. Park Cleanup" className="bg-background"/>
+        {/* RIGHT: CREATE/EDIT FORM */}
+        {/* LOGIC: Takes full width on mobile */}
+        {isFormOpen && (
+          <div className="w-full lg:w-[340px] shrink-0 border-t lg:border-t-0 lg:border-l border-border/40 pt-4 lg:pt-0 lg:pl-4 flex flex-col animate-in slide-in-from-right-4 duration-300">
+            <div className="bg-primary/5 rounded-xl p-4 border border-primary/20 h-auto">
+              <div className="flex items-center justify-between mb-4 text-primary font-medium text-sm">
+                <span className="flex items-center gap-2">
+                  {editingId ? <Edit className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+                  {editingId ? t("compete.editEvent") : t("compete.createEvent")}
+                </span>
+                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setIsFormOpen(false)}><span className="text-lg leading-none">&times;</span></Button>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="space-y-1.5">
+                  <Label className="text-[10px] uppercase text-muted-foreground">{t("compete.eventTitle")}</Label>
+                  <Input 
+                    value={formData.title} 
+                    onChange={(e) => setFormData(p => ({...p, title: e.target.value}))} 
+                    placeholder="e.g. Tree Planting" 
+                    className="bg-background h-9 text-sm"
+                  />
                 </div>
-                <div className="space-y-2">
-                    <Label>{t("compete.eventTime")}</Label>
-                    <Input type="time" value={newEvent.time} onChange={(e) => setNewEvent(p => ({...p, time: e.target.value}))} className="bg-background"/>
+                <div className="space-y-1.5">
+                  <Label className="text-[10px] uppercase text-muted-foreground">{t("compete.eventTime")}</Label>
+                  <Input 
+                    type="time" 
+                    value={formData.time} 
+                    onChange={(e) => setFormData(p => ({...p, time: e.target.value}))} 
+                    className="bg-background h-9 text-sm"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-[10px] uppercase text-muted-foreground">{t("compete.eventLocation")}</Label>
+                  <Input 
+                    value={formData.location} 
+                    onChange={(e) => setFormData(p => ({...p, location: e.target.value}))} 
+                    placeholder="Click on map..." 
+                    className="bg-background font-mono text-xs h-9"
+                  />
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label>{t("compete.eventLocation")}</Label>
-                <div className="flex gap-2">
-                    <Input value={newEvent.location} onChange={(e) => setNewEvent(p => ({...p, location: e.target.value}))} placeholder="Click on map to set coordinates" className="bg-background font-mono text-xs"/>
-                </div>
+              
+              <div className="flex justify-end gap-2 mt-6">
+                <Button variant="ghost" size="sm" onClick={() => setIsFormOpen(false)}>{t("compete.cancel")}</Button>
+                <Button size="sm" onClick={handleSaveEvent} disabled={!formData.title}>{t("compete.saveEvent")}</Button>
               </div>
-              <div className="flex justify-end gap-2">
-                <Button variant="ghost" onClick={handleCancel}>{t("compete.cancel")}</Button>
-                <Button onClick={handleSaveEvent} disabled={!newEvent.title} className="bg-primary text-primary-foreground">{t("compete.saveEvent")}</Button>
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         )}
 
-        {!isFormOpen && (
-            <Button onClick={() => setIsFormOpen(true)} className="w-full bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20">
-                <Plus className="h-4 w-4 mr-2" /> {t("compete.createEvent")}
-            </Button>
-        )}
       </div>
     </div>
   );
@@ -440,7 +523,7 @@ const Compete = () => {
                   <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 border border-primary/20">
                     <CalendarDays className="h-6 w-6 text-primary" />
                   </div>
-                  <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  <span className="text-3xl opacity-100">
                     {t("compete.eventCalendar")}
                   </span>
                 </DialogTitle>

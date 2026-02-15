@@ -29,6 +29,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Label } from "@/components/ui/label"; 
 
 // --- TYPES ---
@@ -73,13 +80,7 @@ const ALL_SCHOOLS = [
   "Washington Middle",
 ];
 
-const ALL_CLASSES = [
-  "Ms. Smith - 5th Grade",
-  "Mr. Chen - 6th Grade",
-  "Ms. Anderson - 10th Grade",
-];
-
-// --- PRESET ICONS MAPPING (EXPANDED) ---
+// --- PRESET ICONS MAPPING ---
 const PRESET_ICONS = [
   { id: 'book', icon: <Book className="h-6 w-6" />, label: 'Study' },
   { id: 'grad', icon: <GraduationCap className="h-6 w-6" />, label: 'Academic' },
@@ -243,6 +244,7 @@ const Community = () => {
   const [newGroupType, setNewGroupType] = useState<"public" | "private">("public");
   const [newGroupPassword, setNewGroupPassword] = useState("");
   const [newGroupSchool, setNewGroupSchool] = useState(MOCK_USER.school);
+  const [organizationPassword, setOrganizationPassword] = useState(""); // NEW: Organization Password State
   const [newGroupIcon, setNewGroupIcon] = useState<string | null>(null);
   const [newGroupIconType, setNewGroupIconType] = useState<"image" | "preset">("image");
   
@@ -328,7 +330,7 @@ const Community = () => {
           members: 1, 
           type: newGroupType,
           password: newGroupType === "private" ? newGroupPassword : undefined,
-          school: newGroupSchool,
+          school: newGroupSchool === "None" ? undefined : newGroupSchool,
           status: "active",
           lastActive: "Just now"
       };
@@ -343,6 +345,7 @@ const Community = () => {
       setNewGroupPassword("");
       setNewGroupIcon(null);
       setNewGroupIconType("image");
+      setOrganizationPassword(""); // Reset org password
       
       toast({ title: "Group Created", description: `${newGroupName} is now active.` });
   };
@@ -889,7 +892,7 @@ const Community = () => {
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <Button variant="outline" size="sm" className="hover:bg-hover hover:text-hover-foreground" onClick={() => handleGroupAction(group.id, "freeze")}>
-                                        {group.status === "active" ? "Freeze" : "Unfreeze"}
+                                            {group.status === "active" ? "Freeze" : "Unfreeze"}
                                     </Button>
                                     <Button variant="ghost" size="icon" className="text-destructive hover:bg-hover hover:text-hover-foreground" onClick={() => handleGroupAction(group.id, "delete")}>
                                         <Trash2 className="h-4 w-4" />
@@ -1020,15 +1023,7 @@ const Community = () => {
               </>
             )}
             
-            {/* NEW CREATE GROUP BUTTON (Mobile) */}
-            <div className="h-8 w-[1px] bg-primary/10 shrink-0 mx-1" />
-            <NavIcon 
-              mobileMode 
-              active={false} 
-              icon={<Plus size={20} />} 
-              label="New Group" 
-              onClick={() => setIsCreateGroupDialogOpen(true)} 
-            />
+            {/* NEW GROUP BUTTON REMOVED FROM MOBILE */}
           </div>
         </div>
       )}
@@ -1058,7 +1053,7 @@ const Community = () => {
               onClick={() => setShowAdminPanel(true)} 
             />
             
-            {/* NEW CREATE GROUP BUTTON (Desktop) */}
+            {/* NEW CREATE GROUP BUTTON (Desktop Only) */}
             <NavIcon 
               active={false} 
               icon={<Plus size={24} />} 
@@ -1164,151 +1159,185 @@ const Community = () => {
 
         {/* CREATE GROUP DIALOG (Updated) */}
         <Dialog open={isCreateGroupDialogOpen} onOpenChange={setIsCreateGroupDialogOpen}>
-            <DialogContent className="sm:max-w-[425px] bg-white/95 dark:bg-card/95 backdrop-blur-xl border-primary/20">
-                <DialogHeader>
+            <DialogContent className="sm:max-w-[900px] sm:h-[600px] flex flex-col gap-0 p-0 bg-white/95 dark:bg-card/95 backdrop-blur-xl border-primary/20 overflow-hidden">
+                <DialogHeader className="p-6 pb-2">
                     <DialogTitle className="flex items-center gap-2"><Layers className="h-5 w-5 text-primary" />Create New Group</DialogTitle>
                     <DialogDescription>Create a space for students and teachers to collaborate.</DialogDescription>
                 </DialogHeader>
-                <div className="grid gap-4 py-4">
-                    {/* ICON UPLOAD */}
-                    <div className="flex justify-center mb-2">
-                        <div className="relative group cursor-pointer" onClick={() => document.getElementById("group-icon-upload")?.click()}>
-                            <Avatar className="h-20 w-20 border-2 border-dashed border-primary/50 group-hover:border-primary transition-colors">
-                                <AvatarImage src={newGroupIconType === "image" && newGroupIcon ? newGroupIcon : undefined} className="object-cover" />
-                                <AvatarFallback className="bg-transparent text-muted-foreground group-hover:text-primary transition-colors">
-                                    {newGroupIconType === "preset" && newGroupIcon ? (
-                                        PRESET_ICONS.find(p => p.id === newGroupIcon)?.icon
-                                    ) : (
-                                        <Camera className="h-8 w-8" />
-                                    )}
-                                </AvatarFallback>
-                            </Avatar>
-                            <div className="absolute bottom-0 right-0 bg-primary text-white p-1 rounded-full shadow-lg">
-                                <Plus className="h-3 w-3" />
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 overflow-y-auto flex-1">
+                    {/* LEFT COLUMN */}
+                    <div className="space-y-4">
+                        {/* ICON UPLOAD */}
+                        <div className="flex justify-center mb-2">
+                            <div className="relative group cursor-pointer" onClick={() => document.getElementById("group-icon-upload")?.click()}>
+                                <Avatar className="h-24 w-24 border-2 border-dashed border-primary/50 group-hover:border-primary transition-colors">
+                                    <AvatarImage src={newGroupIconType === "image" && newGroupIcon ? newGroupIcon : undefined} className="object-cover" />
+                                    <AvatarFallback className="bg-transparent text-muted-foreground group-hover:text-primary transition-colors">
+                                        {newGroupIconType === "preset" && newGroupIcon ? (
+                                            PRESET_ICONS.find(p => p.id === newGroupIcon)?.icon
+                                        ) : (
+                                            <Camera className="h-10 w-10" />
+                                        )}
+                                    </AvatarFallback>
+                                </Avatar>
+                                <div className="absolute bottom-0 right-0 bg-primary text-white p-1.5 rounded-full shadow-lg">
+                                    <Plus className="h-4 w-4" />
+                                </div>
+                                <input id="group-icon-upload" type="file" accept="image/*" className="hidden" onChange={handleGroupIconUpload} />
                             </div>
-                            <input id="group-icon-upload" type="file" accept="image/*" className="hidden" onChange={handleGroupIconUpload} />
+                        </div>
+
+                        {/* PRESET SELECTOR */}
+                        <div className="flex flex-col items-center gap-2 mb-4 relative">
+                            <span className="text-xs text-muted-foreground">Or select a preset:</span>
+                            
+                            <Button 
+                                type="button"
+                                variant="outline" 
+                                className={`w-full border-dashed border-2 flex items-center justify-center gap-2 transition-all ${newGroupIcon && newGroupIconType === "preset" ? "bg-gradient-to-r from-primary to-emerald-600 text-white border-transparent" : "text-muted-foreground hover:bg-hover hover:text-hover-foreground"}`}
+                                onClick={() => setShowIconPicker(!showIconPicker)}
+                            >
+                                {newGroupIcon && newGroupIconType === "preset" ? (
+                                    <>
+                                        {PRESET_ICONS.find(p => p.id === newGroupIcon)?.icon} 
+                                        <span className="ml-2">Icon Selected</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Layers className="h-4 w-4" /> Browse Icons
+                                    </>
+                                )}
+                            </Button>
+
+                            {/* ICON PANEL POPUP */}
+                            {showIconPicker && (
+                                <div className="absolute top-full left-0 right-0 mt-2 p-4 bg-popover border rounded-xl shadow-xl z-50 animate-in fade-in zoom-in-95 duration-200">
+                                    <div className="grid grid-cols-4 gap-2 max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
+                                        {PRESET_ICONS.map(icon => (
+                                            <button 
+                                                key={icon.id}
+                                                type="button"
+                                                className={`p-2 rounded-lg border flex flex-col items-center justify-center gap-1 transition-all ${newGroupIcon === icon.id && newGroupIconType === "preset" ? "border-transparent bg-gradient-to-r from-primary to-emerald-600 text-white ring-2 ring-primary/20" : "border-transparent hover:bg-hover hover:text-hover-foreground text-muted-foreground"}`}
+                                                onClick={() => { 
+                                                    setNewGroupIcon(icon.id); 
+                                                    setNewGroupIconType("preset"); 
+                                                    setShowIconPicker(false); 
+                                                }}
+                                                title={icon.label}
+                                            >
+                                                {icon.icon}
+                                                <span className="text-[10px] truncate w-full text-center">{icon.label}</span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="group-name">Group Name</Label>
+                            <Input 
+                                id="group-name" 
+                                value={newGroupName} 
+                                onChange={(e) => setNewGroupName(e.target.value)} 
+                                placeholder="e.g. Science Fair 2024" 
+                            />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="group-desc">Description</Label>
+                            <Textarea 
+                                id="group-desc" 
+                                value={newGroupDescription} 
+                                onChange={(e) => setNewGroupDescription(e.target.value)} 
+                                placeholder="What is this group about?" 
+                                className="resize-none h-[100px]"
+                            />
                         </div>
                     </div>
 
-                    {/* --- REPLACED SECTION START --- */}
-                    <div className="flex flex-col items-center gap-2 mb-4 relative">
-                        <span className="text-xs text-muted-foreground">Or select a preset:</span>
-                        
-                        <Button 
-                            type="button"
-                            variant="outline" 
-                            className={`w-full border-dashed border-2 flex items-center justify-center gap-2 transition-all ${newGroupIcon && newGroupIconType === "preset" ? "bg-gradient-to-r from-primary to-emerald-600 text-white border-transparent" : "text-muted-foreground hover:bg-hover hover:text-hover-foreground"}`}
-                            onClick={() => setShowIconPicker(!showIconPicker)}
-                        >
-                            {newGroupIcon && newGroupIconType === "preset" ? (
-                                <>
-                                    {PRESET_ICONS.find(p => p.id === newGroupIcon)?.icon} 
-                                    <span className="ml-2">Icon Selected</span>
-                                </>
-                            ) : (
-                                <>
-                                    <Layers className="h-4 w-4" /> Browse Icons
-                                </>
-                            )}
-                        </Button>
+                    {/* RIGHT COLUMN */}
+                    <div className="space-y-4 flex flex-col">
+                        <div className="grid gap-2">
+                            <Label htmlFor="group-school">Organization</Label>
+                            <Select 
+                                value={newGroupSchool} 
+                                onValueChange={(val) => setNewGroupSchool(val)}
+                            >
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Select organization" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="None">None</SelectItem>
+                                    {ALL_SCHOOLS.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                                </SelectContent>
+                            </Select>
+                        </div>
 
-                        {/* ICON PANEL POPUP */}
-                        {showIconPicker && (
-                            <div className="absolute top-full left-0 right-0 mt-2 p-4 bg-popover border rounded-xl shadow-xl z-50 animate-in fade-in zoom-in-95 duration-200">
-                                <div className="grid grid-cols-4 gap-2 max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
-                                    {PRESET_ICONS.map(icon => (
-                                        <button 
-                                            key={icon.id}
-                                            type="button"
-                                            className={`p-2 rounded-lg border flex flex-col items-center justify-center gap-1 transition-all ${newGroupIcon === icon.id && newGroupIconType === "preset" ? "border-transparent bg-gradient-to-r from-primary to-emerald-600 text-white ring-2 ring-primary/20" : "border-transparent hover:bg-hover hover:text-hover-foreground text-muted-foreground"}`}
-                                            onClick={() => { 
-                                                setNewGroupIcon(icon.id); 
-                                                setNewGroupIconType("preset"); 
-                                                setShowIconPicker(false); 
-                                            }}
-                                            title={icon.label}
-                                        >
-                                            {icon.icon}
-                                            <span className="text-[10px] truncate w-full text-center">{icon.label}</span>
-                                        </button>
-                                    ))}
-                                </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="org-password">Organization Password</Label>
+                            <Input 
+                                id="org-password" 
+                                type="password"
+                                value={organizationPassword} 
+                                onChange={(e) => setOrganizationPassword(e.target.value)} 
+                                placeholder={newGroupSchool === "None" ? "Not required" : "Required to link this organization"}
+                                disabled={newGroupSchool === "None"}
+                            />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label>Privacy Type</Label>
+                            <div className="flex gap-4">
+                                <Button 
+                                    type="button" 
+                                    variant={newGroupType === "public" ? "default" : "outline"} 
+                                    onClick={() => setNewGroupType("public")}
+                                    className={`w-full ${newGroupType === "public" ? "bg-gradient-to-r from-primary to-emerald-600 text-white" : "hover:bg-hover hover:text-hover-foreground"}`}
+                                >
+                                    <Globe className="mr-2 h-4 w-4" /> Public
+                                </Button>
+                                <Button 
+                                    type="button" 
+                                    variant={newGroupType === "private" ? "default" : "outline"} 
+                                    onClick={() => setNewGroupType("private")}
+                                    className={`w-full ${newGroupType === "private" ? "bg-gradient-to-r from-primary to-emerald-600 text-white" : "hover:bg-hover hover:text-hover-foreground"}`}
+                                >
+                                    <Lock className="mr-2 h-4 w-4" /> Private
+                                </Button>
+                            </div>
+                        </div>
+
+                        {newGroupType === "private" && (
+                            <div className="grid gap-2 animate-in fade-in slide-in-from-top-2">
+                                <Label htmlFor="group-pass" className="flex items-center gap-2"><KeyRound className="h-4 w-4" /> Access Code</Label>
+                                <Input 
+                                    id="group-pass" 
+                                    type="password"
+                                    value={newGroupPassword} 
+                                    onChange={(e) => setNewGroupPassword(e.target.value)} 
+                                    placeholder="Set a password for joining..." 
+                                />
                             </div>
                         )}
                     </div>
-                    {/* --- REPLACED SECTION END --- */}
-
-                    <div className="grid gap-2">
-                        <Label htmlFor="group-name">Group Name</Label>
-                        <Input 
-                            id="group-name" 
-                            value={newGroupName} 
-                            onChange={(e) => setNewGroupName(e.target.value)} 
-                            placeholder="e.g. Science Fair 2024" 
-                        />
-                    </div>
-
-                    <div className="grid gap-2">
-                        <Label htmlFor="group-desc">Description</Label>
-                        <Textarea 
-                            id="group-desc" 
-                            value={newGroupDescription} 
-                            onChange={(e) => setNewGroupDescription(e.target.value)} 
-                            placeholder="What is this group about?" 
-                            className="resize-none"
-                        />
-                    </div>
-
-                    <div className="grid gap-2">
-                        <Label htmlFor="group-school">Organization</Label>
-                        <select 
-                            id="group-school"
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                            value={newGroupSchool}
-                            onChange={(e) => setNewGroupSchool(e.target.value)}
-                        >
-                            {ALL_SCHOOLS.map(s => <option key={s} value={s}>{s}</option>)}
-                        </select>
-                    </div>
-
-                    <div className="grid gap-2">
-                        <Label>Privacy Type</Label>
-                        <div className="flex gap-4">
-                            <Button 
-                                type="button" 
-                                variant={newGroupType === "public" ? "default" : "outline"} 
-                                onClick={() => setNewGroupType("public")}
-                                className={`w-full ${newGroupType === "public" ? "bg-gradient-to-r from-primary to-emerald-600 text-white" : "hover:bg-hover hover:text-hover-foreground"}`}
-                            >
-                                <Globe className="mr-2 h-4 w-4" /> Public
-                            </Button>
-                            <Button 
-                                type="button" 
-                                variant={newGroupType === "private" ? "default" : "outline"} 
-                                onClick={() => setNewGroupType("private")}
-                                className={`w-full ${newGroupType === "private" ? "bg-gradient-to-r from-primary to-emerald-600 text-white" : "hover:bg-hover hover:text-hover-foreground"}`}
-                            >
-                                <Lock className="mr-2 h-4 w-4" /> Private
-                            </Button>
-                        </div>
-                    </div>
-
-                    {newGroupType === "private" && (
-                        <div className="grid gap-2 animate-in fade-in slide-in-from-top-2">
-                            <Label htmlFor="group-pass" className="flex items-center gap-2"><KeyRound className="h-4 w-4" /> Access Code (Optional)</Label>
-                            <Input 
-                                id="group-pass" 
-                                type="password"
-                                value={newGroupPassword} 
-                                onChange={(e) => setNewGroupPassword(e.target.value)} 
-                                placeholder="Set a password for joining..." 
-                            />
-                        </div>
-                    )}
                 </div>
-                <DialogFooter>
+
+                {/* FIXED FOOTER */}
+                <DialogFooter className="p-6 pt-2 border-t border-primary/10 bg-white/95 dark:bg-card/95 backdrop-blur-xl z-20 mt-auto">
                     <Button variant="ghost" onClick={() => setIsCreateGroupDialogOpen(false)} className="hover:bg-hover hover:text-hover-foreground">Cancel</Button>
-                    <Button onClick={handleCreateGroup} disabled={!newGroupName.trim()} className="bg-gradient-to-r from-primary to-emerald-600 text-white">Create Group</Button>
+                    <Button 
+                        onClick={handleCreateGroup} 
+                        disabled={
+                            !newGroupName.trim() || 
+                            (newGroupSchool !== "None" && !organizationPassword.trim()) || 
+                            (newGroupType === "private" && !newGroupPassword.trim())
+                        } 
+                        className="bg-gradient-to-r from-primary to-emerald-600 text-white"
+                    >
+                        Create Group
+                    </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
@@ -1318,7 +1347,7 @@ const Community = () => {
             {showAdminPanel ? renderAdminContent() : (
                filteredPosts.length === 0 ? (
                   <div className="text-center py-12">
-                     <p className="text-muted-foreground">{t("community.noPostsYet")}</p>
+                      <p className="text-muted-foreground">{t("community.noPostsYet")}</p>
                   </div>
                ) : (
                  filteredPosts.map(renderPost)

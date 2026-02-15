@@ -1,3 +1,5 @@
+/* eslint-disable react-refresh/only-export-components */
+
 import { useTheme } from "@/contexts/ThemeContext";
 import { Toaster as Sonner, toast } from "sonner";
 
@@ -22,6 +24,6 @@ const Toaster = ({ ...props }: ToasterProps) => {
       {...props}
     />
   );
-};
+}; 
 
 export { Toaster, toast };
