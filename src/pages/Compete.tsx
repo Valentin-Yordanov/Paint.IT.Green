@@ -1,5 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -432,6 +434,7 @@ const EventCalendar = () => {
 // --- 5. Main Compete Page ---
 const Compete = () => {
   const { t } = useLanguage();
+  const isMobile = useIsMobile();
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   // --- MOCK DATA FOR LEADERBOARDS ---
@@ -540,60 +543,88 @@ const Compete = () => {
             <Target className="w-6 h-6 text-primary" />
             <h2 className="text-4xl font-bold">{t("compete.challenges")}</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-6 items-start">
-            {pastChallenges.map((comp, index) => (
-              <Card key={index} className="border-border bg-card/50 backdrop-blur-sm opacity-70 hover:opacity-100 transition-all duration-300 hover:shadow-lg group">
-                <CardHeader>
-                  <Badge variant="outline" className="w-fit bg-muted/50">{t("compete.past")}</Badge>
-                  <div className="flex items-center gap-3 pt-2">
-                    <span className="text-3xl group-hover:scale-110 transition-transform duration-300">{comp.icon}</span>
-                    <div>
-                      <CardTitle className="text-lg">{comp.title}</CardTitle>
-                      <p className="text-sm text-muted-foreground">{comp.period}</p>
+          {(() => {
+            const allChallenges = [
+              ...pastChallenges.map(c => ({ ...c, type: "past" as const })),
+              ...(activeChallenge ? [{ ...activeChallenge, type: "active" as const }] : []),
+              ...upcomingChallenges.map(c => ({ ...c, type: "upcoming" as const })),
+            ];
+
+            const renderCard = (comp: typeof allChallenges[number], index: number) => {
+              if (comp.type === "active") {
+                return (
+                  <Card key={`active-${index}`} className="border-primary border-2 bg-gradient-to-br from-primary/10 via-card to-primary/5 backdrop-blur-sm shadow-xl shadow-primary/20 relative overflow-hidden group h-full">
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <CardHeader className="relative z-10">
+                      <Badge variant="default" className="w-fit animate-pulse">{t("compete.active")}</Badge>
+                      <div className="flex items-center gap-3 pt-2">
+                        <span className="text-4xl animate-bounce" style={{ animationDuration: "2s" }}>{comp.icon}</span>
+                        <div>
+                          <CardTitle className="text-xl">{comp.title}</CardTitle>
+                          <p className="text-sm text-muted-foreground">{comp.period}</p>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="relative z-10">
+                      <p className="text-foreground">{comp.description}</p>
+                    </CardContent>
+                  </Card>
+                );
+              }
+              if (comp.type === "past") {
+                return (
+                  <Card key={`past-${index}`} className="border-border bg-card/50 backdrop-blur-sm opacity-70 hover:opacity-100 transition-all duration-300 hover:shadow-lg group h-full">
+                    <CardHeader>
+                      <Badge variant="outline" className="w-fit bg-muted/50">{t("compete.past")}</Badge>
+                      <div className="flex items-center gap-3 pt-2">
+                        <span className="text-3xl group-hover:scale-110 transition-transform duration-300">{comp.icon}</span>
+                        <div>
+                          <CardTitle className="text-lg">{comp.title}</CardTitle>
+                          <p className="text-sm text-muted-foreground">{comp.period}</p>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground text-sm">{comp.description}</p>
+                    </CardContent>
+                  </Card>
+                );
+              }
+              return (
+                <Card key={`upcoming-${index}`} className="border-dashed border-primary/30 bg-card/30 backdrop-blur-sm hover:bg-card/50 transition-all duration-300 hover:shadow-lg hover:border-primary/50 group h-full">
+                  <CardHeader>
+                    <Badge variant="secondary" className="w-fit bg-secondary/50">{t("compete.upcoming")}</Badge>
+                    <div className="flex items-center gap-3 pt-2">
+                      <span className="text-3xl opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300">{comp.icon}</span>
+                      <div>
+                        <CardTitle className="text-lg">{comp.title}</CardTitle>
+                        <p className="text-sm text-muted-foreground">{comp.period}</p>
+                      </div>
                     </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground text-sm">{comp.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-            {activeChallenge && (
-              <Card className="border-primary border-2 bg-gradient-to-br from-primary/10 via-card to-primary/5 backdrop-blur-sm shadow-xl shadow-primary/20 transform scale-105 relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <CardHeader className="relative z-10">
-                  <Badge variant="default" className="w-fit animate-pulse">{t("compete.active")}</Badge>
-                  <div className="flex items-center gap-3 pt-2">
-                    <span className="text-4xl animate-bounce" style={{ animationDuration: "2s" }}>{activeChallenge.icon}</span>
-                    <div>
-                      <CardTitle className="text-xl">{activeChallenge.title}</CardTitle>
-                      <p className="text-sm text-muted-foreground">{activeChallenge.period}</p>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="relative z-10">
-                  <p className="text-foreground">{activeChallenge.description}</p>
-                </CardContent>
-              </Card>
-            )}
-            {upcomingChallenges.map((comp, index) => (
-              <Card key={index} className="border-dashed border-primary/30 bg-card/30 backdrop-blur-sm hover:bg-card/50 transition-all duration-300 hover:shadow-lg hover:border-primary/50 group">
-                <CardHeader>
-                  <Badge variant="secondary" className="w-fit bg-secondary/50">{t("compete.upcoming")}</Badge>
-                  <div className="flex items-center gap-3 pt-2">
-                    <span className="text-3xl opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300">{comp.icon}</span>
-                    <div>
-                      <CardTitle className="text-lg">{comp.title}</CardTitle>
-                      <p className="text-sm text-muted-foreground">{comp.period}</p>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground text-sm">{comp.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground text-sm">{comp.description}</p>
+                  </CardContent>
+                </Card>
+              );
+            };
+
+            return isMobile ? (
+              <Carousel opts={{ align: "center", loop: true }} className="w-full px-4">
+                <CarouselContent>
+                  {allChallenges.map((comp, index) => (
+                    <CarouselItem key={index} className="basis-[85%]">
+                      {renderCard(comp, index)}
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-6 items-start">
+                {allChallenges.map((comp, index) => renderCard(comp, index))}
+              </div>
+            );
+          })()}
         </div>
 
         {/* --- Leaderboards --- */}
