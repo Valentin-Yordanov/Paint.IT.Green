@@ -294,16 +294,16 @@ const Community = () => {
     setAdminUsers(users => users.map(u => u.id === userId ? { ...u, status: u.status === "active" ? "banned" : "active" } : u));
     const user = adminUsers.find(u => u.id === userId);
     addLog("Current Admin", user?.status === "active" ? "Banned User" : "Unbanned User", user?.name || "Unknown");
-    toast({ title: user?.status === "active" ? "User Banned" : "User Unbanned", variant: user?.status === "active" ? "destructive" : "default" });
+    toast({ title: user?.status === "active" ? t("admin.userBanned") : t("admin.userUnbanned"), variant: user?.status === "active" ? "destructive" : "default" });
   };
 
   const handleGroupAction = (groupId: string, action: "freeze" | "delete") => {
       if (action === "freeze") {
           setAdminGroups(groups => groups.map(g => g.id === groupId ? { ...g, status: g.status === "active" ? "frozen" : "active" } : g));
-          toast({ title: "Group Status Updated" });
+          toast({ title: t("admin.groupStatusUpdated") });
       } else {
           setAdminGroups(groups => groups.filter(g => g.id !== groupId));
-          toast({ title: "Group Deleted" });
+          toast({ title: t("admin.groupDeleted") });
       }
   };
 
@@ -347,12 +347,12 @@ const Community = () => {
       setNewGroupIconType("image");
       setOrganizationPassword(""); // Reset org password
       
-      toast({ title: "Group Created", description: `${newGroupName} is now active.` });
+      toast({ title: t("group.created"), description: `${newGroupName} ${t("group.createdDesc")}` });
   };
 
   const handleSendAnnouncement = () => {
       if (!announcementText) return;
-      toast({ title: "Announcement Sent", description: "All users have been notified." });
+      toast({ title: t("admin.announcementSent"), description: t("admin.announcementSentDesc") });
       setAnnouncementText("");
   };
 
@@ -363,10 +363,10 @@ const Community = () => {
     if (action === "delete_post") {
         setPosts(currentPosts => currentPosts.filter(p => p.id !== report.postId));
         addLog("Current Admin", "Deleted Post (Reported)", `Post #${report.postId}`);
-        toast({ title: "Content Removed", description: "The post has been deleted permanently." });
+        toast({ title: t("admin.contentRemoved"), description: t("admin.contentRemovedDesc") });
     } else {
         addLog("Current Admin", "Dismissed Report", `Report #${reportId}`);
-        toast({ title: "Report Dismissed" });
+        toast({ title: t("admin.reportDismissed") });
     }
     setAdminReports(reports => reports.filter(r => r.id !== reportId));
   };
@@ -731,46 +731,46 @@ const Community = () => {
                 <div className="space-y-6 animate-in fade-in duration-500">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border-blue-100 dark:border-blue-900">
-                            <CardHeader className="pb-2"><CardTitle className="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase">Total Users</CardTitle></CardHeader>
+                            <CardHeader className="pb-2"><CardTitle className="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase">{t("admin.totalUsers")}</CardTitle></CardHeader>
                             <CardContent>
                                 <div className="text-3xl font-bold">{adminUsers.length}</div>
-                                <p className="text-xs text-muted-foreground mt-1">+2% from last week</p>
+                                <p className="text-xs text-muted-foreground mt-1">{t("admin.fromLastWeek")}</p>
                             </CardContent>
                         </Card>
                          <Card className="bg-primary/5 border-primary/20">
-                            <CardHeader className="pb-2"><CardTitle className="text-xs font-medium text-muted-foreground uppercase">Active Groups</CardTitle></CardHeader>
+                            <CardHeader className="pb-2"><CardTitle className="text-xs font-medium text-muted-foreground uppercase">{t("admin.activeGroups")}</CardTitle></CardHeader>
                             <CardContent><div className="text-3xl font-bold">{adminGroups.length}</div></CardContent>
                         </Card>
                         <Card className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border-amber-100 dark:border-amber-900">
-                            <CardHeader className="pb-2"><CardTitle className="text-xs font-medium text-amber-600 dark:text-amber-400 uppercase">Pending Reports</CardTitle></CardHeader>
+                            <CardHeader className="pb-2"><CardTitle className="text-xs font-medium text-amber-600 dark:text-amber-400 uppercase">{t("admin.pendingReports")}</CardTitle></CardHeader>
                             <CardContent>
                                 <div className="text-3xl font-bold">{adminReports.length}</div>
-                                <p className="text-xs text-muted-foreground mt-1">{adminReports.length > 0 ? "Action required" : "All clear"}</p>
+                                <p className="text-xs text-muted-foreground mt-1">{adminReports.length > 0 ? t("admin.actionRequired") : t("admin.allClear")}</p>
                             </CardContent>
                         </Card>
                         <Card className="bg-gradient-to-br from-emerald-50 to-green-50 dark:from-emerald-950/30 dark:to-green-950/30 border-emerald-100 dark:border-emerald-900">
-                            <CardHeader className="pb-2"><CardTitle className="text-xs font-medium text-emerald-600 dark:text-emerald-400 uppercase">System Status</CardTitle></CardHeader>
+                            <CardHeader className="pb-2"><CardTitle className="text-xs font-medium text-emerald-600 dark:text-emerald-400 uppercase">{t("admin.systemStatus")}</CardTitle></CardHeader>
                             <CardContent>
                                 <div className="text-3xl font-bold flex items-center gap-2">99.9% <Activity className="h-5 w-5 animate-pulse text-emerald-600" /></div>
-                                <p className="text-xs text-muted-foreground mt-1">Servers operational</p>
+                                <p className="text-xs text-muted-foreground mt-1">{t("admin.serversOperational")}</p>
                             </CardContent>
                         </Card>
                     </div>
 
                     <Card>
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2"><Megaphone className="h-5 w-5 text-primary" /> Global Announcement</CardTitle>
-                            <CardDescription>Send a system-wide broadcast to all active chat rooms.</CardDescription>
+                            <CardTitle className="flex items-center gap-2"><Megaphone className="h-5 w-5 text-primary" /> {t("admin.globalAnnouncement")}</CardTitle>
+                            <CardDescription>{t("admin.announcementDesc")}</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <Textarea 
-                                placeholder="Type your message here (e.g., 'Server maintenance in 10 minutes')..." 
+                                placeholder={t("admin.announcementPlaceholder")}
                                 value={announcementText}
                                 onChange={(e) => setAnnouncementText(e.target.value)}
                             />
                             <div className="flex justify-end">
                                 <Button onClick={handleSendAnnouncement} disabled={!announcementText} className="bg-gradient-to-r from-primary to-emerald-600 text-white">
-                                    <Send className="mr-2 h-4 w-4" /> Broadcast
+                                    <Send className="mr-2 h-4 w-4" /> {t("admin.broadcast")}
                                 </Button>
                             </div>
                         </CardContent>
@@ -778,8 +778,8 @@ const Community = () => {
 
                     <Card>
                         <CardHeader>
-                            <CardTitle>Recent Activity Log</CardTitle>
-                            <CardDescription>Audit trail of administrative actions.</CardDescription>
+                            <CardTitle>{t("admin.recentActivityLog")}</CardTitle>
+                            <CardDescription>{t("admin.activityLogDesc")}</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
@@ -811,21 +811,21 @@ const Community = () => {
                         <div className="relative flex-1">
                             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                             <Input 
-                                placeholder="Search users by name or email..." 
+                                placeholder={t("admin.searchUsers")}
                                 className="pl-9" 
                                 value={userSearch}
                                 onChange={(e) => setUserSearch(e.target.value)}
                             />
                         </div>
-                        <Button variant="outline" className="hover:bg-hover hover:text-hover-foreground"><FileText className="mr-2 h-4 w-4" /> Export CSV</Button>
+                        <Button variant="outline" className="hover:bg-hover hover:text-hover-foreground"><FileText className="mr-2 h-4 w-4" /> {t("admin.exportCsv")}</Button>
                     </div>
 
                     <div className="rounded-md border bg-card">
                         <div className="grid grid-cols-12 gap-2 p-4 border-b bg-muted/50 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                            <div className="col-span-4">User</div>
-                            <div className="col-span-3">Role</div>
-                            <div className="col-span-3">Status</div>
-                            <div className="col-span-2 text-right">Actions</div>
+                            <div className="col-span-4">{t("admin.user")}</div>
+                            <div className="col-span-3">{t("admin.role")}</div>
+                            <div className="col-span-3">{t("admin.status")}</div>
+                            <div className="col-span-2 text-right">{t("admin.actions")}</div>
                         </div>
                         <div className="max-h-[600px] overflow-y-auto">
                             {filteredUsers.map(user => (
@@ -852,11 +852,11 @@ const Community = () => {
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-hover hover:text-hover-foreground"><MoreVertical className="h-4 w-4" /></Button></DropdownMenuTrigger>
                                             <DropdownMenuContent align="end">
-                                                <DropdownMenuLabel>Manage {user.name}</DropdownMenuLabel>
-                                                <DropdownMenuItem>View Profile</DropdownMenuItem>
-                                                <DropdownMenuItem>Reset Password</DropdownMenuItem>
+                                                <DropdownMenuLabel>{t("admin.manage")} {user.name}</DropdownMenuLabel>
+                                                <DropdownMenuItem>{t("admin.viewProfile")}</DropdownMenuItem>
+                                                <DropdownMenuItem>{t("admin.resetPassword")}</DropdownMenuItem>
                                                 <DropdownMenuSeparator />
-                                                <DropdownMenuItem className="text-destructive">Delete Account</DropdownMenuItem>
+                                                <DropdownMenuItem className="text-destructive">{t("admin.deleteAccount")}</DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </div>
@@ -872,7 +872,7 @@ const Community = () => {
             return (
                 <div className="space-y-4 animate-in fade-in duration-500">
                     <div className="flex justify-between items-center">
-                        <h3 className="text-lg font-medium">Chat Groups</h3>
+                        <h3 className="text-lg font-medium">{t("admin.chatGroups")}</h3>
                     </div>
                     <div className="grid gap-4">
                         {adminGroups.map(group => (
@@ -886,13 +886,13 @@ const Community = () => {
                                             {group.status === 'frozen' && <Ban className="h-3 w-3 text-red-500" />}
                                         </div>
                                         <p className="text-xs text-muted-foreground">
-                                            {group.members} members • {group.description || "No description"}
+                                            {group.members} {t("admin.members")} • {group.description || t("admin.noDescription")}
                                         </p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <Button variant="outline" size="sm" className="hover:bg-hover hover:text-hover-foreground" onClick={() => handleGroupAction(group.id, "freeze")}>
-                                            {group.status === "active" ? "Freeze" : "Unfreeze"}
+                                            {group.status === "active" ? t("admin.freeze") : t("admin.unfreeze")}
                                     </Button>
                                     <Button variant="ghost" size="icon" className="text-destructive hover:bg-hover hover:text-hover-foreground" onClick={() => handleGroupAction(group.id, "delete")}>
                                         <Trash2 className="h-4 w-4" />
@@ -909,9 +909,9 @@ const Community = () => {
                 <div className="space-y-4 animate-in fade-in duration-500">
                     {adminReports.length === 0 ? (
                         <div className="flex flex-col items-center justify-center h-64 border rounded-xl bg-muted/10 border-dashed">
-                            <CheckCircle className="h-12 w-12 text-emerald-500 mb-4" />
-                            <h3 className="text-lg font-medium">All Caught Up!</h3>
-                            <p className="text-muted-foreground">No pending reports to review.</p>
+                             <CheckCircle className="h-12 w-12 text-emerald-500 mb-4" />
+                             <h3 className="text-lg font-medium">{t("admin.allCaughtUp")}</h3>
+                             <p className="text-muted-foreground">{t("admin.noPendingReports")}</p>
                         </div>
                     ) : (
                         <div className="grid gap-4">
@@ -922,24 +922,24 @@ const Community = () => {
                                         <CardHeader className="pb-2">
                                             <div className="flex justify-between items-start">
                                                 <div className="flex items-center gap-2">
-                                                    <Badge variant="destructive" className="uppercase text-[10px]">Reported</Badge>
-                                                    <span className="text-sm text-muted-foreground">Reported by <b>{report.reporter}</b> • {report.timestamp}</span>
+                                                     <Badge variant="destructive" className="uppercase text-[10px]">{t("admin.reported")}</Badge>
+                                                     <span className="text-sm text-muted-foreground">{t("admin.reportedBy")} <b>{report.reporter}</b> • {report.timestamp}</span>
                                                 </div>
                                                 <Badge variant="outline">{report.reason}</Badge>
                                             </div>
                                         </CardHeader>
                                         <CardContent>
                                             <div className="bg-muted/40 p-3 rounded-md mb-4 border border-border">
-                                                <p className="text-sm font-medium text-muted-foreground mb-1">Post Content:</p>
-                                                {post ? (
-                                                    <p className="text-sm">{post.content}</p>
-                                                ) : (
-                                                    <p className="text-sm italic text-muted-foreground">Content unavailable (Deleted or Error)</p>
-                                                )}
+                                                 <p className="text-sm font-medium text-muted-foreground mb-1">{t("admin.postContent")}</p>
+                                                 {post ? (
+                                                     <p className="text-sm">{post.content}</p>
+                                                 ) : (
+                                                     <p className="text-sm italic text-muted-foreground">{t("admin.contentUnavailable")}</p>
+                                                 )}
                                             </div>
                                             <div className="flex gap-2 justify-end">
-                                                <Button variant="outline" size="sm" className="hover:bg-hover hover:text-hover-foreground" onClick={() => handleResolveReport(report.id, "dismiss")}>Dismiss Report</Button>
-                                                <Button variant="destructive" size="sm" onClick={() => handleResolveReport(report.id, "delete_post")}><Trash2 className="mr-2 h-4 w-4" /> Delete Post</Button>
+                                                 <Button variant="outline" size="sm" className="hover:bg-hover hover:text-hover-foreground" onClick={() => handleResolveReport(report.id, "dismiss")}>{t("admin.dismissReport")}</Button>
+                                                 <Button variant="destructive" size="sm" onClick={() => handleResolveReport(report.id, "delete_post")}><Trash2 className="mr-2 h-4 w-4" /> {t("admin.deletePost")}</Button>
                                             </div>
                                         </CardContent>
                                     </Card>
@@ -955,14 +955,14 @@ const Community = () => {
                 <div className="space-y-6 animate-in fade-in duration-500">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Safety & Filters</CardTitle>
-                            <CardDescription>Global settings for all chat rooms.</CardDescription>
+                         <CardTitle>{t("admin.safetyFilters")}</CardTitle>
+                             <CardDescription>{t("admin.safetyFiltersDesc")}</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="flex items-center justify-between">
                                 <div className="space-y-0.5">
-                                    <p className="text-sm font-medium">Profanity Filter</p>
-                                    <p className="text-xs text-muted-foreground">Automatically hide offensive words.</p>
+                                     <p className="text-sm font-medium">{t("admin.profanityFilter")}</p>
+                                     <p className="text-xs text-muted-foreground">{t("admin.profanityFilterDesc")}</p>
                                 </div>
                                 <Switch 
                                     checked={adminSettings.profanityFilter} 
@@ -971,8 +971,8 @@ const Community = () => {
                             </div>
                             <div className="flex items-center justify-between">
                                 <div className="space-y-0.5">
-                                    <p className="text-sm font-medium">Image Uploads</p>
-                                    <p className="text-xs text-muted-foreground">Allow users to send images in chats.</p>
+                                     <p className="text-sm font-medium">{t("admin.imageUploads")}</p>
+                                     <p className="text-xs text-muted-foreground">{t("admin.imageUploadsDesc")}</p>
                                 </div>
                                 <Switch 
                                     checked={adminSettings.imageUploads} 
@@ -981,8 +981,8 @@ const Community = () => {
                             </div>
                              <div className="flex items-center justify-between">
                                 <div className="space-y-0.5">
-                                    <p className="text-sm font-medium">Link Preview</p>
-                                    <p className="text-xs text-muted-foreground">Generate previews for shared URLs.</p>
+                                     <p className="text-sm font-medium">{t("admin.linkPreview")}</p>
+                                     <p className="text-xs text-muted-foreground">{t("admin.linkPreviewDesc")}</p>
                                 </div>
                                 <Switch 
                                     checked={adminSettings.linkPreviews} 
@@ -994,11 +994,11 @@ const Community = () => {
                     
                     <Card className="border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/10">
                         <CardHeader>
-                            <CardTitle className="text-red-600">Danger Zone</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <Button variant="destructive" className="w-full">Enable Maintenance Mode</Button>
-                            <p className="text-xs text-red-600/60 mt-2 text-center">This will lock all chat rooms for everyone except admins.</p>
+                             <CardTitle className="text-red-600">{t("admin.dangerZone")}</CardTitle>
+                         </CardHeader>
+                         <CardContent>
+                             <Button variant="destructive" className="w-full">{t("admin.maintenanceMode")}</Button>
+                             <p className="text-xs text-red-600/60 mt-2 text-center">{t("admin.maintenanceModeDesc")}</p>
                         </CardContent>
                     </Card>
                 </div>
@@ -1048,7 +1048,7 @@ const Community = () => {
             <NavIcon 
               active={showAdminPanel} 
               icon={<Shield size={24} />} 
-              label="Admin Console" 
+              label={t("admin.adminConsole")} 
               alert={adminReports.length > 0}
               onClick={() => setShowAdminPanel(true)} 
             />
@@ -1057,7 +1057,7 @@ const Community = () => {
             <NavIcon 
               active={false} 
               icon={<Plus size={24} />} 
-              label="Create Group" 
+              label={t("admin.createGroup")} 
               onClick={() => setIsCreateGroupDialogOpen(true)} 
             />
             {/* --- END SECURITY COMMENT --- */}
@@ -1077,9 +1077,9 @@ const Community = () => {
             <div className="p-6 border-b border-primary/10 bg-white/30 dark:bg-black/10">
               <h3 className="font-bold text-lg flex items-center gap-2 text-primary">
                 <Shield className="h-5 w-5 fill-primary/20" /> 
-                Admin
+                {t("admin.title")}
               </h3>
-              <p className="text-xs text-muted-foreground mt-1">Management Console</p>
+              <p className="text-xs text-muted-foreground mt-1">{t("admin.managementConsole")}</p>
             </div>
             
             <div className="flex-1 overflow-y-auto p-4 space-y-1 custom-scrollbar">
@@ -1088,28 +1088,28 @@ const Community = () => {
                 className={`w-full justify-start ${activeAdminTab === "overview" ? "bg-gradient-to-r from-primary to-emerald-600 text-white shadow-md hover:from-primary/90 hover:to-emerald-600/90" : "hover:bg-hover hover:text-hover-foreground"}`}
                 onClick={() => setActiveAdminTab("overview")}
               >
-                <Activity className="mr-3 h-4 w-4" /> Overview
+                <Activity className="mr-3 h-4 w-4" /> {t("admin.overview")}
               </Button>
               <Button 
                 variant="ghost"
                 className={`w-full justify-start ${activeAdminTab === "groups" ? "bg-gradient-to-r from-primary to-emerald-600 text-white shadow-md hover:from-primary/90 hover:to-emerald-600/90" : "hover:bg-hover hover:text-hover-foreground"}`}
                 onClick={() => setActiveAdminTab("groups")}
               >
-                <Layers className="mr-3 h-4 w-4" /> Groups
+                <Layers className="mr-3 h-4 w-4" /> {t("admin.groups")}
               </Button>
               <Button 
                 variant="ghost"
                 className={`w-full justify-start ${activeAdminTab === "users" ? "bg-gradient-to-r from-primary to-emerald-600 text-white shadow-md hover:from-primary/90 hover:to-emerald-600/90" : "hover:bg-hover hover:text-hover-foreground"}`}
                 onClick={() => setActiveAdminTab("users")}
               >
-                <Users className="mr-3 h-4 w-4" /> Users
+                <Users className="mr-3 h-4 w-4" /> {t("admin.users")}
               </Button>
               <Button 
                 variant="ghost"
                 className={`w-full justify-start ${activeAdminTab === "moderation" ? "bg-gradient-to-r from-primary to-emerald-600 text-white shadow-md hover:from-primary/90 hover:to-emerald-600/90" : "hover:bg-hover hover:text-hover-foreground"}`}
                 onClick={() => setActiveAdminTab("moderation")}
               >
-                <AlertTriangle className="mr-3 h-4 w-4" /> Reports
+                <AlertTriangle className="mr-3 h-4 w-4" /> {t("admin.reports")}
                 {adminReports.length > 0 && <Badge className="ml-auto h-5 px-1.5 bg-red-500 text-white">{adminReports.length}</Badge>}
               </Button>
               <Button 
@@ -1117,11 +1117,11 @@ const Community = () => {
                 className={`w-full justify-start ${activeAdminTab === "settings" ? "bg-gradient-to-r from-primary to-emerald-600 text-white shadow-md hover:from-primary/90 hover:to-emerald-600/90" : "hover:bg-hover hover:text-hover-foreground"}`}
                 onClick={() => setActiveAdminTab("settings")}
               >
-                <Settings className="mr-3 h-4 w-4" /> Settings
+                <Settings className="mr-3 h-4 w-4" /> {t("admin.settings")}
               </Button>
               <div className="my-2 border-t border-primary/10" />
               <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-hover " onClick={() => setShowAdminPanel(false)}>
-                <LogOut className="mr-3 h-4 w-4" /> Exit Mode
+                <LogOut className="mr-3 h-4 w-4" /> {t("admin.exitMode")}
               </Button>
             </div>
           </div>
@@ -1133,16 +1133,16 @@ const Community = () => {
         <div className="max-w-6xl mx-auto pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-emerald-600 to-teal-600 bg-clip-text text-transparent">
-              {showAdminPanel ? (
-                  activeAdminTab === "overview" ? "System Overview" : 
-                  activeAdminTab === "groups" ? "Group Management" :
-                  activeAdminTab === "users" ? "User Management" : 
-                  activeAdminTab === "settings" ? "Global Settings" :
-                  "Content Moderation"
+               {showAdminPanel ? (
+                  activeAdminTab === "overview" ? t("admin.systemOverview") : 
+                  activeAdminTab === "groups" ? t("admin.groupManagement") :
+                  activeAdminTab === "users" ? t("admin.userManagement") : 
+                  activeAdminTab === "settings" ? t("admin.globalSettings") :
+                  t("admin.contentModeration")
               ) : getFeedTitle()}
             </h1>
             <p className="text-muted-foreground">
-               {showAdminPanel ? "Manage, monitor, and maintain community standards." : "Latest updates from your community."}
+               {showAdminPanel ? t("admin.manageSubtitle") : t("admin.latestUpdates")}
             </p>
           </div>
           
@@ -1161,8 +1161,8 @@ const Community = () => {
         <Dialog open={isCreateGroupDialogOpen} onOpenChange={setIsCreateGroupDialogOpen}>
             <DialogContent className="sm:max-w-[900px] sm:h-[600px] flex flex-col gap-0 p-0 bg-white/95 dark:bg-card/95 backdrop-blur-xl border-primary/20 overflow-hidden">
                 <DialogHeader className="p-6 pb-2">
-                    <DialogTitle className="flex items-center gap-2"><Layers className="h-5 w-5 text-primary" />Create New Group</DialogTitle>
-                    <DialogDescription>Create a space for students and teachers to collaborate.</DialogDescription>
+                    <DialogTitle className="flex items-center gap-2"><Layers className="h-5 w-5 text-primary" />{t("group.createTitle")}</DialogTitle>
+                    <DialogDescription>{t("group.createDesc")}</DialogDescription>
                 </DialogHeader>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 overflow-y-auto flex-1">
@@ -1190,7 +1190,7 @@ const Community = () => {
 
                         {/* PRESET SELECTOR */}
                         <div className="flex flex-col items-center gap-2 mb-4 relative">
-                            <span className="text-xs text-muted-foreground">Or select a preset:</span>
+                            <span className="text-xs text-muted-foreground">{t("group.orSelectPreset")}</span>
                             
                             <Button 
                                 type="button"
@@ -1198,14 +1198,14 @@ const Community = () => {
                                 className={`w-full border-dashed border-2 flex items-center justify-center gap-2 transition-all ${newGroupIcon && newGroupIconType === "preset" ? "bg-gradient-to-r from-primary to-emerald-600 text-white border-transparent" : "text-muted-foreground hover:bg-hover hover:text-hover-foreground"}`}
                                 onClick={() => setShowIconPicker(!showIconPicker)}
                             >
-                                {newGroupIcon && newGroupIconType === "preset" ? (
+                                 {newGroupIcon && newGroupIconType === "preset" ? (
                                     <>
                                         {PRESET_ICONS.find(p => p.id === newGroupIcon)?.icon} 
-                                        <span className="ml-2">Icon Selected</span>
+                                        <span className="ml-2">{t("group.iconSelected")}</span>
                                     </>
                                 ) : (
                                     <>
-                                        <Layers className="h-4 w-4" /> Browse Icons
+                                        <Layers className="h-4 w-4" /> {t("group.browseIcons")}
                                     </>
                                 )}
                             </Button>
@@ -1236,22 +1236,22 @@ const Community = () => {
                         </div>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="group-name">Group Name</Label>
+                            <Label htmlFor="group-name">{t("group.groupName")}</Label>
                             <Input 
                                 id="group-name" 
                                 value={newGroupName} 
                                 onChange={(e) => setNewGroupName(e.target.value)} 
-                                placeholder="e.g. Science Fair 2024" 
+                                placeholder={t("group.groupNamePlaceholder")}
                             />
                         </div>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="group-desc">Description</Label>
+                            <Label htmlFor="group-desc">{t("group.description")}</Label>
                             <Textarea 
                                 id="group-desc" 
                                 value={newGroupDescription} 
                                 onChange={(e) => setNewGroupDescription(e.target.value)} 
-                                placeholder="What is this group about?" 
+                                placeholder={t("group.descriptionPlaceholder")}
                                 className="resize-none h-[100px]"
                             />
                         </div>
@@ -1260,35 +1260,35 @@ const Community = () => {
                     {/* RIGHT COLUMN */}
                     <div className="space-y-4 flex flex-col">
                         <div className="grid gap-2">
-                            <Label htmlFor="group-school">Organization</Label>
+                            <Label htmlFor="group-school">{t("group.organization")}</Label>
                             <Select 
                                 value={newGroupSchool} 
                                 onValueChange={(val) => setNewGroupSchool(val)}
                             >
                                 <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Select organization" />
+                                    <SelectValue placeholder={t("group.selectOrganization")} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="None">None</SelectItem>
+                                    <SelectItem value="None">{t("group.none")}</SelectItem>
                                     {ALL_SCHOOLS.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
                                 </SelectContent>
                             </Select>
                         </div>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="org-password">Organization Password</Label>
+                            <Label htmlFor="org-password">{t("group.orgPassword")}</Label>
                             <Input 
                                 id="org-password" 
                                 type="password"
                                 value={organizationPassword} 
                                 onChange={(e) => setOrganizationPassword(e.target.value)} 
-                                placeholder={newGroupSchool === "None" ? "Not required" : "Required to link this organization"}
+                                placeholder={newGroupSchool === "None" ? t("group.orgPasswordNotRequired") : t("group.orgPasswordRequired")}
                                 disabled={newGroupSchool === "None"}
                             />
                         </div>
 
                         <div className="grid gap-2">
-                            <Label>Privacy Type</Label>
+                            <Label>{t("group.privacyType")}</Label>
                             <div className="flex gap-4">
                                 <Button 
                                     type="button" 
@@ -1296,7 +1296,7 @@ const Community = () => {
                                     onClick={() => setNewGroupType("public")}
                                     className={`w-full ${newGroupType === "public" ? "bg-gradient-to-r from-primary to-emerald-600 text-white" : "hover:bg-hover hover:text-hover-foreground"}`}
                                 >
-                                    <Globe className="mr-2 h-4 w-4" /> Public
+                                    <Globe className="mr-2 h-4 w-4" /> {t("group.public")}
                                 </Button>
                                 <Button 
                                     type="button" 
@@ -1304,20 +1304,20 @@ const Community = () => {
                                     onClick={() => setNewGroupType("private")}
                                     className={`w-full ${newGroupType === "private" ? "bg-gradient-to-r from-primary to-emerald-600 text-white" : "hover:bg-hover hover:text-hover-foreground"}`}
                                 >
-                                    <Lock className="mr-2 h-4 w-4" /> Private
+                                    <Lock className="mr-2 h-4 w-4" /> {t("group.private")}
                                 </Button>
                             </div>
                         </div>
 
                         {newGroupType === "private" && (
                             <div className="grid gap-2 animate-in fade-in slide-in-from-top-2">
-                                <Label htmlFor="group-pass" className="flex items-center gap-2"><KeyRound className="h-4 w-4" /> Access Code</Label>
+                                <Label htmlFor="group-pass" className="flex items-center gap-2"><KeyRound className="h-4 w-4" /> {t("group.accessCode")}</Label>
                                 <Input 
                                     id="group-pass" 
                                     type="password"
                                     value={newGroupPassword} 
                                     onChange={(e) => setNewGroupPassword(e.target.value)} 
-                                    placeholder="Set a password for joining..." 
+                                    placeholder={t("group.accessCodePlaceholder")}
                                 />
                             </div>
                         )}
@@ -1326,7 +1326,7 @@ const Community = () => {
 
                 {/* FIXED FOOTER */}
                 <DialogFooter className="p-6 pt-2 border-t border-primary/10 bg-white/95 dark:bg-card/95 backdrop-blur-xl z-20 mt-auto">
-                    <Button variant="ghost" onClick={() => setIsCreateGroupDialogOpen(false)} className="hover:bg-hover hover:text-hover-foreground">Cancel</Button>
+                    <Button variant="ghost" onClick={() => setIsCreateGroupDialogOpen(false)} className="hover:bg-hover hover:text-hover-foreground">{t("group.cancel")}</Button>
                     <Button 
                         onClick={handleCreateGroup} 
                         disabled={
@@ -1336,7 +1336,7 @@ const Community = () => {
                         } 
                         className="bg-gradient-to-r from-primary to-emerald-600 text-white"
                     >
-                        Create Group
+                        {t("group.create")}
                     </Button>
                 </DialogFooter>
             </DialogContent>
