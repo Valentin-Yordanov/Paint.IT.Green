@@ -609,8 +609,10 @@ const Compete = () => {
               );
             };
 
+            const activeIndex = pastChallenges.length;
+
             return isMobile ? (
-              <Carousel opts={{ align: "center", loop: true }} className="w-full px-4">
+              <Carousel opts={{ align: "center", loop: false, startIndex: activeIndex }} className="w-full px-4">
                 <CarouselContent>
                   {allChallenges.map((comp, index) => (
                     <CarouselItem key={index} className="basis-[85%]">
