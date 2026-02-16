@@ -32,14 +32,13 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     {/* 1. MOVE BrowserRouter HERE (Top Level) */}
     <BrowserRouter>
-      
       <ThemeProvider>
         {/* 2. Now LanguageProvider is inside the Router */}
         <LanguageProvider>
           <TooltipProvider>
             <Toaster />
             <Sonner />
-            
+
             {/* 3. AuthProvider is also inside the Router */}
             <AuthProvider>
               <Navbar />
@@ -64,11 +63,9 @@ const App = () => (
               </Routes>
               <Footer />
             </AuthProvider>
-
           </TooltipProvider>
         </LanguageProvider>
       </ThemeProvider>
-      
     </BrowserRouter>
   </QueryClientProvider>
 );

@@ -3,10 +3,25 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { Loader2, XCircle, Leaf, Sparkles, Wind, Sun, Sprout } from "lucide-react";
+import {
+  Loader2,
+  XCircle,
+  Leaf,
+  Sparkles,
+  Wind,
+  Sun,
+  Sprout,
+} from "lucide-react";
 
 const Login = () => {
   const { t } = useLanguage();
@@ -22,10 +37,10 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
       });
 
       if (response.ok) {
@@ -33,7 +48,7 @@ const Login = () => {
         login(userData);
       } else {
         const errorBody = await response.text();
-        let errorMessage = t('login.error.generic') || "Login failed.";
+        let errorMessage = t("login.error.generic") || "Login failed.";
         try {
           const jsonError = JSON.parse(errorBody);
           errorMessage = jsonError.body || jsonError.message || errorMessage;
@@ -44,7 +59,9 @@ const Login = () => {
       }
     } catch (err) {
       console.error("Error:", err);
-      setError(t('login.error.serverOffline') || "Could not connect to server.");
+      setError(
+        t("login.error.serverOffline") || "Could not connect to server.",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -52,20 +69,25 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-8 relative overflow-hidden bg-background">
-      
       {/* 1. Background Pattern */}
       <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-30" />
-          
+
       {/* Card */}
       <Card className="w-full max-w-md relative z-10 backdrop-blur-xl bg-card/80 border-primary/20 shadow-2xl shadow-primary/10">
         <CardHeader className="space-y-1 flex flex-col items-center pb-2">
           <div className="h-16 w-16 mb-2 p-2 rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 backdrop-blur-sm border border-primary/20 flex items-center justify-center">
-            <img src="/pig-logo.png" className="h-full w-full object-contain" alt="Logo" />
+            <img
+              src="/pig-logo.png"
+              className="h-full w-full object-contain"
+              alt="Logo"
+            />
           </div>
           <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-            {t('login.title')}
+            {t("login.title")}
           </CardTitle>
-          <CardDescription className="text-muted-foreground">{t('Log in your Paint IT Green account')}</CardDescription>
+          <CardDescription className="text-muted-foreground">
+            {t("Log in your Paint IT Green account")}
+          </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
@@ -76,20 +98,52 @@ const Login = () => {
               </div>
             )}
             <div className="space-y-2">
-              <Label htmlFor="email">{t('login.email')}</Label>
-              <Input id="email" type="email" placeholder={t('login.emailPlaceholder')} value={email} onChange={(e) => setEmail(e.target.value)} required disabled={isLoading} className="bg-background/50 border-primary/20 focus:border-primary/50" />
+              <Label htmlFor="email">{t("login.email")}</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder={t("login.emailPlaceholder")}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={isLoading}
+                className="bg-background/50 border-primary/20 focus:border-primary/50"
+              />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">{t('login.password')}</Label>
-              <Input id="password" type="password" placeholder={t('login.passwordPlaceholder')} value={password} onChange={(e) => setPassword(e.target.value)} required disabled={isLoading} className="bg-background/50 border-primary/20 focus:border-primary/50" />
+              <Label htmlFor="password">{t("login.password")}</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder={t("login.passwordPlaceholder")}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                disabled={isLoading}
+                className="bg-background/50 border-primary/20 focus:border-primary/50"
+              />
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4 pt-2">
-            <Button type="submit" className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/25" disabled={isLoading}>
-              {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t('login.loading')}</> : t('login.loginButton')}
+            <Button
+              type="submit"
+              className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/25"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {t("login.loading")}
+                </>
+              ) : (
+                t("login.loginButton")
+              )}
             </Button>
             <p className="text-sm text-muted-foreground text-center">
-              {t('login.noAccount')}{" "}<Link to="/signup" className="text-primary hover:underline">{t('login.signupLink')}</Link>
+              {t("login.noAccount")}{" "}
+              <Link to="/signup" className="text-primary hover:underline">
+                {t("login.signupLink")}
+              </Link>
             </p>
           </CardFooter>
         </form>

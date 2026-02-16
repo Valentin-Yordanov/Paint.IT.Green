@@ -25,5 +25,4 @@
 
 // export default NotFound;
 
-
 //Dk what tf this is for. Some random locatcion that is needed for god knows what.

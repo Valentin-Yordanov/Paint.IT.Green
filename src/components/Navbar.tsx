@@ -20,17 +20,13 @@ const Navbar = () => {
     { path: "/profile", label: t("nav.profile"), icon: User },
   ];
 
-  
-  const hoverClasses = "hover:bg-[hsl(var(--hover))] hover:text-[hsl(var(--hover-foreground))] hover:border-[hsl(var(--hover))] transition-colors";
+  const hoverClasses =
+    "hover:bg-[hsl(var(--hover))] hover:text-[hsl(var(--hover-foreground))] hover:border-[hsl(var(--hover))] transition-colors";
 
   const NavLinks = ({ isMobile = false }: { isMobile?: boolean }) => (
     <>
       {navLinks.map(({ path, label, icon: Icon }) => (
-        <Link 
-          key={path} 
-          to={path} 
-          className={isMobile ? "w-full" : ""}
-        >
+        <Link key={path} to={path} className={isMobile ? "w-full" : ""}>
           <Button
             variant={isActive(path) ? "default" : "outline"}
             className={`gap-2 min-w-[120px] justify-center ${isMobile ? "w-full" : ""} ${isActive(path) ? "" : hoverClasses}`}
@@ -51,7 +47,10 @@ const Navbar = () => {
     return (
       <>
         <Link to="/login" className={isMobile ? "w-full" : ""}>
-          <Button variant="outline" className={`${isMobile ? "w-full" : ""} ${hoverClasses}`}>
+          <Button
+            variant="outline"
+            className={`${isMobile ? "w-full" : ""} ${hoverClasses}`}
+          >
             {t("nav.login")}
           </Button>
         </Link>
@@ -94,7 +93,7 @@ const Navbar = () => {
           <SheetContent>
             <div className="flex flex-col gap-4 mt-8">
               <NavLinks isMobile={true} />
-              
+
               <div className="mt-4 border-t pt-4 flex flex-col gap-4">
                 <AuthButtons isMobile={true} />
               </div>

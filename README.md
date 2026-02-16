@@ -1,6 +1,7 @@
 # 🌿 PIG - Paint IT Green
 
-![Project Banner](public/og-img.png) 
+![Project Banner](public/og-img.png)
+
 > **Join students worldwide in learning about nature conservation, competing in environmental challenges, and making a real difference in your community.**
 
 ## 📖 About The Project
@@ -8,10 +9,11 @@
 **Paint IT Green (PIG)** is an educational platform designed to gamify environmental conservation. This project was built to solve the problem of lack of student engagement in nature by providing an interactive way to participate in eco-challenges.
 
 ### Key Features
-* **🌍 Eco-Challenges:** Interactive tasks for students to complete.
-* **🏆 Global Leaderboards:** Compete with other "Eco-Champions."
-* **⚡ Serverless Backend:** Powered by Azure Functions for fast, scalable API responses.
-* **🎨 Modern UI:** Built with Tailwind CSS for a sleek, responsive experience.
+
+- **🌍 Eco-Challenges:** Interactive tasks for students to complete.
+- **🏆 Global Leaderboards:** Compete with other "Eco-Champions."
+- **⚡ Serverless Backend:** Powered by Azure Functions for fast, scalable API responses.
+- **🎨 Modern UI:** Built with Tailwind CSS for a sleek, responsive experience.
 
 ---
 
@@ -19,13 +21,13 @@
 
 This project uses a modern **Serverless** architecture hosted on Azure.
 
-| Area | Technology |
-| :--- | :--- |
-| **Frontend** | React, TypeScript, Vite |
-| **Styling** | Tailwind CSS |
-| **Backend** | Azure Functions |
-| **Hosting** | Azure Static Web Apps (SWA) |
-| **CI/CD** | GitHub Actions |
+| Area         | Technology                  |
+| :----------- | :-------------------------- |
+| **Frontend** | React, TypeScript, Vite     |
+| **Styling**  | Tailwind CSS                |
+| **Backend**  | Azure Functions             |
+| **Hosting**  | Azure Static Web Apps (SWA) |
+| **CI/CD**    | GitHub Actions              |
 
 ---
 
@@ -34,9 +36,10 @@ This project uses a modern **Serverless** architecture hosted on Azure.
 To run this project locally, you need to run both the Frontend (React) and the Backend (Azure Functions).
 
 ### Prerequisites
-* **Node.js:** Version 22.
-* **Azure Functions Core Tools:** (Optional, but recommended for backend debugging).
-* **SWA CLI:** (`npm install -g @azure/static-web-apps-cli`)
+
+- **Node.js:** Version 22.
+- **Azure Functions Core Tools:** (Optional, but recommended for backend debugging).
+- **SWA CLI:** (`npm install -g @azure/static-web-apps-cli`)
 
 ### 1. Clone & Install Dependencies
 

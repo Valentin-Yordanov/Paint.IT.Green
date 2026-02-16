@@ -1,8 +1,21 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 import { useNavigate } from "react-router-dom";
 
 // 1. Define your User shape
-export type UserRole = "guest" | "student" | "parent" | "teacher" | "principal" | "admin" | "moderator";
+export type UserRole =
+  | "guest"
+  | "student"
+  | "parent"
+  | "teacher"
+  | "principal"
+  | "admin"
+  | "moderator";
 
 interface UserProfile {
   id: string;
@@ -14,7 +27,7 @@ interface UserProfile {
 // 2. Define what the Context provides to the rest of the app
 interface AuthContextType {
   user: UserProfile | null;
-  isAuthenticated: boolean; 
+  isAuthenticated: boolean;
   isLoading: boolean;
   login: (userData: UserProfile) => void;
   logout: () => void;
@@ -46,7 +59,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = (userData: UserProfile) => {
     setUser(userData);
     localStorage.setItem("eco_user", JSON.stringify(userData));
-    navigate("/profile"); 
+    navigate("/profile");
   };
 
   // 5. The Logout Function (Called by Navbar)
@@ -67,7 +80,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const isAuthenticated = !!user;
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, isLoading, login, logout, hasRole }}>
+    <AuthContext.Provider
+      value={{ user, isAuthenticated, isLoading, login, logout, hasRole }}
+    >
       {children}
     </AuthContext.Provider>
   );

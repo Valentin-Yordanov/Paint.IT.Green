@@ -157,7 +157,6 @@ const EventCalendar = () => {
   const { t } = useLanguage();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [events, setEvents] = useState<CalendarEvent[]>(INITIAL_MOCK_EVENTS);
-  const [isLoading, setIsLoading] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   
@@ -190,8 +189,6 @@ const EventCalendar = () => {
 
   const handleSaveEvent = async () => {
     if (!selectedDate || !formData.title) return;
-    setIsLoading(true);
-
     const eventToSave: CalendarEvent = {
       id: editingId || Date.now().toString(),
       dateString: selectedDate.toISOString(),
@@ -200,12 +197,9 @@ const EventCalendar = () => {
       location: formData.location,
       createdBy: CURRENT_USER_ID,
     };
-
     setEvents((prev) => 
       editingId ? prev.map(e => e.id === editingId ? eventToSave : e) : [...prev, eventToSave]
     );
-
-    setIsLoading(false);
     setIsFormOpen(false);
   };
 
@@ -228,27 +222,18 @@ const EventCalendar = () => {
     setIsFormOpen(true);
   };
 
-  // Helper to fix Leaflet rendering issues when modal opens
   const ResizeMap = () => {
     const map = useMap();
-    useEffect(() => {
-      setTimeout(() => { map.invalidateSize(); }, 200);
-    }, [map]);
+    useEffect(() => { setTimeout(() => { map.invalidateSize(); }, 200); }, [map]);
     return null;
   };
 
   return (
-    // MAIN CONTAINER
-    // Mobile: h-auto (lets it grow long so you can scroll the modal)
-    // Desktop: h-full (fits inside the fixed modal height)
-    <div className="flex flex-col gap-4 h-auto lg:h-full">
+    <div className="flex flex-col gap-4">
       
       {/* --- TOP SECTION: MAP & CALENDAR --- */}
-      {/* Mobile: Stacked (flex-col) | Desktop: Side-by-side (grid) with fixed height */}
       <div className="flex flex-col lg:grid lg:grid-cols-2 gap-4 lg:h-[320px] shrink-0">
-        
         {/* MAP */}
-        {/* Added 'shrink-0' and 'min-h' to prevent squash */}
         <div className="relative h-[250px] min-h-[250px] lg:h-full w-full rounded-xl border border-border/40 shadow-sm overflow-hidden bg-muted/20 shrink-0 order-2 lg:order-1">
           <div className="absolute top-3 left-3 z-[400] px-2.5 py-1 bg-background/95 backdrop-blur rounded-md border shadow-sm pointer-events-none">
             <span className="text-[10px] font-semibold text-primary flex items-center gap-1.5">
@@ -270,12 +255,7 @@ const EventCalendar = () => {
               return (
                 <Marker key={event.id} position={position} icon={EventIcon}>
                   <Popup>
-                    <div className="p-0.5 min-w-[100px]">
-                      <p className="font-bold text-xs text-primary mb-0.5">{event.title}</p>
-                      <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                         <Clock className="w-2.5 h-2.5" /> {event.time}
-                      </div>
-                    </div>
+                    <div className="p-0.5 min-w-[100px]"><p className="font-bold text-xs text-primary mb-0.5">{event.title}</p></div>
                   </Popup>
                 </Marker>
               );
@@ -303,13 +283,7 @@ const EventCalendar = () => {
               caption: "relative flex justify-center items-center pt-1 pb-4 relative",
             }}
             modifiers={{ event: eventDates }}
-            modifiersStyles={{ 
-              event: { 
-                fontWeight: "700", 
-                color: "hsl(var(--primary))",
-                textDecoration: "underline decoration-wavy decoration-primary/40"
-              } 
-            }}
+            modifiersStyles={{ event: { fontWeight: "700", color: "hsl(var(--primary))", textDecoration: "underline decoration-wavy decoration-primary/40" } }}
           />
         </div>
       </div>
@@ -321,29 +295,21 @@ const EventCalendar = () => {
             <CalendarDays className="w-5 h-5 text-primary" />
             {selectedDate ? selectedDate.toLocaleDateString(undefined, { dateStyle: 'medium' }) : t("compete.selectDate")}
           </h3>
-          <Badge variant="secondary" className="px-2 py-0.5 text-xs">
-            {selectedEvents.length} {t("Events")}
-          </Badge>
+          <Badge variant="secondary" className="px-2 py-0.5 text-xs">{selectedEvents.length} {t("Events")}</Badge>
         </div>
-
-        {/* Create Button */}
         {!isFormOpen && (
-          <Button 
-            size="sm" 
-            onClick={handleCreateClick} 
-            className="bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20 shadow-none h-8"
-          >
+          <Button size="sm" onClick={handleCreateClick} className="bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20 shadow-none h-8">
             <Plus className="h-4 w-4 mr-1.5" /> {t("compete.createEvent")}
           </Button>
         )}
       </div>
 
       {/* --- SPLIT VIEW: LIST & FORM --- */}
-      <div className="flex-1 flex flex-col lg:flex-row gap-4 min-h-0">
+      <div className="flex flex-col lg:flex-row gap-4">
         
-        {/* LEFT: EVENT LIST */}
-        {/* LOGIC: Hidden on mobile if Form is open (`hidden lg:block`) */}
-        <div className={`flex-1 overflow-y-auto pr-1 space-y-2 ${isFormOpen ? 'hidden lg:block' : 'block'}`}>
+        {/* === LEFT: EVENT LIST (WITH SCROLLBAR) === */}
+        {/* FIX: I used h-[350px] here. This forces the height. If you add 10 events, you WILL see a scrollbar. */}
+        <div className={`overflow-y-auto h-[350px] pr-2 space-y-2 w-full ${isFormOpen ? 'hidden lg:block lg:flex-1' : 'block'}`}>
           {selectedEvents.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-muted-foreground border-2 border-dashed border-muted/50 rounded-xl min-h-[150px]">
                <p className="text-sm">{t("compete.noEvents")}</p>
@@ -361,12 +327,8 @@ const EventCalendar = () => {
                   </div>
                   {(event.createdBy === CURRENT_USER_ID) && (
                     <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button variant="ghost" size="icon" className="h-7 w-7 hover:text-blue-500" onClick={(e) => handleEditClick(event, e)}>
-                        <Edit className="h-3.5 w-3.5" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-7 w-7 hover:text-red-500" onClick={(e) => handleDelete(event.id, e)}>
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </Button>
+                      <Button variant="ghost" size="icon" className="h-7 w-7 hover:text-blue-500" onClick={(e) => handleEditClick(event, e)}><Edit className="h-3.5 w-3.5" /></Button>
+                      <Button variant="ghost" size="icon" className="h-7 w-7 hover:text-red-500" onClick={(e) => handleDelete(event.id, e)}><Trash2 className="h-3.5 w-3.5" /></Button>
                     </div>
                   )}
                 </CardContent>
@@ -376,7 +338,6 @@ const EventCalendar = () => {
         </div>
 
         {/* RIGHT: CREATE/EDIT FORM */}
-        {/* LOGIC: Takes full width on mobile */}
         {isFormOpen && (
           <div className="w-full lg:w-[340px] shrink-0 border-t lg:border-t-0 lg:border-l border-border/40 pt-4 lg:pt-0 lg:pl-4 flex flex-col animate-in slide-in-from-right-4 duration-300">
             <div className="bg-primary/5 rounded-xl p-4 border border-primary/20 h-auto">
@@ -391,30 +352,15 @@ const EventCalendar = () => {
               <div className="space-y-4">
                 <div className="space-y-1.5">
                   <Label className="text-[10px] uppercase text-muted-foreground">{t("compete.eventTitle")}</Label>
-                  <Input 
-                    value={formData.title} 
-                    onChange={(e) => setFormData(p => ({...p, title: e.target.value}))} 
-                    placeholder="e.g. Tree Planting" 
-                    className="bg-background h-9 text-sm"
-                  />
+                  <Input value={formData.title} onChange={(e) => setFormData(p => ({...p, title: e.target.value}))} placeholder="e.g. Tree Planting" className="bg-background h-9 text-sm" />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-[10px] uppercase text-muted-foreground">{t("compete.eventTime")}</Label>
-                  <Input 
-                    type="time" 
-                    value={formData.time} 
-                    onChange={(e) => setFormData(p => ({...p, time: e.target.value}))} 
-                    className="bg-background h-9 text-sm"
-                  />
+                  <Input type="time" value={formData.time} onChange={(e) => setFormData(p => ({...p, time: e.target.value}))} className="bg-background h-9 text-sm" />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-[10px] uppercase text-muted-foreground">{t("compete.eventLocation")}</Label>
-                  <Input 
-                    value={formData.location} 
-                    onChange={(e) => setFormData(p => ({...p, location: e.target.value}))} 
-                    placeholder="Click on map..." 
-                    className="bg-background font-mono text-xs h-9"
-                  />
+                  <Input value={formData.location} onChange={(e) => setFormData(p => ({...p, location: e.target.value}))} placeholder="Click on map..." className="bg-background font-mono text-xs h-9" />
                 </div>
               </div>
               
@@ -520,21 +466,24 @@ const Compete = () => {
                 {t("compete.viewEvents")}
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[850px] max-h-[90vh] overflow-hidden bg-gradient-to-br from-background via-background to-primary/5 backdrop-blur-xl border-primary/30 shadow-2xl">
-              <DialogHeader className="relative z-10 pb-4 border-b border-primary/10">
-                <DialogTitle className="flex items-center gap-3 text-xl">
-                  <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 border border-primary/20">
-                    <CalendarDays className="h-6 w-6 text-primary" />
-                  </div>
-                  <span className="text-3xl opacity-100">
-                    {t("compete.eventCalendar")}
-                  </span>
-                </DialogTitle>
-              </DialogHeader>
-              <div className="relative z-10">
-                <EventCalendar />
-              </div>
-            </DialogContent>
+            <DialogContent className="sm:max-w-[850px] max-h-[90vh] flex flex-col overflow-hidden bg-gradient-to-br from-background via-background to-primary/5 backdrop-blur-xl border-primary/30 shadow-2xl">
+  {/* Header: shrink-0 to prevent it from squashing */}
+  <DialogHeader className="relative z-10 pb-4 border-b border-primary/10 shrink-0">
+    <DialogTitle className="flex items-center gap-3 text-xl">
+      <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 border border-primary/20">
+        <CalendarDays className="h-6 w-6 text-primary" />
+      </div>
+      <span className="text-3xl opacity-100">
+        {t("compete.eventCalendar")}
+      </span>
+    </DialogTitle>
+  </DialogHeader>
+  
+  {/* Body: flex-1 to take up remaining height, so EventCalendar can scroll internally */}
+  <div className="relative z-10 flex-1 min-h-0 w-full mt-4">
+    <EventCalendar />
+  </div>
+</DialogContent>
           </Dialog>
         </div>
 
@@ -556,9 +505,9 @@ const Compete = () => {
                   <Card key={`active-${index}`} className="border-primary border-2 bg-gradient-to-br from-primary/10 via-card to-primary/5 backdrop-blur-sm shadow-xl shadow-primary/20 relative overflow-hidden group h-full">
                     <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <CardHeader className="relative z-10">
-                      <Badge variant="default" className="w-fit animate-pulse">{t("compete.active")}</Badge>
+                      <Badge variant="default" className="w-fit">{t("compete.active")}</Badge>
                       <div className="flex items-center gap-3 pt-2">
-                        <span className="text-4xl animate-bounce" style={{ animationDuration: "2s" }}>{comp.icon}</span>
+                        <span className="text-4xl" >{comp.icon}</span>
                         <div>
                           <CardTitle className="text-xl">{comp.title}</CardTitle>
                           <p className="text-sm text-muted-foreground">{comp.period}</p>

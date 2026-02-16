@@ -1,7 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { BookOpen, Trophy, Users, TreePine, ArrowRight, School, LucideIcon} from "lucide-react";
+import {
+  BookOpen,
+  Trophy,
+  Users,
+  TreePine,
+  ArrowRight,
+  School,
+  LucideIcon,
+} from "lucide-react";
 import heroImage from "@/assets/hero-nature.jpg";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -159,7 +167,7 @@ const Home = () => {
                         <h3 className="text-2xl font-bold text-primary md:text-foreground md:group-hover:text-primary transition-colors">
                           {feature.title}
                         </h3>
-                        
+
                         <p className="text-muted-foreground text-lg leading-relaxed">
                           {feature.description}
                         </p>

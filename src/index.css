@@ -5,7 +5,7 @@
 @layer base {
   :root {
     /* --- LIGHT MODE: "Paper & Sage" (NO PURE WHITE) --- */
-    
+
     /* Background: A solid, visible Sage Grey. Definitely not white. */
     --background: 142 15% 90%;
 
@@ -51,11 +51,20 @@
     --ring: 142 60% 35%;
 
     --radius: 0.75rem;
-    
+
     /* Gradient: Uses the Sage and Paper colors, no white stops */
-    --gradient-hero: linear-gradient(135deg, hsl(142 55% 40%), hsl(160 45% 45%), hsl(142 15% 90%));
-    --gradient-card: linear-gradient(180deg, hsl(142 20% 98%), hsl(142 20% 95%));
-    
+    --gradient-hero: linear-gradient(
+      135deg,
+      hsl(142 55% 40%),
+      hsl(160 45% 45%),
+      hsl(142 15% 90%)
+    );
+    --gradient-card: linear-gradient(
+      180deg,
+      hsl(142 20% 98%),
+      hsl(142 20% 95%)
+    );
+
     --shadow-soft: 0 4px 20px -4px hsl(142 30% 20% / 0.08);
     --shadow-medium: 0 8px 30px -6px hsl(142 30% 20% / 0.12);
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -91,10 +100,10 @@
     --muted: 142 25% 15%;
     --muted-foreground: 142 10% 65%;
 
-    --accent: 198 93% 55%; 
+    --accent: 198 93% 55%;
     --accent-foreground: 0 0% 100%;
 
-    --hover: 142 30% 20%; 
+    --hover: 142 30% 20%;
     --hover-foreground: 142 10% 95%;
 
     --destructive: 0 62.8% 50%;
@@ -103,9 +112,17 @@
     --border: 142 25% 18%;
     --input: 142 25% 18%;
     --ring: 142 76% 45%;
-    
-    --gradient-hero: linear-gradient(135deg, hsl(142 76% 25%), hsl(198 93% 40%));
-    --gradient-card: linear-gradient(180deg, hsl(142 25% 10%), hsl(142 25% 12%));
+
+    --gradient-hero: linear-gradient(
+      135deg,
+      hsl(142 76% 25%),
+      hsl(198 93% 40%)
+    );
+    --gradient-card: linear-gradient(
+      180deg,
+      hsl(142 25% 10%),
+      hsl(142 25% 12%)
+    );
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -121,7 +138,7 @@
   * {
     @apply border-border;
   }
-  body {  
+  body {
     @apply bg-background text-foreground;
   }
   ::-webkit-scrollbar {
@@ -146,6 +163,6 @@
 }
 
 .no-scrollbar {
-  -ms-overflow-style: none;  
-  scrollbar-width: none;  
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

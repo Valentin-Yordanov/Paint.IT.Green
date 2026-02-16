@@ -25,7 +25,7 @@ export default tseslint.config(
       ],
       "@typescript-eslint/no-unused-vars": "off",
     },
-  }
+  },
 );
 
 //Sends warnings in your editor if you write code that violates the best practices for React, TypeScript, or general code quality.
