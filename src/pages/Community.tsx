@@ -877,7 +877,6 @@ const Community = () => {
   const renderCreateDialog = () => (
     <Dialog open={isCreateDialogOpen} onOpenChange={handleOpenCreateDialog}>
       <DialogContent className="sm:max-w-[525px] gap-0 p-0 overflow-hidden bg-white/95 dark:bg-card/95 backdrop-blur-2xl border-primary/10 shadow-2xl sm:rounded-2xl">
-        
         {/* Header */}
         <DialogHeader className="p-4 px-6 border-b border-border/40 flex flex-row items-center justify-between space-y-0">
           <DialogTitle className="text-lg font-semibold text-foreground">
@@ -895,13 +894,19 @@ const Community = () => {
               </AvatarFallback>
             </Avatar>
             <div>
-              <p className="text-sm font-semibold leading-none mb-1">{MOCK_USER.name}</p>
+              <p className="text-sm font-semibold leading-none mb-1">
+                {MOCK_USER.name}
+              </p>
               <Badge
                 variant="secondary"
                 className="bg-primary/5 text-primary hover:bg-primary/10 border-transparent px-2 py-0.5 h-auto text-[10px] uppercase tracking-wider font-medium flex items-center gap-1 w-fit transition-colors"
               >
-                {newPostVisibility === "public" && <Globe className="h-3 w-3" />}
-                {newPostVisibility === "school" && <School className="h-3 w-3" />}
+                {newPostVisibility === "public" && (
+                  <Globe className="h-3 w-3" />
+                )}
+                {newPostVisibility === "school" && (
+                  <School className="h-3 w-3" />
+                )}
                 {newPostVisibility === "class" && <Users className="h-3 w-3" />}
                 {newPostVisibility}
               </Badge>
@@ -925,7 +930,7 @@ const Community = () => {
                 className="w-full h-auto max-h-[300px] object-cover"
               />
               <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                 <Button
+                <Button
                   size="sm"
                   variant="destructive"
                   className="rounded-full shadow-lg"
@@ -969,43 +974,43 @@ const Community = () => {
         <div className="p-4 px-6 bg-muted/20 border-t border-border/40 flex items-center justify-between">
           <div className="flex gap-2">
             <div className="relative">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="text-muted-foreground hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 rounded-full transition-colors h-9 w-9"
-                  onClick={() => document.getElementById("image-upload")?.click()}
-                  title={t("community.photo")}
-                >
-                  <ImageIcon className="h-5 w-5" />
-                </Button>
-                <Input
-                  id="image-upload"
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleImageUpload}
-                />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="text-muted-foreground hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 rounded-full transition-colors h-9 w-9"
+                onClick={() => document.getElementById("image-upload")?.click()}
+                title={t("community.photo")}
+              >
+                <ImageIcon className="h-5 w-5" />
+              </Button>
+              <Input
+                id="image-upload"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageUpload}
+              />
             </div>
-            
+
             <div className="relative">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="text-muted-foreground hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/20 rounded-full transition-colors h-9 w-9"
-                  onClick={() => document.getElementById("file-upload")?.click()}
-                  title={t("File")}
-                >
-                  <Paperclip className="h-5 w-5" />
-                </Button>
-                <Input
-                  id="file-upload"
-                  type="file"
-                  multiple
-                  className="hidden"
-                  onChange={handleFileUpload}
-                />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="text-muted-foreground hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/20 rounded-full transition-colors h-9 w-9"
+                onClick={() => document.getElementById("file-upload")?.click()}
+                title={t("File")}
+              >
+                <Paperclip className="h-5 w-5" />
+              </Button>
+              <Input
+                id="file-upload"
+                type="file"
+                multiple
+                className="hidden"
+                onChange={handleFileUpload}
+              />
             </div>
           </div>
 
