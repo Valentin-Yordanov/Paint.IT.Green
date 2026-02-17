@@ -3,10 +3,11 @@
   "Values": {
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "node",
-    "COSMOS_DB_CONNECTION_STRING": "AccountEndpoint=https://paint-it-green-backend.documents.azure.com:443/;AccountKey=iXWXGNEAO7SiRNxglRJlw8Y1W8yBnFH7cosNDsU4gQLTwJ0XkOVF7NvzqWD0M3OfRnZFgZ7KtMUwACDbWAQMMA==;",
-    "COSMOS_DB_DATABASE_ID": "SchoolDB"
+    "COSMOS_DB_CONNECTION_STRING": "<YOUR_COSMOS_DB_CONNECTION_STRING>",
+    "COSMOS_DB_DATABASE_ID": "SchoolDB",
+    "JWT_SECRET": "<YOUR_JWT_SECRET>"
   },
   "Host": {
-    "CORS": "*"
+    "CORS": "http://localhost:5173,http://localhost:8080"
   }
 }
