@@ -508,6 +508,8 @@ const Community = () => {
 
   const [showMobileNav, setShowMobileNav] = useState(true);
   const lastScrollY = useRef(0);
+  const createPostBtnRef = useRef<HTMLDivElement>(null);
+  const [isCreatePostBtnVisible, setIsCreatePostBtnVisible] = useState(true);
 
   // --- EFFECTS ---
   useEffect(() => {
@@ -526,6 +528,19 @@ const Community = () => {
     window.addEventListener("scroll", controlNavbar);
     return () => window.removeEventListener("scroll", controlNavbar);
   }, [isMobile]);
+
+  // Track visibility of the original Create Post button (desktop only)
+  useEffect(() => {
+    if (isMobile) return;
+    const el = createPostBtnRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsCreatePostBtnVisible(entry.isIntersecting),
+      { threshold: 0 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [isMobile, showAdminPanel]);
 
   // --- ADMIN ACTIONS ---
   const handleBanUser = (userId: string) => {
@@ -1877,6 +1892,28 @@ const Community = () => {
               </>
             )}
 
+            {/* CREATE POST BUTTON - appears when original is scrolled out of view */}
+            {!isCreatePostBtnVisible && !showAdminPanel && (
+              <>
+                <div className="w-10 h-[2px] bg-primary/10 rounded-full my-4" />
+                <div
+                  className="group relative flex flex-col items-center justify-center cursor-pointer w-full mb-6 animate-in fade-in slide-in-from-top-2 duration-300"
+                  onClick={() => handleOpenCreateDialog(true)}
+                  role="button"
+                  tabIndex={0}
+                >
+                  <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-3 py-1.5 bg-gray-900 text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none z-50 shadow-xl translate-x-[-10px] group-hover:translate-x-0 whitespace-nowrap">
+                    {t("community.createPost")}
+                    <div className="absolute top-1/2 -left-1.5 -mt-1.5 border-4 border-transparent border-r-gray-900" />
+                  </div>
+                  <div className="relative flex items-center justify-center transition-all duration-300 h-12 w-12 rounded-2xl bg-gradient-to-br from-primary to-emerald-600 text-white shadow-lg shadow-primary/30 hover:scale-110 hover:shadow-xl border border-white/40 dark:border-white/10">
+                    <Plus size={24} />
+                  </div>
+                </div>
+                <div className="w-10 h-[2px] bg-primary/10 rounded-full my-4" />
+              </>
+            )}
+
             {/* --- SECURITY COMMENT: WRAP THIS IN PERMISSION CHECK (e.g. if(user.isAdmin)) --- */}
             <div className="w-10 h-[2px] bg-primary/10 rounded-full my-4" />
             <NavIcon
@@ -1999,7 +2036,7 @@ const Community = () => {
           </div>
 
           {!showAdminPanel && (
-            <div className="hidden md:block">
+            <div className="hidden md:block" ref={createPostBtnRef}>
               <Button
                 onClick={() => handleOpenCreateDialog(true)}
                 className="rounded-full bg-gradient-to-r from-primary to-emerald-600 hover:from-primary/90 hover:to-emerald-600/90 shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all hover:scale-105"
