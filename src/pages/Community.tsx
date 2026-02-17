@@ -873,128 +873,149 @@ const Community = () => {
     return activeFeed;
   };
 
-  // --- RENDER HELPERS (Restored Original) ---
+  // --- RENDER HELPERS  ---
   const renderCreateDialog = () => (
     <Dialog open={isCreateDialogOpen} onOpenChange={handleOpenCreateDialog}>
-      <DialogContent className="sm:max-w-[500px] bg-white/95 dark:bg-card/95 backdrop-blur-xl border-primary/20">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Plus className="h-5 w-5 text-primary" />
+      <DialogContent className="sm:max-w-[525px] gap-0 p-0 overflow-hidden bg-white/95 dark:bg-card/95 backdrop-blur-2xl border-primary/10 shadow-2xl sm:rounded-2xl">
+        
+        {/* Header */}
+        <DialogHeader className="p-4 px-6 border-b border-border/40 flex flex-row items-center justify-between space-y-0">
+          <DialogTitle className="text-lg font-semibold text-foreground">
             {t("community.createNewPost")}
           </DialogTitle>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="flex items-start gap-4">
-            <Avatar className="border-2 border-primary/20">
-              <AvatarFallback className="bg-gradient-to-br from-primary/20 to-emerald-500/20 text-primary">
+
+        {/* Body */}
+        <div className="p-6 pb-2">
+          {/* User Info Row */}
+          <div className="flex items-center gap-3 mb-4">
+            <Avatar className="h-10 w-10 border border-border/50">
+              <AvatarFallback className="bg-gradient-to-br from-primary/20 to-emerald-500/20 text-primary font-bold">
                 {MOCK_USER.name.substring(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
-            <div className="grid gap-2 flex-1">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-medium">{MOCK_USER.name}</p>
-                <Badge
-                  variant="outline"
-                  className="capitalize bg-primary/5 border-primary/20"
-                >
-                  {newPostVisibility}
-                </Badge>
-              </div>
-              <Textarea
-                placeholder={`${t("community.sharePlaceholder")}...`}
-                value={newPostContent}
-                onChange={(e) => setNewPostContent(e.target.value)}
-                className="min-h-[100px] resize-none border-none focus-visible:ring-0 px-0 shadow-none bg-transparent"
+            <div>
+              <p className="text-sm font-semibold leading-none mb-1">{MOCK_USER.name}</p>
+              <Badge
+                variant="secondary"
+                className="bg-primary/5 text-primary hover:bg-primary/10 border-transparent px-2 py-0.5 h-auto text-[10px] uppercase tracking-wider font-medium flex items-center gap-1 w-fit transition-colors"
+              >
+                {newPostVisibility === "public" && <Globe className="h-3 w-3" />}
+                {newPostVisibility === "school" && <School className="h-3 w-3" />}
+                {newPostVisibility === "class" && <Users className="h-3 w-3" />}
+                {newPostVisibility}
+              </Badge>
+            </div>
+          </div>
+
+          {/* Text Input Area */}
+          <Textarea
+            placeholder={`${t("community.sharePlaceholder")}...`}
+            value={newPostContent}
+            onChange={(e) => setNewPostContent(e.target.value)}
+            className="min-h-[140px] text-base resize-none border-none focus-visible:ring-0 px-0 shadow-none bg-transparent placeholder:text-muted-foreground/50"
+          />
+
+          {/* Image Preview Card */}
+          {newPostImage && (
+            <div className="relative mt-2 rounded-xl overflow-hidden border border-border/50 shadow-sm group">
+              <img
+                src={newPostImage}
+                alt="Preview"
+                className="w-full h-auto max-h-[300px] object-cover"
               />
-              {newPostImage && (
-                <div className="relative mt-2 rounded-lg overflow-hidden border border-primary/20">
-                  <img
-                    src={newPostImage}
-                    alt="Preview"
-                    className="w-full h-auto max-h-[200px] object-cover"
-                  />
-                  <Button
-                    size="icon"
-                    variant="destructive"
-                    className="absolute top-2 right-2 h-7 w-7 rounded-full"
-                    onClick={() => setNewPostImage(undefined)}
+              <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                 <Button
+                  size="sm"
+                  variant="destructive"
+                  className="rounded-full shadow-lg"
+                  onClick={() => setNewPostImage(undefined)}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" /> Remove
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Attachments List */}
+          {newPostAttachments.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {newPostAttachments.map((attachment, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/5 border border-primary/10 text-xs font-medium text-primary group"
+                >
+                  {attachment.type === "image" ? (
+                    <ImageIcon className="h-3.5 w-3.5" />
+                  ) : (
+                    <File className="h-3.5 w-3.5" />
+                  )}
+                  <span className="max-w-[150px] truncate">
+                    {attachment.name}
+                  </span>
+                  <button
+                    className="ml-1 hover:text-destructive transition-colors"
+                    onClick={() => removeAttachment(index)}
                   >
                     <X className="h-3 w-3" />
-                  </Button>
+                  </button>
                 </div>
-              )}
-              {newPostAttachments.length > 0 && (
-                <div className="mt-2 space-y-2">
-                  {newPostAttachments.map((attachment, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 border border-primary/10"
-                    >
-                      {attachment.type === "image" ? (
-                        <ImageIcon className="h-4 w-4 text-primary" />
-                      ) : (
-                        <File className="h-4 w-4 text-primary" />
-                      )}
-                      <span className="text-sm flex-1 truncate">
-                        {attachment.name}
-                      </span>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-6 w-6 hover:text-destructive hover:bg-hover"
-                        onClick={() => removeAttachment(index)}
-                      >
-                        <X className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Footer / Toolbar */}
+        <div className="p-4 px-6 bg-muted/20 border-t border-border/40 flex items-center justify-between">
+          <div className="flex gap-2">
+            <div className="relative">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="text-muted-foreground hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 rounded-full transition-colors h-9 w-9"
+                  onClick={() => document.getElementById("image-upload")?.click()}
+                  title={t("community.photo")}
+                >
+                  <ImageIcon className="h-5 w-5" />
+                </Button>
+                <Input
+                  id="image-upload"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageUpload}
+                />
+            </div>
+            
+            <div className="relative">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="text-muted-foreground hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/20 rounded-full transition-colors h-9 w-9"
+                  onClick={() => document.getElementById("file-upload")?.click()}
+                  title={t("File")}
+                >
+                  <Paperclip className="h-5 w-5" />
+                </Button>
+                <Input
+                  id="file-upload"
+                  type="file"
+                  multiple
+                  className="hidden"
+                  onChange={handleFileUpload}
+                />
             </div>
           </div>
-          <div className="flex items-center justify-between border-t border-primary/10 pt-4">
-            <div className="flex gap-1">
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="text-muted-foreground hover:text-primary hover:bg-hover rounded-full"
-                onClick={() => document.getElementById("image-upload")?.click()}
-              >
-                <ImageIcon className="h-4 w-4 mr-1" /> {t("community.photo")}
-              </Button>
-              <Input
-                id="image-upload"
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleImageUpload}
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="text-muted-foreground hover:text-primary hover:bg-hover rounded-full"
-                onClick={() => document.getElementById("file-upload")?.click()}
-              >
-                <Paperclip className="h-4 w-4 mr-1" /> {t("File")}
-              </Button>
-              <Input
-                id="file-upload"
-                type="file"
-                multiple
-                className="hidden"
-                onChange={handleFileUpload}
-              />
-            </div>
-            <Button
-              onClick={handleCreatePost}
-              disabled={!newPostContent.trim()}
-              className="bg-gradient-to-r from-primary to-emerald-600 text-white rounded-full"
-            >
-              {t("community.post")}
-            </Button>
-          </div>
+
+          <Button
+            onClick={handleCreatePost}
+            disabled={!newPostContent.trim()}
+            className="rounded-full px-6 bg-primary hover:bg-primary/90 text-white font-medium shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:shadow-none"
+          >
+            {t("community.post")} <Send className="ml-2 h-3.5 w-3.5" />
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
@@ -1753,7 +1774,18 @@ const Community = () => {
   };
 
   return (
-    <div className="h-screen bg-gradient-to-br from-green-50 via-emerald-50/50 to-teal-50 dark:from-background dark:via-green-950/20 dark:to-background pt-0 flex flex-col md:flex-row overflow-hidden no-scrollbar">
+    <div className="h-screen bg-gradient-to-br from-green-50 via-emerald-50/50 to-teal-50 dark:from-background dark:via-green-950/20 dark:to-background pt-0 flex flex-col md:flex-row overflow-hidden">
+      <style>
+        {`
+          .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+          }
+          .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+        `}
+      </style>
       {/* MOBILE NAV */}
       {isMobile && (
         <div
@@ -1937,7 +1969,7 @@ const Community = () => {
 
       {/* MAIN CONTENT AREA */}
       <main
-        className={`flex-1 h-full overflow-y-auto min-w-0 px-4 md:px-10 pb-32 transition-all duration-300 ${isMobile ? "pt-24" : "pt-6"}`}
+        className={`flex-1 h-full overflow-y-auto hide-scrollbar min-w-0 px-4 md:px-10 pb-32 transition-all duration-300 ${isMobile ? "pt-24" : "pt-6"}`}
       >
         <div className="max-w-6xl mx-auto pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
