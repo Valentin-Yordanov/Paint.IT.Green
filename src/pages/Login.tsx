@@ -16,6 +16,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import {
   Loader2,
   XCircle,
+  Leaf,
+  Sparkles,
+  Wind,
+  Sun,
+  Sprout,
 } from "lucide-react";
 
 const Login = () => {
@@ -39,13 +44,18 @@ const Login = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        // Backend now returns { user, token }
-        login(data);
-      } else if (response.status === 429) {
-        setError("Too many login attempts. Please try again later.");
+        const userData = await response.json();
+        login(userData);
       } else {
-        setError(t("login.error.generic") || "Invalid email or password.");
+        const errorBody = await response.text();
+        let errorMessage = t("login.error.generic") || "Login failed.";
+        try {
+          const jsonError = JSON.parse(errorBody);
+          errorMessage = jsonError.body || jsonError.message || errorMessage;
+        } catch {
+          errorMessage = errorBody || errorMessage;
+        }
+        setError(errorMessage);
       }
     } catch (err) {
       console.error("Error:", err);
@@ -59,8 +69,10 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-8 relative overflow-hidden bg-background">
+      {/* 1. Background Pattern */}
       <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-30" />
 
+      {/* Card */}
       <Card className="w-full max-w-md relative z-10 backdrop-blur-xl bg-card/80 border-primary/20 shadow-2xl shadow-primary/10">
         <CardHeader className="space-y-1 flex flex-col items-center pb-2">
           <div className="h-16 w-16 mb-2 p-2 rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 backdrop-blur-sm border border-primary/20 flex items-center justify-center">

@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import { useNavigate } from "react-router-dom";
 
+// 1. Define your User shape
 export type UserRole =
   | "guest"
   | "student"
@@ -23,14 +24,14 @@ interface UserProfile {
   name?: string;
 }
 
+// 2. Define what the Context provides to the rest of the app
 interface AuthContextType {
   user: UserProfile | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (loginResponse: { user: UserProfile; token: string }) => void;
+  login: (userData: UserProfile) => void;
   logout: () => void;
   hasRole: (requiredRoles: UserRole[]) => boolean;
-  getToken: () => string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -40,56 +41,47 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
+  // 3. On startup, check if we have a user saved in LocalStorage (so refreshing doesn't log you out)
   useEffect(() => {
     const storedUser = localStorage.getItem("eco_user");
-    const storedToken = localStorage.getItem("eco_token");
-    if (storedUser && storedToken) {
+    if (storedUser) {
       try {
-        // Basic JWT expiry check (decode payload without verification - verification happens server-side)
-        const payload = JSON.parse(atob(storedToken.split('.')[1]));
-        if (payload.exp && payload.exp * 1000 > Date.now()) {
-          setUser(JSON.parse(storedUser));
-        } else {
-          // Token expired
-          localStorage.removeItem("eco_user");
-          localStorage.removeItem("eco_token");
-        }
+        setUser(JSON.parse(storedUser));
       } catch (e) {
-        console.error("Failed to parse stored auth data", e);
+        console.error("Failed to parse stored user", e);
         localStorage.removeItem("eco_user");
-        localStorage.removeItem("eco_token");
       }
     }
     setIsLoading(false);
   }, []);
 
-  const login = (loginResponse: { user: UserProfile; token: string }) => {
-    setUser(loginResponse.user);
-    localStorage.setItem("eco_user", JSON.stringify(loginResponse.user));
-    localStorage.setItem("eco_token", loginResponse.token);
+  // 4. The Login Function (Called by Login.tsx after API success)
+  const login = (userData: UserProfile) => {
+    setUser(userData);
+    localStorage.setItem("eco_user", JSON.stringify(userData));
     navigate("/profile");
   };
 
+  // 5. The Logout Function (Called by Navbar)
   const logout = () => {
     setUser(null);
     localStorage.removeItem("eco_user");
-    localStorage.removeItem("eco_token");
     navigate("/login");
   };
 
-  const getToken = () => localStorage.getItem("eco_token");
-
+  // Helper: Check if user has specific permission
   const hasRole = (requiredRoles: UserRole[]) => {
     if (!user) return false;
     if (user.role === "moderator" || user.role === "admin") return true;
     return requiredRoles.includes(user.role);
   };
 
+  // Calculated property for Navbar
   const isAuthenticated = !!user;
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated, isLoading, login, logout, hasRole, getToken }}
+      value={{ user, isAuthenticated, isLoading, login, logout, hasRole }}
     >
       {children}
     </AuthContext.Provider>

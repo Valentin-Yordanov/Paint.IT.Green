@@ -79,7 +79,7 @@ const Signup: React.FC = () => {
         data = { body: text };
       }
 
-      if (response.ok || response.status === 201) {
+      if (response.ok) {
         const message = data.message || t("signup.successMessage");
         setSuccessMessage(message);
         setTimeout(() => navigate("/login"), 2000);

@@ -7,6 +7,7 @@ import {
 import { CosmosClient, ItemDefinition } from "@azure/cosmos";
 import * as bcrypt from "bcryptjs";
 
+// Local interface representing the structure of the user object saved to Cosmos DB.
 interface UserSchema extends ItemDefinition {
   id: string;
   email: string;
@@ -18,11 +19,12 @@ interface UserSchema extends ItemDefinition {
   createdAt: string;
 }
 
+// 1. Database Configuration
 const connectionString = process.env.COSMOS_DB_CONNECTION_STRING;
-const databaseName = process.env.COSMOS_DB_DATABASE_ID;
-const containerName = "Users";
 
-const VALID_ROLES = ["Student", "Teacher", "Parent"];
+const databaseName = process.env.COSMOS_DB_DATABASE_ID;
+
+const containerName = "Users";
 
 export async function userHandler(
   request: HttpRequest,
@@ -31,11 +33,25 @@ export async function userHandler(
   context.log(`Processing user signup request.`);
 
   try {
+    // --- Configuration Check: Ensure all necessary variables are present ---
     if (!connectionString || !databaseName) {
-      context.error("Database configuration missing.");
-      return { status: 500, body: "Internal Server Error." };
+      context.error(
+        "Database configuration missing: Check COSMOS_DB_CONNECTION_STRING and COSMOS_DB_DATABASE_ID.",
+      );
+      return {
+        status: 500,
+        body: "Internal Server Error: Database configuration missing.",
+      };
     }
 
+    // 1. Connect to Cosmos DB
+    const client = new CosmosClient(connectionString);
+
+    // Using the environment variable for the database ID
+    const database = client.database(databaseName);
+    const container = database.container(containerName);
+
+    // 2. Get data from the frontend
     const body = (await request.json()) as {
       email: string;
       password: string;
@@ -44,48 +60,36 @@ export async function userHandler(
     };
     const { email, password, name, requestedRole } = body;
 
-    // Input validation
     if (!email || !password || !name) {
       return { status: 400, body: "Please provide email, password, and name." };
     }
-    if (typeof email !== "string" || email.length > 255 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return { status: 400, body: "Invalid email format." };
-    }
-    if (typeof password !== "string" || password.length < 8 || password.length > 128) {
-      return { status: 400, body: "Password must be between 8 and 128 characters." };
-    }
-    if (typeof name !== "string" || name.length < 2 || name.length > 100 || !/^[a-zA-Zа-яА-ЯёЁ\s\-']+$/.test(name)) {
-      return { status: 400, body: "Name must be 2-100 characters and contain only letters, spaces, hyphens." };
-    }
-    if (requestedRole && !VALID_ROLES.includes(requestedRole)) {
-      return { status: 400, body: "Invalid role." };
-    }
 
-    const client = new CosmosClient(connectionString);
-    const database = client.database(databaseName);
-    const container = database.container(containerName);
+    const lowerCaseEmail = email.toLowerCase();
 
-    const lowerCaseEmail = email.toLowerCase().trim();
-
+    // 3. Check if user already exists
     const { resources: existingUsers } = await container.items
       .query({
-        query: "SELECT c.id FROM c WHERE c.email = @email",
+        query: "SELECT * FROM c WHERE c.email = @email",
         parameters: [{ name: "@email", value: lowerCaseEmail }],
       })
       .fetchAll();
 
     if (existingUsers.length > 0) {
-      return { status: 200, jsonBody: { message: "If this email is not already registered, your account has been created. Please check your email." } };
+      return { status: 409, body: "User with this email already exists." };
     }
 
+    // 4. Security: Encrypt the password (Salt = 10 rounds)
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
-    const role = requestedRole && VALID_ROLES.includes(requestedRole) ? requestedRole : "Student";
 
+    // 5. Determine Role
+    const role = requestedRole || "Student"; // Default is Student change it------------------------------------------------------------------
+
+    // 6. Create the User Object
     const newUser: UserSchema = {
       id: lowerCaseEmail,
       email: lowerCaseEmail,
-      name: name.trim(),
+      name,
       passwordHash,
       role,
       isVerified: false,
@@ -93,25 +97,50 @@ export async function userHandler(
       createdAt: new Date().toISOString(),
     };
 
+    // 7. Save to Cosmos DB
     const { resource: createdUser } = await container.items.create(newUser);
 
     if (!createdUser) {
       context.error("Cosmos DB create operation returned no resource.");
-      return { status: 500, body: "Registration failed." };
+      return {
+        status: 500,
+        body: `Registration failed. Database operation did not return the created user.`,
+      };
     }
 
+    // 8. Response for success
     return {
       status: 201,
       jsonBody: {
-        message: "If this email is not already registered, your account has been created. Please check your email.",
+        message:
+          "User created successfully! Please wait for a moderator to verify your account.",
+        userId: createdUser.id,
+        role: createdUser.role,
       },
     };
   } catch (error) {
-    context.error(`Error creating user: ${error instanceof Error ? error.message : String(error)}`);
-    return { status: 500, body: "Internal Server Error." };
+    let errorMessage = "An unknown error occurred.";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    } else if (
+      typeof error === "object" &&
+      error !== null &&
+      "message" in error
+    ) {
+      errorMessage = (error as { message: string }).message;
+    }
+
+    context.error(`Error creating user: ${errorMessage}`);
+
+    // Return a generic error to the client for security
+    return {
+      status: 500,
+      body: `Internal Server Error. Please check the function logs for details.`,
+    };
   }
 }
 
+// 9. Register the Function with the Azure Host
 app.http("UserHandler", {
   methods: ["POST"],
   authLevel: "anonymous",
