@@ -1897,7 +1897,7 @@ const Community = () => {
               <>
                 <div className="w-10 h-[2px] bg-primary/10 rounded-full my-4" />
                 <div
-                  className="group relative flex flex-col items-center justify-center cursor-pointer w-full mb-6 animate-in fade-in slide-in-from-top-2 duration-300"
+                  className="group relative flex flex-col items-center justify-center cursor-pointer w-full mb-0 animate-in fade-in slide-in-from-top-2 duration-300"
                   onClick={() => handleOpenCreateDialog(true)}
                   role="button"
                   tabIndex={0}
@@ -1910,7 +1910,6 @@ const Community = () => {
                     <Plus size={24} />
                   </div>
                 </div>
-                <div className="w-10 h-[2px] bg-primary/10 rounded-full my-4" />
               </>
             )}
 
