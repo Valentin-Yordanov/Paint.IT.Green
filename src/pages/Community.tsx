@@ -354,7 +354,7 @@ const NavIcon = ({
   className?: string;
 }) => (
   <div
-    className={`group relative flex flex-col items-center justify-center cursor-pointer ${mobileMode ? "min-w-[70px] mx-1" : "w-full mb-6"} ${className}`}
+    className={`group relative flex flex-col items-center justify-center cursor-pointer ${mobileMode ? "min-w-[70px] mx-1" : "w-full mb-3"} ${className}`}
     onClick={onClick}
     role="button"
     tabIndex={0}
@@ -1867,7 +1867,7 @@ const Community = () => {
               }}
             />
 
-            <div className="w-10 h-[2px] bg-primary/10 rounded-full my-4" />
+            <div className="w-10 h-[2px] bg-primary/10 rounded-full my-2" />
 
             {MOCK_USER.role === "student" && (
               <>
@@ -1895,9 +1895,9 @@ const Community = () => {
             {/* CREATE POST BUTTON - appears when original is scrolled out of view */}
             {!isCreatePostBtnVisible && !showAdminPanel && (
               <>
-                <div className="w-10 h-[2px] bg-primary/10 rounded-full my-4" />
+                <div className="w-10 h-[2px] bg-primary/10 rounded-full my-2" />
                 <div
-                  className="group relative flex flex-col items-center justify-center cursor-pointer w-full mb-0 animate-in fade-in slide-in-from-top-2 duration-300"
+                  className="group relative flex flex-col items-center justify-center cursor-pointer w-full mb-0 animate-fade-in transition-all duration-500 ease-out"
                   onClick={() => handleOpenCreateDialog(true)}
                   role="button"
                   tabIndex={0}
@@ -1914,7 +1914,7 @@ const Community = () => {
             )}
 
             {/* --- SECURITY COMMENT: WRAP THIS IN PERMISSION CHECK (e.g. if(user.isAdmin)) --- */}
-            <div className="w-10 h-[2px] bg-primary/10 rounded-full my-4" />
+            <div className="w-10 h-[2px] bg-primary/10 rounded-full my-2" />
             <NavIcon
               active={showAdminPanel}
               icon={<Shield size={24} />}
