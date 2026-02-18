@@ -1804,23 +1804,6 @@ const Community = () => {
             -ms-overflow-style: none;
             scrollbar-width: none;
           }
-          .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-          }
-          .custom-scrollbar::-webkit-scrollbar-track {
-            background: transparent;
-          }
-          .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: hsl(var(--primary) / 0.2);
-            border-radius: 9999px;
-          }
-          .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: hsl(var(--primary) / 0.4);
-          }
-          .custom-scrollbar {
-            scrollbar-width: thin;
-            scrollbar-color: hsl(var(--primary) / 0.2) transparent;
-          }
         `}
       </style>
       {/* MOBILE NAV */}
@@ -2270,8 +2253,8 @@ const Community = () => {
           </DialogContent>
         </Dialog>
 
-        {/* SCROLLABLE POSTS PANEL */}
-        <div className="flex-1 overflow-y-auto pb-32 custom-scrollbar">
+        {/* SCROLLABLE POSTS PANEL - fills remaining height, uses global scrollbar */}
+        <div className="flex-1 min-h-0 overflow-y-auto pb-6">
           <div className="max-w-6xl mx-auto space-y-6">
             {showAdminPanel ? (
               renderAdminContent()
