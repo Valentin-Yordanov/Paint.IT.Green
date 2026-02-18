@@ -1804,6 +1804,23 @@ const Community = () => {
             -ms-overflow-style: none;
             scrollbar-width: none;
           }
+          .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+          }
+          .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+          }
+          .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: hsl(var(--primary) / 0.2);
+            border-radius: 9999px;
+          }
+          .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: hsl(var(--primary) / 0.4);
+          }
+          .custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: hsl(var(--primary) / 0.2) transparent;
+          }
         `}
       </style>
       {/* MOBILE NAV */}
@@ -2008,11 +2025,12 @@ const Community = () => {
         </div>
       )}
 
-      {/* MAIN CONTENT AREA */}
+      {/* MAIN CONTENT AREA - fixed panel, only posts scroll */}
       <main
-        className={`flex-1 h-full overflow-y-auto hide-scrollbar min-w-0 px-4 md:px-10 pb-32 transition-all duration-300 ${isMobile ? "pt-24" : "pt-6"}`}
+        className={`flex-1 h-full flex flex-col min-w-0 px-4 md:px-10 transition-all duration-300 ${isMobile ? "pt-24" : "pt-6"}`}
       >
-        <div className="max-w-6xl mx-auto pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        {/* FIXED HEADER */}
+        <div className="max-w-6xl mx-auto w-full pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4 flex-shrink-0">
           <div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-emerald-600 to-teal-600 bg-clip-text text-transparent">
               {showAdminPanel
@@ -2103,176 +2121,140 @@ const Community = () => {
                   </div>
                 </div>
 
-                {/* PRESET SELECTOR */}
-                <div className="flex flex-col items-center gap-2 mb-4 relative">
-                  <span className="text-xs text-muted-foreground">
-                    {t("group.orSelectPreset")}
-                  </span>
-
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className={`w-full border-dashed border-2 flex items-center justify-center gap-2 transition-all ${newGroupIcon && newGroupIconType === "preset" ? "bg-gradient-to-r from-primary to-emerald-600 text-white border-transparent" : "text-muted-foreground hover:bg-hover hover:text-hover-foreground"}`}
-                    onClick={() => setShowIconPicker(!showIconPicker)}
-                  >
-                    {newGroupIcon && newGroupIconType === "preset" ? (
-                      <>
-                        {PRESET_ICONS.find((p) => p.id === newGroupIcon)?.icon}
-                        <span className="ml-2">{t("group.iconSelected")}</span>
-                      </>
-                    ) : (
-                      <>
-                        <Layers className="h-4 w-4" /> {t("group.browseIcons")}
-                      </>
-                    )}
-                  </Button>
-
-                  {/* ICON PANEL POPUP */}
-                  {showIconPicker && (
-                    <div className="absolute top-full left-0 right-0 mt-2 p-4 bg-popover border rounded-xl shadow-xl z-50 animate-in fade-in zoom-in-95 duration-200">
-                      <div className="grid grid-cols-4 gap-2 max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
-                        {PRESET_ICONS.map((icon) => (
-                          <button
-                            key={icon.id}
-                            type="button"
-                            className={`p-2 rounded-lg border flex flex-col items-center justify-center gap-1 transition-all ${newGroupIcon === icon.id && newGroupIconType === "preset" ? "border-transparent bg-gradient-to-r from-primary to-emerald-600 text-white ring-2 ring-primary/20" : "border-transparent hover:bg-hover hover:text-hover-foreground text-muted-foreground"}`}
-                            onClick={() => {
-                              setNewGroupIcon(icon.id);
-                              setNewGroupIconType("preset");
-                              setShowIconPicker(false);
-                            }}
-                            title={icon.label}
-                          >
-                            {icon.icon}
-                            <span className="text-[10px] truncate w-full text-center">
-                              {icon.label}
-                            </span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                {/* PRESET ICONS */}
+                <div>
+                  <Label className="text-xs font-medium">{t("group.orChooseIcon")}</Label>
+                  <div className="grid grid-cols-8 gap-2 mt-2">
+                    {PRESET_ICONS.map((preset) => (
+                      <button
+                        key={preset.id}
+                        type="button"
+                        onClick={() => {
+                          setNewGroupIcon(preset.id);
+                          setNewGroupIconType("preset");
+                        }}
+                        className={`p-2 rounded-lg border transition-all hover:scale-105 ${
+                          newGroupIconType === "preset" && newGroupIcon === preset.id
+                            ? "border-primary bg-primary/10 shadow-md"
+                            : "border-border hover:border-primary/50"
+                        }`}
+                        title={preset.label}
+                      >
+                        {preset.icon}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
-                <div className="grid gap-2">
-                  <Label htmlFor="group-name">{t("group.groupName")}</Label>
+                <div>
+                  <Label htmlFor="group-name">{t("group.name")}</Label>
                   <Input
                     id="group-name"
                     value={newGroupName}
                     onChange={(e) => setNewGroupName(e.target.value)}
-                    placeholder={t("group.groupNamePlaceholder")}
+                    placeholder={t("group.namePlaceholder")}
+                    className="mt-1"
                   />
                 </div>
-
-                <div className="grid gap-2">
+                <div>
                   <Label htmlFor="group-desc">{t("group.description")}</Label>
                   <Textarea
                     id="group-desc"
                     value={newGroupDescription}
                     onChange={(e) => setNewGroupDescription(e.target.value)}
-                    placeholder={t("group.descriptionPlaceholder")}
-                    className="resize-none h-[100px]"
+                    placeholder={t("group.descPlaceholder")}
+                    className="mt-1"
+                    rows={3}
                   />
                 </div>
               </div>
 
               {/* RIGHT COLUMN */}
-              <div className="space-y-4 flex flex-col">
-                <div className="grid gap-2">
-                  <Label htmlFor="group-school">
-                    {t("group.organization")}
-                  </Label>
+              <div className="space-y-4">
+                <div>
+                  <Label>{t("group.type")}</Label>
                   <Select
-                    value={newGroupSchool}
-                    onValueChange={(val) => setNewGroupSchool(val)}
+                    value={newGroupType}
+                    onValueChange={(v) => setNewGroupType(v as "public" | "private")}
                   >
-                    <SelectTrigger className="w-full">
-                      <SelectValue
-                        placeholder={t("group.selectOrganization")}
-                      />
+                    <SelectTrigger className="mt-1">
+                      <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="None">{t("group.none")}</SelectItem>
-                      {ALL_SCHOOLS.map((s) => (
-                        <SelectItem key={s} value={s}>
-                          {s}
+                      <SelectItem value="public">
+                        <div className="flex items-center gap-2">
+                          <Unlock className="h-4 w-4" /> {t("group.public")}
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="private">
+                        <div className="flex items-center gap-2">
+                          <Lock className="h-4 w-4" /> {t("group.private")}
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {newGroupType === "private" && (
+                  <div>
+                    <Label htmlFor="group-password">{t("group.password")}</Label>
+                    <div className="relative mt-1">
+                      <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="group-password"
+                        type="password"
+                        value={newGroupPassword}
+                        onChange={(e) => setNewGroupPassword(e.target.value)}
+                        placeholder={t("group.passwordPlaceholder")}
+                        className="pl-10"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <div>
+                  <Label>{t("group.school")}</Label>
+                  <Select
+                    value={newGroupSchool}
+                    onValueChange={setNewGroupSchool}
+                  >
+                    <SelectTrigger className="mt-1">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="None">{t("group.noSchool")}</SelectItem>
+                      {ALL_SCHOOLS.map((school) => (
+                        <SelectItem key={school} value={school}>
+                          {school}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
 
-                <div className="grid gap-2">
-                  <Label htmlFor="org-password">{t("group.orgPassword")}</Label>
-                  <Input
-                    id="org-password"
-                    type="password"
-                    value={organizationPassword}
-                    onChange={(e) => setOrganizationPassword(e.target.value)}
-                    placeholder={
-                      newGroupSchool === "None"
-                        ? t("group.orgPasswordNotRequired")
-                        : t("group.orgPasswordRequired")
-                    }
-                    disabled={newGroupSchool === "None"}
-                  />
-                </div>
-
-                <div className="grid gap-2">
-                  <Label>{t("group.privacyType")}</Label>
-                  <div className="flex gap-4">
-                    <Button
-                      type="button"
-                      variant={
-                        newGroupType === "public" ? "default" : "outline"
-                      }
-                      onClick={() => setNewGroupType("public")}
-                      className={`w-full ${newGroupType === "public" ? "bg-gradient-to-r from-primary to-emerald-600 text-white" : "hover:bg-hover hover:text-hover-foreground"}`}
-                    >
-                      <Globe className="mr-2 h-4 w-4" /> {t("group.public")}
-                    </Button>
-                    <Button
-                      type="button"
-                      variant={
-                        newGroupType === "private" ? "default" : "outline"
-                      }
-                      onClick={() => setNewGroupType("private")}
-                      className={`w-full ${newGroupType === "private" ? "bg-gradient-to-r from-primary to-emerald-600 text-white" : "hover:bg-hover hover:text-hover-foreground"}`}
-                    >
-                      <Lock className="mr-2 h-4 w-4" /> {t("group.private")}
-                    </Button>
-                  </div>
-                </div>
-
-                {newGroupType === "private" && (
-                  <div className="grid gap-2 animate-in fade-in slide-in-from-top-2">
-                    <Label
-                      htmlFor="group-pass"
-                      className="flex items-center gap-2"
-                    >
-                      <KeyRound className="h-4 w-4" /> {t("group.accessCode")}
-                    </Label>
-                    <Input
-                      id="group-pass"
-                      type="password"
-                      value={newGroupPassword}
-                      onChange={(e) => setNewGroupPassword(e.target.value)}
-                      placeholder={t("group.accessCodePlaceholder")}
-                    />
+                {newGroupSchool !== "None" && (
+                  <div>
+                    <Label htmlFor="org-password">{t("group.orgPassword")}</Label>
+                    <div className="relative mt-1">
+                      <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="org-password"
+                        type="password"
+                        value={organizationPassword}
+                        onChange={(e) => setOrganizationPassword(e.target.value)}
+                        placeholder={t("group.orgPasswordPlaceholder")}
+                        className="pl-10"
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {t("group.orgPasswordDesc")}
+                    </p>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* FIXED FOOTER */}
-            <DialogFooter className="p-6 pt-2 border-t border-primary/10 bg-white/95 dark:bg-card/95 backdrop-blur-xl z-20 mt-auto">
-              <Button
-                variant="ghost"
-                onClick={() => setIsCreateGroupDialogOpen(false)}
-                className="hover:bg-hover hover:text-hover-foreground"
-              >
-                {t("group.cancel")}
-              </Button>
+            <DialogFooter className="p-6 pt-0">
               <Button
                 onClick={handleCreateGroup}
                 disabled={
@@ -2288,19 +2270,21 @@ const Community = () => {
           </DialogContent>
         </Dialog>
 
-        {/* DYNAMIC CONTENT */}
-        <div className="max-w-6xl mx-auto space-y-6">
-          {showAdminPanel ? (
-            renderAdminContent()
-          ) : filteredPosts.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">
-                {t("community.noPostsYet")}
-              </p>
-            </div>
-          ) : (
-            filteredPosts.map(renderPost)
-          )}
+        {/* SCROLLABLE POSTS PANEL */}
+        <div className="flex-1 overflow-y-auto pb-32 custom-scrollbar">
+          <div className="max-w-6xl mx-auto space-y-6">
+            {showAdminPanel ? (
+              renderAdminContent()
+            ) : filteredPosts.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">
+                  {t("community.noPostsYet")}
+                </p>
+              </div>
+            ) : (
+              filteredPosts.map(renderPost)
+            )}
+          </div>
         </div>
       </main>
 
