@@ -462,7 +462,7 @@ const Community = () => {
     linkPreviews: true,
   });
 
-  // Create Group State (Expanded)
+  // Create Group State
   const [isCreateGroupDialogOpen, setIsCreateGroupDialogOpen] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
   const [newGroupDescription, setNewGroupDescription] = useState("");
@@ -471,14 +471,11 @@ const Community = () => {
   );
   const [newGroupPassword, setNewGroupPassword] = useState("");
   const [newGroupSchool, setNewGroupSchool] = useState(MOCK_USER.school);
-  const [organizationPassword, setOrganizationPassword] = useState(""); // NEW: Organization Password State
+  const [organizationPassword, setOrganizationPassword] = useState("");
   const [newGroupIcon, setNewGroupIcon] = useState<string | null>(null);
   const [newGroupIconType, setNewGroupIconType] = useState<"image" | "preset">(
     "image",
   );
-
-  // Icon Picker State
-  const [showIconPicker, setShowIconPicker] = useState(false);
 
   // --- NORMAL STATE ---
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
@@ -528,19 +525,6 @@ const Community = () => {
     window.addEventListener("scroll", controlNavbar);
     return () => window.removeEventListener("scroll", controlNavbar);
   }, [isMobile]);
-
-  // Track visibility of the original Create Post button (desktop only)
-  useEffect(() => {
-    if (isMobile) return;
-    const el = createPostBtnRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setIsCreatePostBtnVisible(entry.isIntersecting),
-      { threshold: 0 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [isMobile, showAdminPanel]);
 
   // --- ADMIN ACTIONS ---
   const handleBanUser = (userId: string) => {
@@ -613,14 +597,13 @@ const Community = () => {
     addLog("Current Admin", "Created Group", newGroupName);
     setIsCreateGroupDialogOpen(false);
 
-    // Reset form
     setNewGroupName("");
     setNewGroupDescription("");
     setNewGroupType("public");
     setNewGroupPassword("");
     setNewGroupIcon(null);
     setNewGroupIconType("image");
-    setOrganizationPassword(""); // Reset org password
+    setOrganizationPassword("");
 
     toast({
       title: t("group.created"),
@@ -702,7 +685,7 @@ const Community = () => {
     );
   };
 
-  // --- NORMAL ACTIONS (Restored) ---
+  // --- NORMAL ACTIONS ---
   const toggleLike = (postId: number) => {
     const newLiked = new Set(likedPosts);
     if (newLiked.has(postId)) newLiked.delete(postId);
@@ -1794,9 +1777,18 @@ const Community = () => {
   };
 
   return (
-    <div className="h-screen bg-gradient-to-br from-green-50 via-emerald-50/50 to-teal-50 dark:from-background dark:via-green-950/20 dark:to-background pt-0 flex flex-col md:flex-row overflow-hidden">
+    // ПРОМЯНА 1: Върнахме го към h-screen, но фиксирано в горния край с absolute top-0 left-0
+    <div className="w-full h-[calc(100vh-80px)] bg-gradient-to-br from-green-50 via-emerald-50/50 to-teal-50 dark:from-background dark:via-green-950/20 dark:to-background flex flex-col md:flex-row overflow-hidden">
       <style>
         {`
+          /* ПРОМЯНА 3: Задължаваме браузъра да блокира скролирането на цялата страница */
+          html, body, #root, #__next {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden !important;
+            overscroll-behavior: none !important; /* Спира "подскачането" при скрол в крайностите */
+          }
           .hide-scrollbar::-webkit-scrollbar {
             display: none;
           }
@@ -1847,15 +1839,14 @@ const Community = () => {
                 />
               </>
             )}
-
-            {/* NEW GROUP BUTTON REMOVED FROM MOBILE */}
           </div>
         </div>
       )}
 
       {/* DESKTOP SIDEBAR */}
+      {/* ПРОМЯНА 2: Използваме justify-start pt-6, за да залепим менюто за върха на екрана */}
       {!isMobile && (
-        <aside className="h-full flex flex-col justify-center w-[80px] ml-6 z-30 flex-shrink-0">
+        <aside className="h-full flex flex-col justify-start pt-6 w-[80px] ml-6 z-30 flex-shrink-0">
           <div className="flex flex-col items-center py-6 bg-white/40 dark:bg-card/40 backdrop-blur-xl border border-white/40 dark:border-border/40 rounded-3xl shadow-xl h-fit max-h-[90vh]">
             <NavIcon
               active={activeFeed === "public" && !showAdminPanel}
@@ -1892,7 +1883,6 @@ const Community = () => {
               </>
             )}
 
-            {/* CREATE POST BUTTON - appears when original is scrolled out of view */}
             {!isCreatePostBtnVisible && !showAdminPanel && (
               <>
                 <div className="w-10 h-[2px] bg-primary/10 rounded-full my-2" />
@@ -1913,7 +1903,6 @@ const Community = () => {
               </>
             )}
 
-            {/* --- SECURITY COMMENT: WRAP THIS IN PERMISSION CHECK (e.g. if(user.isAdmin)) --- */}
             <div className="w-10 h-[2px] bg-primary/10 rounded-full my-2" />
             <NavIcon
               active={showAdminPanel}
@@ -1923,23 +1912,21 @@ const Community = () => {
               onClick={() => setShowAdminPanel(true)}
             />
 
-            {/* NEW CREATE GROUP BUTTON (Desktop Only) */}
             <NavIcon
               active={false}
               icon={<Plus size={24} />}
               label={t("admin.createGroup")}
               onClick={() => setIsCreateGroupDialogOpen(true)}
             />
-            {/* --- END SECURITY COMMENT --- */}
           </div>
         </aside>
       )}
 
-      {/* ADMIN SUB-MENU (SLIDES OUT) */}
+      {/* ADMIN SUB-MENU */}
       {!isMobile && (
         <div
           className={`
-            h-full flex flex-col justify-center z-20 transition-all duration-300 ease-in-out
+            h-full flex flex-col justify-start pt-6 z-20 transition-all duration-300 ease-in-out
             ${showAdminPanel ? "w-[240px] ml-4 opacity-100 translate-x-0" : "w-0 ml-0 opacity-0 -translate-x-10 overflow-hidden"}
           `}
         >
@@ -2008,12 +1995,13 @@ const Community = () => {
         </div>
       )}
 
-      {/* MAIN CONTENT AREA - fixed panel, only posts scroll */}
+      {/* MAIN CONTENT AREA */}
       <main
-        className={`flex-1 h-full flex flex-col min-w-0 px-4 md:px-10 transition-all duration-300 ${isMobile ? "pt-24" : "pt-6"}`}
+        className={`flex-1 h-full flex flex-col min-w-0 bg-transparent transition-all duration-300 overflow-hidden relative`}
       >
-        {/* FIXED HEADER */}
-        <div className="max-w-6xl mx-auto w-full pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4 flex-shrink-0">
+        <div
+          className={`flex-shrink-0 max-w-6xl mx-auto w-full pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4 px-4 md:px-10 ${isMobile ? "pt-24" : "pt-2"}`}
+        >
           <div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-emerald-600 to-teal-600 bg-clip-text text-transparent">
               {showAdminPanel
@@ -2049,7 +2037,7 @@ const Community = () => {
 
         {renderCreateDialog()}
 
-        {/* CREATE GROUP DIALOG (Updated) */}
+        {/* CREATE GROUP DIALOG */}
         <Dialog
           open={isCreateGroupDialogOpen}
           onOpenChange={setIsCreateGroupDialogOpen}
@@ -2064,9 +2052,7 @@ const Community = () => {
             </DialogHeader>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 overflow-y-auto flex-1">
-              {/* LEFT COLUMN */}
               <div className="space-y-4">
-                {/* ICON UPLOAD */}
                 <div className="flex justify-center mb-2">
                   <div
                     className="relative group cursor-pointer"
@@ -2104,9 +2090,10 @@ const Community = () => {
                   </div>
                 </div>
 
-                {/* PRESET ICONS */}
                 <div>
-                  <Label className="text-xs font-medium">{t("group.orChooseIcon")}</Label>
+                  <Label className="text-xs font-medium">
+                    {t("group.orChooseIcon")}
+                  </Label>
                   <div className="grid grid-cols-8 gap-2 mt-2">
                     {PRESET_ICONS.map((preset) => (
                       <button
@@ -2117,7 +2104,8 @@ const Community = () => {
                           setNewGroupIconType("preset");
                         }}
                         className={`p-2 rounded-lg border transition-all hover:scale-105 ${
-                          newGroupIconType === "preset" && newGroupIcon === preset.id
+                          newGroupIconType === "preset" &&
+                          newGroupIcon === preset.id
                             ? "border-primary bg-primary/10 shadow-md"
                             : "border-border hover:border-primary/50"
                         }`}
@@ -2152,13 +2140,14 @@ const Community = () => {
                 </div>
               </div>
 
-              {/* RIGHT COLUMN */}
               <div className="space-y-4">
                 <div>
                   <Label>{t("group.type")}</Label>
                   <Select
                     value={newGroupType}
-                    onValueChange={(v) => setNewGroupType(v as "public" | "private")}
+                    onValueChange={(v) =>
+                      setNewGroupType(v as "public" | "private")
+                    }
                   >
                     <SelectTrigger className="mt-1">
                       <SelectValue />
@@ -2180,7 +2169,9 @@ const Community = () => {
 
                 {newGroupType === "private" && (
                   <div>
-                    <Label htmlFor="group-password">{t("group.password")}</Label>
+                    <Label htmlFor="group-password">
+                      {t("group.password")}
+                    </Label>
                     <div className="relative mt-1">
                       <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
@@ -2205,7 +2196,9 @@ const Community = () => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="None">{t("group.noSchool")}</SelectItem>
+                      <SelectItem value="None">
+                        {t("group.noSchool")}
+                      </SelectItem>
                       {ALL_SCHOOLS.map((school) => (
                         <SelectItem key={school} value={school}>
                           {school}
@@ -2217,14 +2210,18 @@ const Community = () => {
 
                 {newGroupSchool !== "None" && (
                   <div>
-                    <Label htmlFor="org-password">{t("group.orgPassword")}</Label>
+                    <Label htmlFor="org-password">
+                      {t("group.orgPassword")}
+                    </Label>
                     <div className="relative mt-1">
                       <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="org-password"
                         type="password"
                         value={organizationPassword}
-                        onChange={(e) => setOrganizationPassword(e.target.value)}
+                        onChange={(e) =>
+                          setOrganizationPassword(e.target.value)
+                        }
                         placeholder={t("group.orgPasswordPlaceholder")}
                         className="pl-10"
                       />
@@ -2253,8 +2250,7 @@ const Community = () => {
           </DialogContent>
         </Dialog>
 
-        {/* SCROLLABLE POSTS PANEL - fills remaining height, uses global scrollbar */}
-        <div className="flex-1 min-h-0 overflow-y-auto pb-6">
+        <div className="flex-1 w-full min-h-0 overflow-y-auto overscroll-none pb-6 px-4 md:px-10">
           <div className="max-w-6xl mx-auto space-y-6">
             {showAdminPanel ? (
               renderAdminContent()
