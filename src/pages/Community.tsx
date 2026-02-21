@@ -53,7 +53,6 @@ import {
   Unlock,
   Camera,
   KeyRound,
-  // EXTENDED ICON SET FOR PRESETS
   Book,
   GraduationCap,
   Music,
@@ -113,7 +112,7 @@ type Post = {
   role: string;
   time: string;
   content: string;
-  image?: string;
+  images?: string[];
   attachments?: Attachment[];
   likes: number;
   comments: Comment[];
@@ -370,16 +369,7 @@ const NavIcon = ({
     )}
 
     <div
-      className={`
-      relative flex items-center justify-center transition-all duration-300
-      ${mobileMode ? "h-14 w-14 rounded-full" : "h-12 w-12 rounded-2xl"}
-      ${
-        active
-          ? "bg-gradient-to-br from-primary to-emerald-600 text-white shadow-lg shadow-primary/30 scale-105"
-          : "bg-white/80 dark:bg-card/80 text-muted-foreground hover:bg-white hover:text-primary hover:scale-110 hover:shadow-lg"
-      }
-      border border-white/40 dark:border-white/10 shadow-sm
-    `}
+      className={`relative flex items-center justify-center transition-all duration-300 ${mobileMode ? "h-14 w-14 rounded-full" : "h-12 w-12 rounded-2xl"} ${active ? "bg-gradient-to-br from-primary to-emerald-600 text-white shadow-lg shadow-primary/30 scale-105" : "bg-white/80 dark:bg-card/80 text-muted-foreground hover:bg-white hover:text-primary hover:scale-110 hover:shadow-lg"} border border-white/40 dark:border-white/10 shadow-sm`}
     >
       {icon}
       {active && mobileMode && (
@@ -415,7 +405,7 @@ const Community = () => {
       time: "2 hours ago",
       content:
         "Incredible turnout for our tree planting event today! Our students planted 50 trees around the school campus. This helps reduce our carbon footprint and beautifies our daily environment. So proud of everyone's dedication to our environment! 🌳",
-      image: studentsImage,
+      images: [studentsImage],
       likes: 124,
       comments: [
         {
@@ -496,35 +486,14 @@ const Community = () => {
   const [newPostVisibility, setNewPostVisibility] = useState<
     "public" | "school" | "class"
   >("public");
-  const [newPostImage, setNewPostImage] = useState<string | undefined>(
-    undefined,
-  );
+  const [newPostImages, setNewPostImages] = useState<string[]>([]);
   const [newPostAttachments, setNewPostAttachments] = useState<Attachment[]>(
     [],
   );
 
-  const [showMobileNav, setShowMobileNav] = useState(true);
-  const lastScrollY = useRef(0);
+  const [lightboxImages, setLightboxImages] = useState<string[] | null>(null);
   const createPostBtnRef = useRef<HTMLDivElement>(null);
   const [isCreatePostBtnVisible, setIsCreatePostBtnVisible] = useState(true);
-
-  // --- EFFECTS ---
-  useEffect(() => {
-    if (!isMobile) return;
-    const controlNavbar = () => {
-      if (typeof window !== "undefined") {
-        const currentScrollY = window.scrollY;
-        if (currentScrollY > lastScrollY.current && currentScrollY > 50) {
-          setShowMobileNav(false);
-        } else {
-          setShowMobileNav(true);
-        }
-        lastScrollY.current = currentScrollY;
-      }
-    };
-    window.addEventListener("scroll", controlNavbar);
-    return () => window.removeEventListener("scroll", controlNavbar);
-  }, [isMobile]);
 
   // --- ADMIN ACTIONS ---
   const handleBanUser = (userId: string) => {
@@ -596,7 +565,6 @@ const Community = () => {
     setAdminGroups([newGroup, ...adminGroups]);
     addLog("Current Admin", "Created Group", newGroupName);
     setIsCreateGroupDialogOpen(false);
-
     setNewGroupName("");
     setNewGroupDescription("");
     setNewGroupType("public");
@@ -604,7 +572,6 @@ const Community = () => {
     setNewGroupIcon(null);
     setNewGroupIconType("image");
     setOrganizationPassword("");
-
     toast({
       title: t("group.created"),
       description: `${newGroupName} ${t("group.createdDesc")}`,
@@ -626,7 +593,6 @@ const Community = () => {
   ) => {
     const report = adminReports.find((r) => r.id === reportId);
     if (!report) return;
-
     if (action === "delete_post") {
       setPosts((currentPosts) =>
         currentPosts.filter((p) => p.id !== report.postId),
@@ -660,7 +626,7 @@ const Community = () => {
 
   // --- RENDER HELPERS ---
   const getGroupIcon = (group: Group) => {
-    if (group.iconType === "image" && group.icon) {
+    if (group.iconType === "image" && group.icon)
       return (
         <img
           src={group.icon}
@@ -668,7 +634,6 @@ const Community = () => {
           className="h-10 w-10 rounded-full object-cover"
         />
       );
-    }
     if (group.iconType === "preset" && group.icon) {
       const preset = PRESET_ICONS.find((p) => p.id === group.icon);
       if (preset)
@@ -736,7 +701,7 @@ const Community = () => {
   };
 
   const handleCreatePost = () => {
-    if (!newPostContent.trim()) return;
+    if (!newPostContent.trim() && newPostImages.length === 0) return;
     const newPost: Post = {
       id: Date.now(),
       school: newPostSchool,
@@ -744,7 +709,7 @@ const Community = () => {
       role: MOCK_USER.role,
       time: "Just now",
       content: newPostContent,
-      image: newPostImage,
+      images: newPostImages,
       attachments: newPostAttachments,
       likes: 0,
       comments: [],
@@ -753,7 +718,7 @@ const Community = () => {
     };
     setPosts([newPost, ...posts]);
     setNewPostContent("");
-    setNewPostImage(undefined);
+    setNewPostImages([]);
     setNewPostAttachments([]);
     setIsCreateDialogOpen(false);
     toast({
@@ -763,15 +728,27 @@ const Community = () => {
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setNewPostImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+    const files = e.target.files;
+    if (files) {
+      const filePromises = Array.from(files).map((file) => {
+        return new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            resolve(reader.result as string);
+          };
+          reader.readAsDataURL(file);
+        });
+      });
+
+      Promise.all(filePromises).then((base64Images) => {
+        setNewPostImages((prev) => [...prev, ...base64Images]);
+      });
     }
     e.target.value = "";
+  };
+
+  const removeUploadedImage = (index: number) => {
+    setNewPostImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -800,9 +777,8 @@ const Community = () => {
     setNewPostAttachments((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleDeletePost = (postId: number) => {
+  const handleDeletePost = (postId: number) =>
     setPosts(posts.filter((post) => post.id !== postId));
-  };
 
   const handleEditPost = (postId: number) => {
     if (!editPostText.trim()) return;
@@ -812,7 +788,7 @@ const Community = () => {
     setEditingPost(null);
   };
 
-  const handleDeleteComment = (postId: number, idx: number) => {
+  const handleDeleteComment = (postId: number, idx: number) =>
     setPosts(
       posts.map((p) =>
         p.id === postId
@@ -820,7 +796,6 @@ const Community = () => {
           : p,
       ),
     );
-  };
 
   const handleEditComment = (postId: number, idx: number) => {
     if (!editCommentText.trim()) return;
@@ -845,7 +820,6 @@ const Community = () => {
         setNewPostVisibility("school");
       else if (activeFeed === "myClass") setNewPostVisibility("class");
       else setNewPostVisibility("public");
-
       if (ALL_SCHOOLS.includes(activeFeed)) setNewPostSchool(activeFeed);
       else setNewPostSchool(MOCK_USER.school);
     }
@@ -875,16 +849,13 @@ const Community = () => {
   const renderCreateDialog = () => (
     <Dialog open={isCreateDialogOpen} onOpenChange={handleOpenCreateDialog}>
       <DialogContent className="sm:max-w-[525px] gap-0 p-0 overflow-hidden bg-white/95 dark:bg-card/95 backdrop-blur-2xl border-primary/10 shadow-2xl sm:rounded-2xl">
-        {/* Header */}
         <DialogHeader className="p-4 px-6 border-b border-border/40 flex flex-row items-center justify-between space-y-0">
           <DialogTitle className="text-lg font-semibold text-foreground">
             {t("community.createNewPost")}
           </DialogTitle>
         </DialogHeader>
 
-        {/* Body */}
-        <div className="p-6 pb-2">
-          {/* User Info Row */}
+        <div className="p-6 pb-2 max-h-[60vh] overflow-y-auto custom-scrollbar">
           <div className="flex items-center gap-3 mb-4">
             <Avatar className="h-10 w-10 border border-border/50">
               <AvatarFallback className="bg-gradient-to-br from-primary/20 to-emerald-500/20 text-primary font-bold">
@@ -911,7 +882,6 @@ const Community = () => {
             </div>
           </div>
 
-          {/* Text Input Area */}
           <Textarea
             placeholder={`${t("community.sharePlaceholder")}...`}
             value={newPostContent}
@@ -919,28 +889,33 @@ const Community = () => {
             className="min-h-[140px] text-base resize-none border-none focus-visible:ring-0 px-0 shadow-none bg-transparent placeholder:text-muted-foreground/50"
           />
 
-          {/* Image Preview Card */}
-          {newPostImage && (
-            <div className="relative mt-2 rounded-xl overflow-hidden border border-border/50 shadow-sm group">
-              <img
-                src={newPostImage}
-                alt="Preview"
-                className="w-full h-auto max-h-[300px] object-cover"
-              />
-              <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  className="rounded-full shadow-lg"
-                  onClick={() => setNewPostImage(undefined)}
+          {newPostImages.length > 0 && (
+            <div className="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {newPostImages.map((imgSrc, idx) => (
+                <div
+                  key={idx}
+                  className="relative rounded-xl overflow-hidden border border-border/50 shadow-sm group aspect-square"
                 >
-                  <Trash2 className="h-4 w-4 mr-2" /> Remove
-                </Button>
-              </div>
+                  <img
+                    src={imgSrc}
+                    alt={`Preview ${idx}`}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <Button
+                      size="icon"
+                      variant="destructive"
+                      className="h-8 w-8 rounded-full shadow-lg"
+                      onClick={() => removeUploadedImage(idx)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
 
-          {/* Attachments List */}
           {newPostAttachments.length > 0 && (
             <div className="mt-3 flex flex-wrap gap-2">
               {newPostAttachments.map((attachment, index) => (
@@ -968,7 +943,6 @@ const Community = () => {
           )}
         </div>
 
-        {/* Footer / Toolbar */}
         <div className="p-4 px-6 bg-muted/20 border-t border-border/40 flex items-center justify-between">
           <div className="flex gap-2">
             <div className="relative">
@@ -986,6 +960,7 @@ const Community = () => {
                 id="image-upload"
                 type="file"
                 accept="image/*"
+                multiple
                 className="hidden"
                 onChange={handleImageUpload}
               />
@@ -1014,7 +989,7 @@ const Community = () => {
 
           <Button
             onClick={handleCreatePost}
-            disabled={!newPostContent.trim()}
+            disabled={!newPostContent.trim() && newPostImages.length === 0}
             className="rounded-full px-6 bg-primary hover:bg-primary/90 text-white font-medium shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:shadow-none"
           >
             {t("community.post")} <Send className="ml-2 h-3.5 w-3.5" />
@@ -1115,9 +1090,11 @@ const Community = () => {
 
       <CardContent className="p-4 md:p-6 pt-6">
         <div
-          className={`${post.image ? "grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-start" : ""}`}
+          className={`${post.images && post.images.length > 0 ? "grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-start" : ""}`}
         >
-          <div className={`flex flex-col ${post.image ? "h-full" : ""}`}>
+          <div
+            className={`flex flex-col ${post.images && post.images.length > 0 ? "h-full" : ""}`}
+          >
             {editingPost === post.id ? (
               <Textarea
                 value={editPostText}
@@ -1187,13 +1164,41 @@ const Community = () => {
             </div>
           </div>
 
-          {post.image && (
-            <div className="rounded-xl overflow-hidden border border-white/30 dark:border-border/40 shadow-md h-full max-h-[500px] flex items-center bg-black/5 dark:bg-black/20">
-              <img
-                src={post.image}
-                alt="Post attachment"
-                className="w-full h-full object-cover"
-              />
+          {post.images && post.images.length > 0 && (
+            <div
+              className={`rounded-xl overflow-hidden border border-white/30 dark:border-border/40 shadow-md ${post.images.length > 1 && post.images.length <= 4 ? "grid grid-cols-2 gap-1 bg-black/5 dark:bg-white/5" : "flex items-center bg-black/5 dark:bg-black/20 max-h-[500px]"}`}
+            >
+              {post.images.length > 4 ? (
+                <div
+                  className="relative w-full h-full cursor-pointer group aspect-square md:aspect-auto md:h-full"
+                  onClick={() => setLightboxImages(post.images!)}
+                >
+                  <img
+                    src={post.images[0]}
+                    alt="Post attachment"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center transition-colors group-hover:bg-black/40">
+                    <span className="text-white text-4xl font-bold">
+                      +{post.images.length - 1}
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                post.images.map((imgSrc, idx) => (
+                  <div
+                    key={idx}
+                    className={`relative overflow-hidden w-full ${post.images!.length > 1 ? "aspect-square" : "h-full"}`}
+                    onClick={() => setLightboxImages(post.images!)}
+                  >
+                    <img
+                      src={imgSrc}
+                      alt={`Post attachment ${idx}`}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500 cursor-pointer"
+                    />
+                  </div>
+                ))
+              )}
             </div>
           )}
         </div>
@@ -1306,7 +1311,6 @@ const Community = () => {
     </Card>
   );
 
-  // --- RENDER ADMIN VIEWS ---
   const renderAdminContent = () => {
     switch (activeAdminTab) {
       case "overview":
@@ -1370,7 +1374,6 @@ const Community = () => {
                 </CardContent>
               </Card>
             </div>
-
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -1396,7 +1399,6 @@ const Community = () => {
                 </div>
               </CardContent>
             </Card>
-
             <Card>
               <CardHeader>
                 <CardTitle>{t("admin.recentActivityLog")}</CardTitle>
@@ -1430,7 +1432,6 @@ const Community = () => {
             </Card>
           </div>
         );
-
       case "users": {
         const filteredUsers = adminUsers.filter(
           (u) =>
@@ -1456,7 +1457,6 @@ const Community = () => {
                 <FileText className="mr-2 h-4 w-4" /> {t("admin.exportCsv")}
               </Button>
             </div>
-
             <div className="rounded-md border bg-card">
               <div className="grid grid-cols-12 gap-2 p-4 border-b bg-muted/50 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 <div className="col-span-4">{t("admin.user")}</div>
@@ -1549,7 +1549,6 @@ const Community = () => {
           </div>
         );
       }
-
       case "groups":
         return (
           <div className="space-y-4 animate-in fade-in duration-500">
@@ -1605,7 +1604,6 @@ const Community = () => {
             </div>
           </div>
         );
-
       case "moderation":
         return (
           <div className="space-y-4 animate-in fade-in duration-500">
@@ -1688,7 +1686,6 @@ const Community = () => {
             )}
           </div>
         );
-
       case "settings":
         return (
           <div className="space-y-6 animate-in fade-in duration-500">
@@ -1753,7 +1750,6 @@ const Community = () => {
                 </div>
               </CardContent>
             </Card>
-
             <Card className="border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/10">
               <CardHeader>
                 <CardTitle className="text-red-600">
@@ -1777,32 +1773,19 @@ const Community = () => {
   };
 
   return (
-    // ПРОМЯНА 1: Върнахме го към h-screen, но фиксирано в горния край с absolute top-0 left-0
     <div className="w-full h-[calc(100vh-80px)] bg-gradient-to-br from-green-50 via-emerald-50/50 to-teal-50 dark:from-background dark:via-green-950/20 dark:to-background flex flex-col md:flex-row overflow-hidden">
       <style>
         {`
-          /* ПРОМЯНА 3: Задължаваме браузъра да блокира скролирането на цялата страница */
-          html, body, #root, #__next {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden !important;
-            overscroll-behavior: none !important; /* Спира "подскачането" при скрол в крайностите */
-          }
-          .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-          }
-          .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-          }
+          html, body, #root, #__next { margin: 0; padding: 0; height: 100%; overflow: hidden !important; overscroll-behavior: none !important; }
+          .hide-scrollbar::-webkit-scrollbar { display: none; }
+          .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         `}
       </style>
+
       {/* MOBILE NAV */}
       {isMobile && (
-        <div
-          className={`fixed top-16 left-0 right-0 z-40 w-full bg-white/90 dark:bg-card/90 backdrop-blur-md border-b border-primary/10 dark:border-border transition-all duration-500 ease-in-out ${showMobileNav ? "translate-y-0 opacity-100" : "-translate-y-[200%] opacity-0 pointer-events-none"}`}
-        >
+        <div className="fixed top-16 left-0 right-0 z-40 w-full bg-white/90 dark:bg-card/90 backdrop-blur-md border-b border-primary/10 dark:border-border">
+          {" "}
           <div className="flex items-center px-4 py-2 overflow-x-auto no-scrollbar gap-2 snap-x">
             <NavIcon
               mobileMode
@@ -1844,7 +1827,6 @@ const Community = () => {
       )}
 
       {/* DESKTOP SIDEBAR */}
-      {/* ПРОМЯНА 2: Използваме justify-start pt-6, за да залепим менюто за върха на екрана */}
       {!isMobile && (
         <aside className="h-full flex flex-col justify-start pt-6 w-[80px] ml-6 z-30 flex-shrink-0">
           <div className="flex flex-col items-center py-6 bg-white/40 dark:bg-card/40 backdrop-blur-xl border border-white/40 dark:border-border/40 rounded-3xl shadow-xl h-fit max-h-[90vh]">
@@ -1857,9 +1839,7 @@ const Community = () => {
                 setActiveFeed("public");
               }}
             />
-
             <div className="w-10 h-[2px] bg-primary/10 rounded-full my-2" />
-
             {MOCK_USER.role === "student" && (
               <>
                 <NavIcon
@@ -1893,7 +1873,7 @@ const Community = () => {
                   tabIndex={0}
                 >
                   <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-3 py-1.5 bg-gray-900 text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none z-50 shadow-xl translate-x-[-10px] group-hover:translate-x-0 whitespace-nowrap">
-                    {t("community.createPost")}
+                    {t("community.createPost")}{" "}
                     <div className="absolute top-1/2 -left-1.5 -mt-1.5 border-4 border-transparent border-r-gray-900" />
                   </div>
                   <div className="relative flex items-center justify-center transition-all duration-300 h-12 w-12 rounded-2xl bg-gradient-to-br from-primary to-emerald-600 text-white shadow-lg shadow-primary/30 hover:scale-110 hover:shadow-xl border border-white/40 dark:border-white/10">
@@ -1911,7 +1891,6 @@ const Community = () => {
               alert={adminReports.length > 0}
               onClick={() => setShowAdminPanel(true)}
             />
-
             <NavIcon
               active={false}
               icon={<Plus size={24} />}
@@ -1925,22 +1904,18 @@ const Community = () => {
       {/* ADMIN SUB-MENU */}
       {!isMobile && (
         <div
-          className={`
-            h-full flex flex-col justify-start pt-6 z-20 transition-all duration-300 ease-in-out
-            ${showAdminPanel ? "w-[240px] ml-4 opacity-100 translate-x-0" : "w-0 ml-0 opacity-0 -translate-x-10 overflow-hidden"}
-          `}
+          className={`h-full flex flex-col justify-start pt-6 z-20 transition-all duration-300 ease-in-out ${showAdminPanel ? "w-[240px] ml-4 opacity-100 translate-x-0" : "w-0 ml-0 opacity-0 -translate-x-10 overflow-hidden"}`}
         >
           <div className="h-fit max-h-[90vh] bg-white/60 dark:bg-card/60 backdrop-blur-xl border border-white/40 dark:border-border/40 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
             <div className="p-6 border-b border-primary/10 bg-white/30 dark:bg-black/10">
               <h3 className="font-bold text-lg flex items-center gap-2 text-primary">
-                <Shield className="h-5 w-5 fill-primary/20" />
+                <Shield className="h-5 w-5 fill-primary/20" />{" "}
                 {t("admin.title")}
               </h3>
               <p className="text-xs text-muted-foreground mt-1">
                 {t("admin.managementConsole")}
               </p>
             </div>
-
             <div className="flex-1 overflow-y-auto p-4 space-y-1 custom-scrollbar">
               <Button
                 variant="ghost"
@@ -1968,7 +1943,7 @@ const Community = () => {
                 className={`w-full justify-start ${activeAdminTab === "moderation" ? "bg-gradient-to-r from-primary to-emerald-600 text-white shadow-md hover:from-primary/90 hover:to-emerald-600/90" : "hover:bg-hover hover:text-hover-foreground"}`}
                 onClick={() => setActiveAdminTab("moderation")}
               >
-                <AlertTriangle className="mr-3 h-4 w-4" /> {t("admin.reports")}
+                <AlertTriangle className="mr-3 h-4 w-4" /> {t("admin.reports")}{" "}
                 {adminReports.length > 0 && (
                   <Badge className="ml-auto h-5 px-1.5 bg-red-500 text-white">
                     {adminReports.length}
@@ -2045,13 +2020,13 @@ const Community = () => {
           <DialogContent className="sm:max-w-[900px] sm:h-[600px] flex flex-col gap-0 p-0 bg-white/95 dark:bg-card/95 backdrop-blur-xl border-primary/20 overflow-hidden">
             <DialogHeader className="p-6 pb-2">
               <DialogTitle className="flex items-center gap-2">
-                <Layers className="h-5 w-5 text-primary" />
+                <Layers className="h-5 w-5 text-primary" />{" "}
                 {t("group.createTitle")}
               </DialogTitle>
               <DialogDescription>{t("group.createDesc")}</DialogDescription>
             </DialogHeader>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 overflow-y-auto flex-1">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 overflow-hidden flex-1">
               <div className="space-y-4">
                 <div className="flex justify-center mb-2">
                   <div
@@ -2092,7 +2067,7 @@ const Community = () => {
 
                 <div>
                   <Label className="text-xs font-medium">
-                    {t("group.orChooseIcon")}
+                    {t("group.orSelectIcon")}
                   </Label>
                   <div className="grid grid-cols-8 gap-2 mt-2">
                     {PRESET_ICONS.map((preset) => (
@@ -2103,12 +2078,7 @@ const Community = () => {
                           setNewGroupIcon(preset.id);
                           setNewGroupIconType("preset");
                         }}
-                        className={`p-2 rounded-lg border transition-all hover:scale-105 ${
-                          newGroupIconType === "preset" &&
-                          newGroupIcon === preset.id
-                            ? "border-primary bg-primary/10 shadow-md"
-                            : "border-border hover:border-primary/50"
-                        }`}
+                        className={`p-2 rounded-lg border transition-all hover:scale-105 ${newGroupIconType === "preset" && newGroupIcon === preset.id ? "border-primary bg-primary/10 shadow-md" : "border-border hover:border-primary/60"}`}
                         title={preset.label}
                       >
                         {preset.icon}
@@ -2133,7 +2103,7 @@ const Community = () => {
                     id="group-desc"
                     value={newGroupDescription}
                     onChange={(e) => setNewGroupDescription(e.target.value)}
-                    placeholder={t("group.descPlaceholder")}
+                    placeholder={t("group.descriptionPlaceholder")}
                     className="mt-1"
                     rows={3}
                   />
@@ -2142,7 +2112,7 @@ const Community = () => {
 
               <div className="space-y-4">
                 <div>
-                  <Label>{t("group.type")}</Label>
+                  <Label>{t("group.privacyType")}</Label>
                   <Select
                     value={newGroupType}
                     onValueChange={(v) =>
@@ -2166,11 +2136,10 @@ const Community = () => {
                     </SelectContent>
                   </Select>
                 </div>
-
                 {newGroupType === "private" && (
                   <div>
                     <Label htmlFor="group-password">
-                      {t("group.password")}
+                      {t("group.accessCode")}
                     </Label>
                     <div className="relative mt-1">
                       <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -2179,15 +2148,14 @@ const Community = () => {
                         type="password"
                         value={newGroupPassword}
                         onChange={(e) => setNewGroupPassword(e.target.value)}
-                        placeholder={t("group.passwordPlaceholder")}
+                        placeholder={t("group.accessCodePlaceholder")}
                         className="pl-10"
                       />
                     </div>
                   </div>
                 )}
-
                 <div>
-                  <Label>{t("group.school")}</Label>
+                  <Label>{t("group.selectOrganization")}</Label>
                   <Select
                     value={newGroupSchool}
                     onValueChange={setNewGroupSchool}
@@ -2196,9 +2164,7 @@ const Community = () => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="None">
-                        {t("group.noSchool")}
-                      </SelectItem>
+                      <SelectItem value="None">{t("group.none")}</SelectItem>
                       {ALL_SCHOOLS.map((school) => (
                         <SelectItem key={school} value={school}>
                           {school}
@@ -2207,7 +2173,6 @@ const Community = () => {
                     </SelectContent>
                   </Select>
                 </div>
-
                 {newGroupSchool !== "None" && (
                   <div>
                     <Label htmlFor="org-password">
@@ -2222,12 +2187,12 @@ const Community = () => {
                         onChange={(e) =>
                           setOrganizationPassword(e.target.value)
                         }
-                        placeholder={t("group.orgPasswordPlaceholder")}
+                        placeholder={t("group.orgPassword")}
                         className="pl-10"
                       />
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {t("group.orgPasswordDesc")}
+                      {t("group.orgPasswordRequired")}
                     </p>
                   </div>
                 )}
@@ -2250,7 +2215,7 @@ const Community = () => {
           </DialogContent>
         </Dialog>
 
-        <div className="flex-1 w-full min-h-0 overflow-y-auto overscroll-none pb-6 px-4 md:px-10">
+        <div className="flex-1 w-full min-h-0 overflow-y-auto overscroll-none pb-6 px-4 md:px-10 custom-scrollbar">
           <div className="max-w-6xl mx-auto space-y-6">
             {showAdminPanel ? (
               renderAdminContent()
@@ -2276,6 +2241,36 @@ const Community = () => {
           <Plus size={28} />
         </Button>
       )}
+
+      <Dialog
+        open={!!lightboxImages}
+        onOpenChange={(open) => !open && setLightboxImages(null)}
+      >
+        <DialogContent className="max-w-4xl max-h-[90vh] bg-black/95 border-none p-0 flex flex-col overflow-hidden rounded-xl shadow-2xl">
+          <DialogHeader className="absolute top-0 right-0 z-50 p-4">
+            <DialogTitle className="sr-only">Image Gallery</DialogTitle>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-white hover:bg-white/20 rounded-full h-10 w-10"
+              onClick={() => setLightboxImages(null)}
+            >
+              <X className="h-6 w-6" />
+            </Button>
+          </DialogHeader>
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+            {lightboxImages?.map((src, i) => (
+              <div key={i} className="flex justify-center w-full">
+                <img
+                  src={src}
+                  className="max-w-full h-auto max-h-[80vh] object-contain rounded-lg shadow-lg"
+                  alt={`Gallery item ${i + 1}`}
+                />
+              </div>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
