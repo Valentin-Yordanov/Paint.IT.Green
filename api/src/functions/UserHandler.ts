@@ -6,6 +6,7 @@ import {
 } from "@azure/functions";
 import { CosmosClient, ItemDefinition } from "@azure/cosmos";
 import * as bcrypt from "bcryptjs";
+import * as crypto from "crypto"; // Imported for UUID generation
 
 interface UserSchema extends ItemDefinition {
   id: string;
@@ -18,10 +19,12 @@ interface UserSchema extends ItemDefinition {
   createdAt: string;
 }
 
-// 1. Database Configuration
 const connectionString = process.env.COSMOS_DB_CONNECTION_STRING;
 const databaseName = process.env.COSMOS_DB_DATABASE_ID;
 const containerName = "Users";
+
+// 1. FIX: Initialize client OUTSIDE the handler
+const client = connectionString ? new CosmosClient(connectionString) : null;
 
 export async function userHandler(
   request: HttpRequest,
@@ -38,7 +41,7 @@ export async function userHandler(
     };
     const { email, password, name, requestedRole } = body;
 
-    if (!connectionString || !databaseName || !email || !password || !name) {
+    if (!client || !databaseName || !email || !password || !name) {
       context.error("Missing required fields or DB configuration.");
       return {
         status: 400,
@@ -46,14 +49,11 @@ export async function userHandler(
       };
     }
 
-    // 1. Connect to Cosmos DB
-    const client = new CosmosClient(connectionString);
     const database = client.database(databaseName);
     const container = database.container(containerName);
 
     const lowerCaseEmail = email.toLowerCase();
 
-    // 2. Check if user already exists
     const { resources: existingUsers } = await container.items
       .query({
         query: "SELECT * FROM c WHERE c.email = @email",
@@ -65,16 +65,13 @@ export async function userHandler(
       return { status: 409, body: "User with this email already exists." };
     }
 
-    // 3. Security: Encrypt the password (Salt = 10 rounds)
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-
-    // 4. Determine Role
     const role = requestedRole || "Student";
 
-    // 5. Create the User Object
+    // 2. FIX: Generate a safe UUID for the Cosmos DB id
     const newUser: UserSchema = {
-      id: lowerCaseEmail,
+      id: crypto.randomUUID(), 
       email: lowerCaseEmail,
       name,
       passwordHash: hashedPassword,
@@ -84,7 +81,6 @@ export async function userHandler(
       createdAt: new Date().toISOString(),
     };
 
-    // 6. Save to Cosmos DB
     const { resource: createdUser } = await container.items.create(newUser);
 
     if (!createdUser) {
@@ -95,12 +91,10 @@ export async function userHandler(
       };
     }
 
-    // 7. Response for success
     return {
       status: 201,
       jsonBody: {
-        message:
-          "User created successfully! Please wait for a moderator to verify your account.",
+        message: "User created successfully!",
         userId: createdUser.id,
         role: createdUser.role,
       },

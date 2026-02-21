@@ -4,14 +4,6 @@
   },
   "routes": [
     {
-      "route": "/login",
-      "rewrite": "/.auth/login/github"
-    },
-    {
-      "route": "/logout",
-      "rewrite": "/.auth/logout"
-    },
-    {
       "route": "/api/login",
       "allowedRoles": ["anonymous"]
     },
@@ -24,12 +16,6 @@
       "allowedRoles": ["anonymous", "authenticated"]
     }
   ],
-  "responseOverrides": {
-    "401": {
-      "redirect": "/login",
-      "statusCode": 302
-    }
-  },
   "globalHeaders": {
     "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate"
   }
