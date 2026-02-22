@@ -80,6 +80,7 @@ import {
 import studentsImage from "@/assets/students-planting.jpg";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -393,6 +394,7 @@ const NavIcon = ({
 const Community = () => {
   const { toast } = useToast();
   const { t } = useLanguage();
+  const { hasRole } = useAuth();
   const isMobile = useIsMobile();
 
   // --- STATE ---
@@ -1884,19 +1886,23 @@ const Community = () => {
             )}
 
             <div className="w-10 h-[2px] bg-primary/10 rounded-full my-2" />
-            <NavIcon
-              active={showAdminPanel}
-              icon={<Shield size={24} />}
-              label={t("admin.adminConsole")}
-              alert={adminReports.length > 0}
-              onClick={() => setShowAdminPanel(true)}
-            />
-            <NavIcon
-              active={false}
-              icon={<Plus size={24} />}
-              label={t("admin.createGroup")}
-              onClick={() => setIsCreateGroupDialogOpen(true)}
-            />
+            {hasRole(["admin"]) && (
+              <>
+                <NavIcon
+                  active={showAdminPanel}
+                  icon={<Shield size={24} />}
+                  label={t("admin.adminConsole")}
+                  alert={adminReports.length > 0}
+                  onClick={() => setShowAdminPanel(true)}
+                />
+                <NavIcon
+                  active={false}
+                  icon={<Plus size={24} />}
+                  label={t("admin.createGroup")}
+                  onClick={() => setIsCreateGroupDialogOpen(true)}
+                />
+              </>
+            )}
           </div>
         </aside>
       )}
