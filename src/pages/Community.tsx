@@ -702,8 +702,9 @@ const Community = () => {
     });
   };
 
-  const handleCreatePost = () => {
+  const handleCreatePost = async () => {
     if (!newPostContent.trim() && newPostImages.length === 0) return;
+    
     const newPost: Post = {
       id: Date.now(),
       school: newPostSchool,
@@ -718,15 +719,36 @@ const Community = () => {
       visibility: newPostVisibility,
       status: "active",
     };
-    setPosts([newPost, ...posts]);
-    setNewPostContent("");
-    setNewPostImages([]);
-    setNewPostAttachments([]);
-    setIsCreateDialogOpen(false);
-    toast({
-      title: t("community.postCreated"),
-      description: t("community.postCreatedDesc"),
-    });
+
+    try {
+      const response = await fetch('/api/posts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newPost)
+      });
+
+      if (response.ok) {
+        setPosts([newPost, ...posts]);
+        setNewPostContent("");
+        setNewPostImages([]);
+        setNewPostAttachments([]);
+        setIsCreateDialogOpen(false);
+        toast({
+          title: t("community.postCreated"),
+          description: t("community.postCreatedDesc"),
+        });
+      } else {
+        toast({ 
+          title: "Error", 
+          description: "Failed to save post to database.", 
+          variant: "destructive" 
+        });
+      }
+    } catch (error) {
+      console.error("Error creating post:", error);
+    }
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
