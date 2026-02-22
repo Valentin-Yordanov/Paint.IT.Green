@@ -6,6 +6,7 @@ import {
   input,
   output,
 } from "@azure/functions";
+import * as crypto from "crypto"
 
 // Interface for type safety
 interface EventBody {
