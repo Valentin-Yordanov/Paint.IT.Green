@@ -80,7 +80,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Helper: Check if user has specific permission
   const hasRole = (requiredRoles: UserRole[]) => {
     if (!user) return false;
-    if (user.isAdmin || user.role === "moderator" || user.role === "admin") return true;
+    if (user.isAdmin ) return true;
     return requiredRoles.includes(user.role as UserRole);
   };
 

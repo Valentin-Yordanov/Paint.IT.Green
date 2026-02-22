@@ -394,7 +394,7 @@ const NavIcon = ({
 const Community = () => {
   const { toast } = useToast();
   const { t } = useLanguage();
-  const { hasRole } = useAuth();
+  const { user } = useAuth();
   const isMobile = useIsMobile();
 
   // --- STATE ---
@@ -1885,8 +1885,7 @@ const Community = () => {
               </>
             )}
 
-            <div className="w-10 h-[2px] bg-primary/10 rounded-full my-2" />
-            {hasRole(["admin"]) && (
+            {user?.isAdmin && (
               <>
                 <NavIcon
                   active={showAdminPanel}
