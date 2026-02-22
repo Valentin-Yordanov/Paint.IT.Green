@@ -42,7 +42,7 @@ const Profile = () => {
   const { toast } = useToast();
   const { t, language, setLanguage } = useLanguage();
   const { theme, setTheme } = useTheme();
-  const { logout, user } = useAuth();
+  const { logout, user, updateUser } = useAuth();
 
   const [isLoading, setIsLoading] = useState(true);
   const [userStats, setUserStats] = useState({
@@ -136,7 +136,6 @@ const Profile = () => {
     setIsLoading(false);
   }, [user]);
 
-  // --- HANDLE MOCK UPDATE PROFILE ---
   // --- HANDLE REAL UPDATE PROFILE ---
   const handleSaveProfile = async () => {
     if (!user) return;
@@ -150,7 +149,7 @@ const Profile = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           id: user.id,
-          email: user.email, // Имейлът не се променя, но трябва за валидация
+          email: editedEmail,
           name: editedName,
           schoolName: editedSchool,
         }),
@@ -164,24 +163,19 @@ const Profile = () => {
           ...prev,
           name: updatedUser.name,
           school: updatedUser.schoolName,
+          email: updatedUser.email,
         }));
 
-        // 3. Обновяваме локалната памет (localStorage)
-        localStorage.setItem("user", JSON.stringify(updatedUser));
+        // 3. Обновяваме глобалния state (което запазва и в localStorage)
+        updateUser(updatedUser);
 
-        setEditMode(false); // Затваряме режима за редакция
-
+        setEditMode(false);
         toast({
           title: t("profile.updated") || "Profile updated",
           description:
             t("profile.updatedDesc") ||
             "Your changes have been saved successfully.",
         });
-
-        // 4. Рефрешваме страницата, за да може и навигацията горе да си вземе новото име
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
       } else {
         const errorText = await response.text();
         console.error("Failed to update profile:", errorText);
@@ -624,8 +618,8 @@ const Profile = () => {
                           id="email"
                           type="email"
                           value={editedEmail}
-                          disabled
-                          className="h-12 rounded-xl bg-muted/50"
+                          onChange={(e) => setEditedEmail(e.target.value)}
+                          className="h-12 rounded-xl"
                         />
                       </div>
                       <div className="space-y-2">

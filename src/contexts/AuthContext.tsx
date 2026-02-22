@@ -33,6 +33,7 @@ interface AuthContextType {
   login: (userData: UserProfile) => void;
   logout: () => void;
   hasRole: (requiredRoles: UserRole[]) => boolean;
+  updateUser: (userData: UserProfile) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -56,18 +57,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(false);
   }, []);
 
-  // 4. The Login Function (Called by Login.tsx after API success)
+  // 4. The Login Function
   const login = (userData: UserProfile) => {
     setUser(userData);
     localStorage.setItem("eco_user", JSON.stringify(userData));
     navigate("/profile");
   };
 
-  // 5. The Logout Function (Called by Navbar)
+  // 5. The Logout Function
   const logout = () => {
     setUser(null);
     localStorage.removeItem("eco_user");
-    navigate("/login");
+  };
+
+  // 6. The Update Function (моментално обновяване без рефреш)
+  const updateUser = (userData: UserProfile) => {
+    setUser(userData);
+    localStorage.setItem("eco_user", JSON.stringify(userData));
   };
 
   // Helper: Check if user has specific permission
@@ -82,7 +88,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated, isLoading, login, logout, hasRole }}
+      value={{ user, isAuthenticated, isLoading, login, logout, hasRole, updateUser }}
     >
       {children}
     </AuthContext.Provider>
@@ -96,6 +102,7 @@ const defaultAuthContext: AuthContextType = {
   login: () => {},
   logout: () => {},
   hasRole: () => false,
+  updateUser: () => {},
 };
 
 //eslint-disable-next-line react-refresh/only-export-components

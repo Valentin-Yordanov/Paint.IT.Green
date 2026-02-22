@@ -31,7 +31,7 @@ export async function updateProfileHandler(
     if (!id || !email) {
       return { status: 400, body: "Missing id or email." };
     }
-
+    
     const client = new CosmosClient(connectionString);
     const container = client.database(databaseName).container(containerName);
 
@@ -45,7 +45,8 @@ export async function updateProfileHandler(
     // 2. Обновяваме само позволените полета (без имейл и парола)
     if (name) existingUser.name = name;
     if (schoolName) existingUser.schoolName = schoolName;
-
+    if (email) existingUser.email = email.toLowerCase();
+    
     // 3. Записваме промените обратно в базата
     const { resource: updatedUser } = await container
       .item(id, id)
