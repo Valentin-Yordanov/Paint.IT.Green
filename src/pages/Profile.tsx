@@ -310,7 +310,6 @@ const Profile = () => {
             <Card className="overflow-hidden border-0 shadow-xl bg-gradient-to-br from-card via-card to-primary/5">
               <CardContent className="p-0">
                 <div className="h-24 md:h-32 bg-gradient-to-r from-primary/40 via-primary/30 to-accent/40 relative">
-                  {/* This adds a slight dark tint to help white text pop */}
                   <div className="absolute inset-0 bg-black/20" />
                   <div className="absolute inset-0 bg-[url(...)] opacity-10" />
                 </div>
@@ -630,7 +629,12 @@ const Profile = () => {
                           id="school"
                           value={editedSchool}
                           onChange={(e) => setEditedSchool(e.target.value)}
-                          className="h-12 rounded-xl"
+                          disabled={userStats.role === "Parent" || userStats.role === "Guest"}
+                          className={`h-12 rounded-xl ${
+                            userStats.role === "Parent" || userStats.role === "Guest"
+                              ? "bg-muted/50"
+                              : ""
+                          }`}
                         />
                       </div>
                       <div className="space-y-2">
