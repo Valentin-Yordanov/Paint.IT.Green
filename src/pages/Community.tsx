@@ -1887,6 +1887,7 @@ const Community = () => {
 
             {user?.isAdmin && (
               <>
+              <div className="w-10 h-[2px] bg-primary/20 rounded-full my-2" />
                 <NavIcon
                   active={showAdminPanel}
                   icon={<Shield size={24} />}

@@ -17,7 +17,7 @@ const Navbar = () => {
     { path: "/learn", label: t("nav.learn"), icon: BookOpen },
     { path: "/compete", label: t("nav.compete"), icon: Trophy },
     { path: "/community", label: t("nav.community"), icon: Users },
-    { path: "/profile", label: t("nav.profile"), icon: User },
+    ...(isAuthenticated ? [{ path: "/profile", label: t("nav.profile"), icon: User }] : []),
   ];
 
   const hoverClasses =
