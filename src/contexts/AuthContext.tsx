@@ -23,6 +23,7 @@ interface UserProfile {
   role: UserRole | string;
   name?: string;
   schoolName?: string;
+  isAdmin?: boolean;
 }
 
 // 2. Define what the Context provides to the rest of the app
@@ -79,7 +80,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Helper: Check if user has specific permission
   const hasRole = (requiredRoles: UserRole[]) => {
     if (!user) return false;
-    if (user.role === "moderator" || user.role === "admin") return true;
+    if (user.isAdmin || user.role === "moderator" || user.role === "admin") return true;
     return requiredRoles.includes(user.role as UserRole);
   };
 
