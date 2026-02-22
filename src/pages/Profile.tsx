@@ -27,7 +27,6 @@ import {
   Languages,
   Moon,
   Loader2,
-  Sparkles,
   TrendingUp,
   LogOut,
 } from "lucide-react";
@@ -93,22 +92,22 @@ const Profile = () => {
 
   const recentAchievements = [
     {
-      title: t("achievement.treePlanter"),
-      description: t("achievement.treePlanterDesc"),
+      title: t("achievement.treePlanter") || "Tree Planter",
+      description: t("achievement.treePlanterDesc") || "Planted first tree",
       icon: Leaf,
-      date: `2 ${t("time.daysAgo")}`,
+      date: `2 ${t("time.daysAgo") || "days ago"}`,
     },
     {
-      title: t("achievement.quizMaster"),
-      description: t("achievement.quizMasterDesc"),
+      title: t("achievement.quizMaster") || "Quiz Master",
+      description: t("achievement.quizMasterDesc") || "Scored 100% on quiz",
       icon: BookOpen,
-      date: `1 ${t("time.weekAgo")}`,
+      date: `1 ${t("time.weekAgo") || "week ago"}`,
     },
     {
-      title: t("achievement.champion"),
-      description: t("achievement.championDesc"),
+      title: t("achievement.champion") || "Champion",
+      description: t("achievement.championDesc") || "Reached top rank",
       icon: Trophy,
-      date: `2 ${t("time.weeksAgo")}`,
+      date: `2 ${t("time.weeksAgo") || "weeks ago"}`,
     },
   ];
 
@@ -120,7 +119,7 @@ const Profile = () => {
         role: user.role || "Student",
         school: user.schoolName || "N/A",
         email: user.email,
-        points: 0, // Тези статистики можем да ги направим реални по-късно
+        points: 0, // These stats can be made real later
         rank: "Newcomer",
         treesPlanted: 0,
         challengesCompleted: 0,
@@ -143,7 +142,7 @@ const Profile = () => {
     setIsLoading(true);
 
     try {
-      // 1. Изпращаме заявка към новия ни бекенд път
+      // 1. Send request to our backend
       const response = await fetch("/api/updateProfile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -158,7 +157,7 @@ const Profile = () => {
       if (response.ok) {
         const updatedUser = await response.json();
 
-        // 2. Обновяваме визуално страницата
+        // 2. Visually update page
         setUserStats((prev) => ({
           ...prev,
           name: updatedUser.name,
@@ -166,7 +165,7 @@ const Profile = () => {
           email: updatedUser.email,
         }));
 
-        // 3. Обновяваме глобалния state (което запазва и в localStorage)
+        // 3. Update global state (which saves to localStorage)
         updateUser(updatedUser);
 
         setEditMode(false);
@@ -219,16 +218,16 @@ const Profile = () => {
     setNewGoalDescription("");
     setIsGoalDialogOpen(false);
     toast({
-      title: t("profile.goalCreated"),
-      description: t("profile.goalCreatedDesc"),
+      title: t("profile.goalCreated") || "Goal Created",
+      description: t("profile.goalCreatedDesc") || "New goal has been added.",
     });
   };
 
   const handleDeleteGoal = (goalId: number) => {
     setActiveGoals(activeGoals.filter((goal) => goal.id !== goalId));
     toast({
-      title: t("profile.goalDeleted"),
-      description: t("profile.goalDeletedDesc"),
+      title: t("profile.goalDeleted") || "Goal Deleted",
+      description: t("profile.goalDeletedDesc") || "Goal has been removed.",
     });
   };
 
@@ -246,10 +245,15 @@ const Profile = () => {
       }),
     );
     toast({
-      title: t("profile.progressUpdated"),
-      description: t("profile.progressUpdatedDesc"),
+      title: t("profile.progressUpdated") || "Progress Updated",
+      description: t("profile.progressUpdatedDesc") || "Your goal progress has changed.",
     });
   };
+
+  // Safe check for school lock regardless of case formatting in DB ("Parent", "parent", "Guest", etc.)
+  const isSchoolLocked =
+    userStats.role?.toLowerCase() === "parent" ||
+    userStats.role?.toLowerCase() === "guest";
 
   if (isLoading) {
     return (
@@ -277,10 +281,10 @@ const Profile = () => {
         {/* Header with animated accent */}
         <div className="mb-10 text-center md:text-left">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-3 bg-gradient-to-r from-foreground via-foreground to-primary bg-clip-text">
-            {t("profile.title")}
+            {t("profile.title") || "My Profile"}
           </h1>
           <p className="text-lg text-muted-foreground max-w-xl">
-            {t("profile.subtitle")}
+            {t("profile.subtitle") || "Manage your account and track your impact."}
           </p>
         </div>
 
@@ -291,14 +295,14 @@ const Profile = () => {
               className="gap-2 py-3 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-lg transition-all duration-300"
             >
               <User className="h-4 w-4" />
-              {t("profile.overview")}
+              {t("profile.overview") || "Overview"}
             </TabsTrigger>
             <TabsTrigger
               value="settings"
               className="gap-2 py-3 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-lg transition-all duration-300"
             >
               <Settings className="h-4 w-4" />
-              {t("profile.settings")}
+              {t("profile.settings") || "Settings"}
             </TabsTrigger>
           </TabsList>
 
@@ -356,7 +360,7 @@ const Profile = () => {
                         </span>
                       </div>
                       <div className="text-sm text-muted-foreground font-medium">
-                        {t("profile.points")}
+                        {t("profile.points") || "Points"}
                       </div>
                     </div>
                   </div>
@@ -370,19 +374,19 @@ const Profile = () => {
                 {
                   icon: Leaf,
                   value: userStats.treesPlanted,
-                  label: t("profile.trees"),
+                  label: t("profile.trees") || "Trees Planted",
                   color: "from-emerald-500 to-green-600",
                 },
                 {
                   icon: Trophy,
                   value: userStats.challengesCompleted,
-                  label: t("profile.challenges"),
+                  label: t("profile.challenges") || "Challenges Completed",
                   color: "from-amber-500 to-orange-600",
                 },
                 {
                   icon: BookOpen,
                   value: userStats.lessonsFinished,
-                  label: t("profile.lessons"),
+                  label: t("profile.lessons") || "Lessons Finished",
                   color: "from-blue-500 to-indigo-600",
                 },
               ].map((stat, idx) => (
@@ -419,7 +423,7 @@ const Profile = () => {
                   <div className="p-2 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500">
                     <Award className="h-5 w-5 text-white" />
                   </div>
-                  {t("profile.achievements")}
+                  {t("profile.achievements") || "Recent Achievements"}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -456,7 +460,7 @@ const Profile = () => {
                   <div className="p-2 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500">
                     <Target className="h-5 w-5 text-white" />
                   </div>
-                  {t("profile.goals")}
+                  {t("profile.goals") || "Active Goals"}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -492,7 +496,7 @@ const Profile = () => {
                               {goal.progress}%
                             </span>
                             <span className="text-sm text-muted-foreground">
-                              {t("profile.complete")}
+                              {t("profile.complete") || "complete"}
                             </span>
                           </div>
                           <div className="flex items-center gap-1">
@@ -534,37 +538,37 @@ const Profile = () => {
                   <DialogTrigger asChild>
                     <Button className="w-full mt-6 gap-2 h-12 rounded-xl shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300">
                       <Plus className="h-5 w-5" />
-                      {t("profile.newGoal")}
+                      {t("profile.newGoal") || "Create New Goal"}
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[500px] rounded-2xl">
                     <DialogHeader>
                       <DialogTitle className="text-xl">
-                        {t("profile.createGoal")}
+                        {t("profile.createGoal") || "Create Goal"}
                       </DialogTitle>
                     </DialogHeader>
                     <div className="space-y-5 pt-4">
                       <div className="space-y-2">
                         <Label className="text-sm font-medium">
-                          {t("profile.goalTitle")}
+                          {t("profile.goalTitle") || "Title"}
                         </Label>
                         <Input
                           value={newGoalTitle}
                           onChange={(e) => setNewGoalTitle(e.target.value)}
-                          placeholder={t("profile.goalPlaceholder")}
+                          placeholder={t("profile.goalPlaceholder") || "e.g., Plant 5 trees"}
                           className="h-12 rounded-xl"
                         />
                       </div>
                       <div className="space-y-2">
                         <Label className="text-sm font-medium">
-                          {t("profile.goalDesc")}
+                          {t("profile.goalDesc") || "Description"}
                         </Label>
                         <Textarea
                           value={newGoalDescription}
                           onChange={(e) =>
                             setNewGoalDescription(e.target.value)
                           }
-                          placeholder={t("profile.goalDescPlaceholder")}
+                          placeholder={t("profile.goalDescPlaceholder") || "Describe your goal"}
                           className="min-h-[120px] rounded-xl"
                         />
                       </div>
@@ -575,7 +579,7 @@ const Profile = () => {
                         }
                         className="w-full h-12 rounded-xl"
                       >
-                        {t("profile.createButton")}
+                        {t("profile.createButton") || "Create"}
                       </Button>
                     </div>
                   </DialogContent>
@@ -591,7 +595,7 @@ const Profile = () => {
             <Card className="border-0 shadow-lg">
               <CardHeader className="pb-4">
                 <CardTitle className="text-xl">
-                  {t("profile.settingsTitle")}
+                  {t("profile.settingsTitle") || "Profile Settings"}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-8">
@@ -600,7 +604,7 @@ const Profile = () => {
                     <div className="grid gap-5 md:grid-cols-2">
                       <div className="space-y-2">
                         <Label htmlFor="name" className="text-sm font-medium">
-                          {t("profile.name")}
+                          {t("profile.name") || "Full Name"}
                         </Label>
                         <Input
                           id="name"
@@ -611,7 +615,7 @@ const Profile = () => {
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="email" className="text-sm font-medium">
-                          {t("profile.email")}
+                          {t("profile.email") || "Email Address"}
                         </Label>
                         <Input
                           id="email"
@@ -623,24 +627,23 @@ const Profile = () => {
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="school" className="text-sm font-medium">
-                          {t("profile.school")}
+                          {t("profile.school") || "School Name"}
                         </Label>
                         <Input
                           id="school"
                           value={editedSchool}
                           onChange={(e) => setEditedSchool(e.target.value)}
-                          disabled={userStats.role === "Parent" || userStats.role === "Guest"}
+                          disabled={isSchoolLocked}
                           className={`h-12 rounded-xl ${
-                            userStats.role === "Parent" || userStats.role === "Guest"
-                              ? "bg-muted/50"
-                              : ""
+                            isSchoolLocked ? "bg-muted/50" : ""
                           }`}
                         />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="role" className="text-sm font-medium">
-                          {t("profile.role")}
+                          {t("profile.role") || "Account Role"}
                         </Label>
+                        {/* Removed onChange, since this field is always disabled */}
                         <Input
                           id="role"
                           value={editedRole}
@@ -654,14 +657,14 @@ const Profile = () => {
                         onClick={handleSaveProfile}
                         className="h-11 px-6 rounded-xl"
                       >
-                        {t("profile.save")}
+                        {t("profile.save") || "Save Changes"}
                       </Button>
                       <Button
                         variant="outline"
                         onClick={handleCancelEdit}
                         className="h-11 px-6 rounded-xl"
                       >
-                        {t("profile.cancel")}
+                        {t("profile.cancel") || "Cancel"}
                       </Button>
                     </div>
                   </div>
@@ -669,10 +672,10 @@ const Profile = () => {
                   <div className="space-y-6">
                     <div className="grid gap-6 md:grid-cols-2">
                       {[
-                        { label: t("profile.name"), value: userStats.name },
-                        { label: t("profile.email"), value: userStats.email },
-                        { label: t("profile.school"), value: userStats.school },
-                        { label: t("profile.role"), value: userStats.role },
+                        { label: t("profile.name") || "Name", value: userStats.name },
+                        { label: t("profile.email") || "Email", value: userStats.email },
+                        { label: t("profile.school") || "School", value: userStats.school },
+                        { label: t("profile.role") || "Role", value: userStats.role },
                       ].map((field, idx) => (
                         <div
                           key={idx}
@@ -691,7 +694,7 @@ const Profile = () => {
                       onClick={() => setEditMode(true)}
                       className="h-11 px-6 rounded-xl"
                     >
-                      {t("profile.edit")}
+                      {t("profile.edit") || "Edit Profile"}
                     </Button>
                   </div>
                 )}
@@ -711,18 +714,18 @@ const Profile = () => {
                         </div>
                         <div>
                           <Label className="text-base font-semibold">
-                            {t("profile.darkMode")}
+                            {t("profile.darkMode") || "Dark Mode"}
                           </Label>
                           <p className="text-sm text-muted-foreground">
-                            {t("profile.darkModeDesc")}
+                            {t("profile.darkModeDesc") || "Switch to a darker theme"}
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
                         <span className="text-sm font-medium px-3 py-1 rounded-full bg-background">
                           {theme === "light"
-                            ? t("profile.light")
-                            : t("profile.dark")}
+                            ? t("profile.light") || "Light"
+                            : t("profile.dark") || "Dark"}
                         </span>
                         <Switch
                           checked={theme === "dark"}
@@ -743,10 +746,10 @@ const Profile = () => {
                         </div>
                         <div>
                           <Label className="text-base font-semibold">
-                            {t("profile.language")}
+                            {t("profile.language") || "Language"}
                           </Label>
                           <p className="text-sm text-muted-foreground">
-                            {t("profile.languageDesc")}
+                            {t("profile.languageDesc") || "Switch language between EN and BG"}
                           </p>
                         </div>
                       </div>
@@ -781,7 +784,7 @@ const Profile = () => {
                     }}
                   >
                     <LogOut className="h-4 w-4" />
-                    {t("profile.logout") || t("Log Out")}
+                    {t("profile.logout") || t("Log Out") || "Log Out"}
                   </Button>
                 </div>
               </CardContent>
