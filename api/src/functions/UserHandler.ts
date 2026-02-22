@@ -6,16 +6,17 @@ import {
 } from "@azure/functions";
 import { CosmosClient, ItemDefinition } from "@azure/cosmos";
 import * as bcrypt from "bcryptjs";
-import * as crypto from "crypto"; // Imported for UUID generation
+import * as crypto from "crypto";
 
 interface UserSchema extends ItemDefinition {
   id: string;
   email: string;
   name: string;
   passwordHash: string;
-  role: string;
+  role: "Student" | "Parent" | "Teacher" | "Guest";
+  isAdmin: boolean;
+  schoolName: string;
   isVerified: boolean;
-  schoolId: string;
   createdAt: string;
 }
 
@@ -23,7 +24,6 @@ const connectionString = process.env.COSMOS_DB_CONNECTION_STRING;
 const databaseName = process.env.COSMOS_DB_DATABASE_ID;
 const containerName = "Users";
 
-// 1. FIX: Initialize client OUTSIDE the handler
 const client = connectionString ? new CosmosClient(connectionString) : null;
 
 export async function userHandler(
@@ -37,21 +37,23 @@ export async function userHandler(
       email: string;
       password: string;
       name: string;
-      requestedRole?: string;
+      role: "Student" | "Parent" | "Teacher" | "Guest";
+      schoolName?: string;
     };
-    const { email, password, name, requestedRole } = body;
+    
+    const { email, password, name, role, schoolName } = body;
 
-    if (!client || !databaseName || !email || !password || !name) {
-      context.error("Missing required fields or DB configuration.");
-      return {
-        status: 400,
-        body: "Missing required fields or server configuration.",
-      };
+    if (!client || !databaseName || !email || !password || !name || !role) {
+      return { status: 400, body: "Missing required fields." };
+    }
+
+    const validRoles = ["Student", "Parent", "Teacher", "Guest"];
+    if (!validRoles.includes(role)) {
+      return { status: 400, body: "Invalid role selected." };
     }
 
     const database = client.database(databaseName);
     const container = database.container(containerName);
-
     const lowerCaseEmail = email.toLowerCase();
 
     const { resources: existingUsers } = await container.items
@@ -67,28 +69,23 @@ export async function userHandler(
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    const role = requestedRole || "Student";
 
-    // 2. FIX: Generate a safe UUID for the Cosmos DB id
     const newUser: UserSchema = {
-      id: crypto.randomUUID(), 
+      id: crypto.randomUUID(),
       email: lowerCaseEmail,
       name,
       passwordHash: hashedPassword,
       role,
+      isAdmin: false,
+      schoolName: (role === "Student" || role === "Teacher") ? (schoolName || "Not Provided") : "N/A",
       isVerified: false,
-      schoolId: "default-school",
       createdAt: new Date().toISOString(),
     };
 
     const { resource: createdUser } = await container.items.create(newUser);
 
     if (!createdUser) {
-      context.error("Cosmos DB create operation returned no resource.");
-      return {
-        status: 500,
-        body: `Registration failed. Database operation did not return the created user.`,
-      };
+      return { status: 500, body: `Database operation failed.` };
     }
 
     return {
@@ -100,13 +97,8 @@ export async function userHandler(
       },
     };
   } catch (error) {
-    context.error(
-      `Error creating user: ${error instanceof Error ? error.message : String(error)}`,
-    );
-    return {
-      status: 500,
-      body: `Internal Server Error. Please check the function logs for details.`,
-    };
+    context.error(error);
+    return { status: 500, body: `Internal Server Error.` };
   }
 }
 
