@@ -40,7 +40,7 @@ export async function userHandler(
       role: "Student" | "Parent" | "Teacher" | "Guest";
       schoolName?: string;
     };
-    
+
     const { email, password, name, role, schoolName } = body;
 
     if (!client || !databaseName || !email || !password || !name || !role) {
@@ -77,7 +77,10 @@ export async function userHandler(
       passwordHash: hashedPassword,
       role,
       isAdmin: false,
-      schoolName: (role === "Student" || role === "Teacher") ? (schoolName || "Not Provided") : "N/A",
+      schoolName:
+        role === "Student" || role === "Teacher"
+          ? schoolName || "Not Provided"
+          : "N/A",
       isVerified: false,
       createdAt: new Date().toISOString(),
     };

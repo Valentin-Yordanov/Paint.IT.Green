@@ -21,7 +21,7 @@ interface DbUser {
   email: string;
   name?: string;
   role: string;
-  schoolName?: string; 
+  schoolName?: string;
   passwordHash: string;
 }
 
@@ -71,7 +71,7 @@ export async function loginHandler(
       email: user.email,
       name: user.name,
       role: user.role || "Student",
-      schoolName: user.schoolName || "N/A"
+      schoolName: user.schoolName || "N/A",
     };
 
     return {

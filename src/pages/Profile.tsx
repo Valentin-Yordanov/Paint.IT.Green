@@ -137,24 +137,70 @@ const Profile = () => {
   }, [user]);
 
   // --- HANDLE MOCK UPDATE PROFILE ---
-  const handleSaveProfile = () => {
-    // Instead of sending a PUT request, we just update the local state
+  // --- HANDLE REAL UPDATE PROFILE ---
+  const handleSaveProfile = async () => {
+    if (!user) return;
 
-    // Update the main display state
-    setUserStats({
-      ...userStats,
-      name: editedName,
-      school: editedSchool,
-      email: editedEmail,
-      role: editedRole,
-    });
+    setIsLoading(true);
 
-    setEditMode(false);
+    try {
+      // 1. Изпращаме заявка към новия ни бекенд път
+      const response = await fetch("/api/updateProfile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: user.id,
+          email: user.email, // Имейлът не се променя, но трябва за валидация
+          name: editedName,
+          schoolName: editedSchool,
+        }),
+      });
 
-    toast({
-      title: t("profile.updated"),
-      description: t("profile.updatedDesc"),
-    });
+      if (response.ok) {
+        const updatedUser = await response.json();
+
+        // 2. Обновяваме визуално страницата
+        setUserStats((prev) => ({
+          ...prev,
+          name: updatedUser.name,
+          school: updatedUser.schoolName,
+        }));
+
+        // 3. Обновяваме локалната памет (localStorage)
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+
+        setEditMode(false); // Затваряме режима за редакция
+
+        toast({
+          title: t("profile.updated") || "Profile updated",
+          description:
+            t("profile.updatedDesc") ||
+            "Your changes have been saved successfully.",
+        });
+
+        // 4. Рефрешваме страницата, за да може и навигацията горе да си вземе новото име
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } else {
+        const errorText = await response.text();
+        console.error("Failed to update profile:", errorText);
+        toast({
+          title: "Error",
+          description: "Failed to update profile: " + errorText,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast({
+        title: "Network Error",
+        description: "Could not connect to the server.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCancelEdit = () => {
@@ -600,8 +646,8 @@ const Profile = () => {
                         <Input
                           id="role"
                           value={editedRole}
-                          onChange={(e) => setEditedRole(e.target.value)}
-                          className="h-12 rounded-xl"
+                          disabled
+                          className="h-12 rounded-xl bg-muted/50"
                         />
                       </div>
                     </div>
