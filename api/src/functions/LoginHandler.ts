@@ -23,6 +23,7 @@ interface DbUser {
   role: string;
   schoolName?: string;
   passwordHash: string;
+  isAdmin?: boolean;
 }
 
 export async function loginHandler(
@@ -47,7 +48,7 @@ export async function loginHandler(
 
     const querySpec = {
       query:
-        "SELECT c.id, c.email, c.name, c.role, c.schoolName, c.passwordHash FROM c WHERE c.email = @email",
+        "SELECT c.id, c.email, c.name, c.role, c.schoolName, c.passwordHash, c.isAdmin FROM c WHERE c.email = @email",
       parameters: [{ name: "@email", value: email.toLowerCase() }],
     };
 
@@ -72,6 +73,7 @@ export async function loginHandler(
       name: user.name,
       role: user.role || "Student",
       schoolName: user.schoolName || "N/A",
+      isAdmin: user.isAdmin || false,
     };
 
     return {
