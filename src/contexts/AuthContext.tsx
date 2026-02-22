@@ -20,8 +20,9 @@ export type UserRole =
 interface UserProfile {
   id: string;
   email: string;
-  role: UserRole;
+  role: UserRole | string;
   name?: string;
+  schoolName?: string;
 }
 
 // 2. Define what the Context provides to the rest of the app
@@ -73,7 +74,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const hasRole = (requiredRoles: UserRole[]) => {
     if (!user) return false;
     if (user.role === "moderator" || user.role === "admin") return true;
-    return requiredRoles.includes(user.role);
+    return requiredRoles.includes(user.role as UserRole);
   };
 
   // Calculated property for Navbar

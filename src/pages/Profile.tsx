@@ -112,37 +112,26 @@ const Profile = () => {
     },
   ];
 
-  // --- MOCK DATA FETCH ON LOAD ---
+  // --- REAL DATA FETCH ON LOAD ---
   useEffect(() => {
-    // Set mock data immediately - no artificial delay needed
-    const mockData = {
-      name: "Test Student",
-      role: "Eco Warrior",
-      schoolId: "Green Valley High",
-      email: user?.email || "student@example.com",
-      points: 1250,
-      rank: "Gold",
-      treesPlanted: 15,
-      challengesCompleted: 8,
-      lessonsFinished: 12,
-    };
+    if (user) {
+      setUserStats({
+        name: user.name || "Unknown User",
+        role: user.role || "Student",
+        school: user.schoolName || "N/A",
+        email: user.email,
+        points: 0, // Тези статистики можем да ги направим реални по-късно
+        rank: "Newcomer",
+        treesPlanted: 0,
+        challengesCompleted: 0,
+        lessonsFinished: 0,
+      });
 
-    setUserStats({
-      name: mockData.name,
-      role: mockData.role,
-      school: mockData.schoolId,
-      email: mockData.email,
-      points: mockData.points,
-      rank: mockData.rank,
-      treesPlanted: mockData.treesPlanted,
-      challengesCompleted: mockData.challengesCompleted,
-      lessonsFinished: mockData.lessonsFinished,
-    });
-
-    setEditedName(mockData.name);
-    setEditedSchool(mockData.schoolId);
-    setEditedEmail(mockData.email);
-    setEditedRole(mockData.role);
+      setEditedName(user.name || "");
+      setEditedSchool(user.schoolName || "");
+      setEditedEmail(user.email);
+      setEditedRole(user.role || "");
+    }
 
     setIsLoading(false);
   }, [user]);
