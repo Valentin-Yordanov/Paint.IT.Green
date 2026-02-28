@@ -398,42 +398,28 @@ const Community = () => {
   const isMobile = useIsMobile();
 
   // --- STATE ---
-  const [posts, setPosts] = useState<Post[]>([
-    {
-      id: 0,
-      school: "Lincoln Elementary",
-      author: "Principal Johnson",
-      role: "Principal",
-      time: "2 hours ago",
-      content:
-        "Incredible turnout for our tree planting event today! Our students planted 50 trees around the school campus. This helps reduce our carbon footprint and beautifies our daily environment. So proud of everyone's dedication to our environment! 🌳",
-      images: [studentsImage],
-      likes: 124,
-      comments: [
-        {
-          author: "Ms. Smith",
-          role: "Teacher",
-          content: "Amazing work!",
-          time: "1 hour ago",
-        },
-      ],
-      visibility: "public",
-      status: "active",
-    },
-    {
-      id: 1,
-      school: "Roosevelt High",
-      author: "Ms. Anderson",
-      role: "Teacher",
-      time: "5 hours ago",
-      content:
-        "Our 10th grade class organized a beach cleanup this weekend. We collected over 200 pounds of trash! Small steps lead to big changes.",
-      likes: 89,
-      comments: [],
-      visibility: "public",
-      status: "active",
-    },
-  ]);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await fetch('/api/posts');
+        if (response.ok) {
+          const data = await response.json();
+          setPosts(data);
+        } else {
+          console.error("Failed to fetch posts");
+        }
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, []);
   const [activeFeed, setActiveFeed] = useState<string>("public");
 
   // --- ADMIN STATE ---
