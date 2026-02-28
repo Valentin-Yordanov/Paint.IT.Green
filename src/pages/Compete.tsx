@@ -403,8 +403,6 @@ const EventCalendar = () => {
 
       {/* --- SPLIT VIEW: LIST & FORM --- */}
       <div className="flex flex-col lg:flex-row gap-4">
-        {/* === LEFT: EVENT LIST (WITH SCROLLBAR) === */}
-        {/* FIX: I used h-[350px] here. This forces the height. If you add 10 events, you WILL see a scrollbar. */}
         <div
           className={`overflow-y-auto h-[350px] pr-2 space-y-2 w-full ${isFormOpen ? "hidden lg:block lg:flex-1" : "block"}`}
         >
@@ -724,7 +722,6 @@ const Compete = () => {
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[850px] max-h-[90vh] flex flex-col overflow-hidden bg-gradient-to-br from-background via-background to-primary/5 backdrop-blur-xl border-primary/30 shadow-2xl">
-              {/* Header: shrink-0 to prevent it from squashing */}
               <DialogHeader className="relative z-10 pb-4 border-b border-primary/10 shrink-0">
                 <DialogTitle className="flex items-center gap-3 text-xl">
                   <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 border border-primary/20">
@@ -736,7 +733,6 @@ const Compete = () => {
                 </DialogTitle>
               </DialogHeader>
 
-              {/* Body: flex-1 to take up remaining height, so EventCalendar can scroll internally */}
               <div className="relative z-10 flex-1 min-h-0 w-full mt-4">
                 <EventCalendar />
               </div>

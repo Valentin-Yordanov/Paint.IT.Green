@@ -475,7 +475,6 @@ const Learn = () => {
                   <ForestGame onClose={() => setActiveGame(null)} />
                 ) : (
                   <>
-                    {/* Standard Text Content */}
                     {selectedTopicData.content.map((section, index) => (
                       <div
                         key={index}
@@ -490,8 +489,6 @@ const Learn = () => {
                         </p>
                       </div>
                     ))}
-
-                    {/* Actions */}
                     <div className="pt-8 flex flex-col sm:flex-row justify-center gap-4 border-t border-border/50 mt-8">
                       <Button
                         asChild

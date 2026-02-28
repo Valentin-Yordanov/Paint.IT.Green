@@ -127,9 +127,8 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Combined Features & Stats Section */}
+      {/* Features & Stats Section */}
       <section className="relative overflow-hidden py-24">
-        {/* --- Background Effects --- */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5" />
         <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-40 right-10 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse delay-1000" />

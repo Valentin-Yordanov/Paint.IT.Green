@@ -111,7 +111,7 @@ const Profile = () => {
     },
   ];
 
-  // --- REAL DATA FETCH ON LOAD ---
+  // --- DATA FETCH ON LOAD ---
   useEffect(() => {
     if (user) {
       setUserStats({
@@ -119,7 +119,7 @@ const Profile = () => {
         role: user.role || "Student",
         school: user.schoolName || "N/A",
         email: user.email,
-        points: 0, // These stats can be made real later
+        points: 0, 
         rank: "Newcomer",
         treesPlanted: 0,
         challengesCompleted: 0,
@@ -135,14 +135,13 @@ const Profile = () => {
     setIsLoading(false);
   }, [user]);
 
-  // --- HANDLE REAL UPDATE PROFILE ---
+  // --- HANDLE UPDATE PROFILE ---
   const handleSaveProfile = async () => {
     if (!user) return;
 
     setIsLoading(true);
 
     try {
-      // 1. Send request to our backend
       const response = await fetch("/api/updateProfile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -156,16 +155,12 @@ const Profile = () => {
 
       if (response.ok) {
         const updatedUser = await response.json();
-
-        // 2. Visually update page
         setUserStats((prev) => ({
           ...prev,
           name: updatedUser.name,
           school: updatedUser.schoolName,
           email: updatedUser.email,
         }));
-
-        // 3. Update global state (which saves to localStorage)
         updateUser(updatedUser);
 
         setEditMode(false);
@@ -250,7 +245,6 @@ const Profile = () => {
     });
   };
 
-  // Safe check for school lock regardless of case formatting in DB ("Parent", "parent", "Guest", etc.)
   const isSchoolLocked =
     userStats.role?.toLowerCase() === "parent" ||
     userStats.role?.toLowerCase() === "guest";

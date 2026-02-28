@@ -1,7 +1,6 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 import { CosmosClient } from "@azure/cosmos";
 
-// Дефинираме интерфейси за всички вложени обекти
 interface Comment {
     author: string;
     role: string;

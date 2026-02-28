@@ -35,19 +35,19 @@ export async function updateProfileHandler(
     const client = new CosmosClient(connectionString);
     const container = client.database(databaseName).container(containerName);
 
-    // 1. Намираме потребителя по неговото ID
+    // 1. Find user by his ID
     const { resource: existingUser } = await container.item(id, id).read();
 
     if (!existingUser) {
       return { status: 404, body: "User not found." };
     }
 
-    // 2. Обновяваме само позволените полета (без имейл и парола)
+    // 2. Change date
     if (name) existingUser.name = name;
     if (schoolName) existingUser.schoolName = schoolName;
     if (email) existingUser.email = email.toLowerCase();
     
-    // 3. Записваме промените обратно в базата
+    // 3. Save changes
     const { resource: updatedUser } = await container
       .item(id, id)
       .replace(existingUser);
@@ -56,7 +56,7 @@ export async function updateProfileHandler(
       return { status: 500, body: "Failed to update user." };
     }
 
-    // 4. Връщаме обновения профил към фронтенда
+    // 4. Fetch date to front-end
     const userProfile = {
       id: updatedUser.id,
       email: updatedUser.email,
@@ -77,7 +77,6 @@ export async function updateProfileHandler(
   }
 }
 
-// Регистрираме новия път: /api/updateProfile
 app.http("UpdateProfile", {
   methods: ["PUT"],
   authLevel: "anonymous",
